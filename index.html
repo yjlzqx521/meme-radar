@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>土狗监控 - Meme Coin Radar</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    body { background: #0f1115; color: #fff; min-height: 100vh; padding: 20px; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    header { text-align: center; padding: 30px 0; border-bottom: 1px solid #2a2d34; margin-bottom: 30px; }
+    h1 { font-size: 28px; background: linear-gradient(135deg, #f7931a, #ffb347); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .subtitle { color: #888; margin-top: 8px; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
+    .stat-card { background: #1a1d23; padding: 20px; border-radius: 10px; border: 1px solid #2a2d34; }
+    .stat-label { font-size: 14px; color: #888; }
+    .stat-value { font-size: 24px; font-weight: bold; margin-top: 5px; }
+    .green { color: #00d284; }
+    .red { color: #ff6b6b; }
+    table { width: 100%; border-collapse: collapse; background: #1a1d23; border-radius: 10px; overflow: hidden; }
+    th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #2a2d34; }
+    th { background: #22252b; color: #aaa; font-weight: 600; font-size: 13px; text-transform: uppercase; }
+    tr:hover { background: #21242b; }
+    .chain-tag { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 11px; background: #332266; color: #ccb3ff; }
+    .price-up { color: #00d284; }
+    .price-down { color: #ff6b6b; }
+    .refresh-btn { background: linear-gradient(135deg, #f7931a, #ffb347); border: none; padding: 10px 24px; border-radius: 8px; color: #000; font-weight: 600; cursor: pointer; margin-bottom: 20px; }
+    .refresh-btn:hover { opacity: 0.9; }
+    .warning { background: rgba(247, 147, 26, 0.1); border: 1px solid #f7931a44; padding: 12px; border-radius: 8px; margin-bottom: 20px; color: #ffc16f; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1> 土狗监控中心</h1>
+      <p class="subtitle">Meme Coin Radar · 实时扫描新币种 · 数据仅供参考</p>
+    </header>
+    <div class="warning">
+      ⚠️ 风险提示：加密货币投资风险极高！本页面仅作数据展示，不构成投资建议。DYOR！
+    </div>
+    <button class="refresh-btn" onclick="loadData()"> 刷新数据</button>
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-label">今日新币</div>
+        <div class="stat-value" id="totalNew">--</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">涨幅前10</div>
+        <div class="stat-value green" id="topGainers">--</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">监控中</div>
+        <div class="stat-value" id="watching">--</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">最后更新</div>
+        <div class="stat-value" style="font-size:14px" id="lastUpdate">--</div>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>币种</th>
+          <th>链</th>
+          <th>价格</th>
+          <th>24h涨跌</th>
+          <th>市值</th>
+          <th>流动性</th>
+        </tr>
+      </thead>
+      <tbody id="coinTable">
+        <tr><td colspan="6" style="text-align:center;padding:40px;color:#888;">点击"刷新数据"加载示例数据</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <script>
+    const sampleData = [
+      { name: 'DOGE', symbol: 'DOGE', chain: 'ETH', price: '0.1234', change: '+5.2%', cap: '$17.2B', liq: '$245M', up: true },
+      { name: 'SHIB', symbol: 'SHIB', chain: 'ETH', price: '0.0000234', change: '-1.8%', cap: '$13.8B', liq: '$189M', up: false },
+      { name: 'PEPE', symbol: 'PEPE', chain: 'ETH', price: '0.0000145', change: '+12.7%', cap: '$6.2B', liq: '$342M', up: true },
+      { name: 'WIF', symbol: 'WIF', chain: 'SOL', price: '1.45', change: '+8.3%', cap: '$1.8B', liq: '$98M', up: true },
+      { name: 'BONK', symbol: 'BONK', chain: 'SOL', price: '0.0000189', change: '-3.5%', cap: '$1.1B', liq: '$76M', up: false },
+      { name: 'FLOKI', symbol: 'FLOKI', chain: 'ETH', price: '0.000287', change: '+4.1%', cap: '$685M', liq: '$45M', up: true },
+      { name: 'MEME', symbol: 'MEME', chain: 'ETH', price: '0.0245', change: '-0.7%', cap: '$42M', liq: '$3.2M', up: false },
+      { name: 'POPCAT', symbol: 'POPCAT', chain: 'SOL', price: '0.456', change: '+15.2%', cap: '$456M', liq: '$89M', up: true },
+    ];
+    function loadData() {
+      const tbody = document.getElementById('coinTable');
+      tbody.innerHTML = sampleData.map(c => `
+        <tr>
+          <td><strong>${c.symbol}</strong><br><small style="color:#888">${c.name}</small></td>
+          <td><span class="chain-tag">${c.chain}</span></td>
+          <td>${c.price}</td>
+          <td class="${c.up ? 'price-up' : 'price-down'}">${c.change}</td>
+          <td>${c.cap}</td>
+          <td>${c.liq}</td>
+        </tr>
+      `).join('');
+      document.getElementById('totalNew').textContent = '1,247';
+      document.getElementById('topGainers').textContent = '186';
+      document.getElementById('watching').textContent = sampleData.length;
+      document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+    }
+  </script>
+</body>
+</html>
