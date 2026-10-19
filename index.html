@@ -3,104 +3,633 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>土狗监控 - Meme Coin Radar</title>
+  <title> 猎人金狗监控 · 终极完整版｜10链·四维评分·风控防火墙</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-    body { background: #0f1115; color: #fff; min-height: 100vh; padding: 20px; }
-    .container { max-width: 1200px; margin: 0 auto; }
-    header { text-align: center; padding: 30px 0; border-bottom: 1px solid #2a2d34; margin-bottom: 30px; }
-    h1 { font-size: 28px; background: linear-gradient(135deg, #f7931a, #ffb347); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .subtitle { color: #888; margin-top: 8px; }
-    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
-    .stat-card { background: #1a1d23; padding: 20px; border-radius: 10px; border: 1px solid #2a2d34; }
-    .stat-label { font-size: 14px; color: #888; }
-    .stat-value { font-size: 24px; font-weight: bold; margin-top: 5px; }
+    body { background: #0b0e14; color: #e6e6e6; min-height: 100vh; padding: 16px; line-height: 1.5; }
+    .container { max-width: 1400px; margin: 0 auto; }
+    
+    /* ===== 头部 ===== */
+    header { text-align: center; padding: 24px 0; border-bottom: 1px solid #1f2937; margin-bottom: 20px; }
+    h1 { font-size: 24px; background: linear-gradient(135deg, #f7931a, #ffd166); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; }
+    .subtitle { color: #888; margin-top: 6px; font-size: 13px; }
+    .version { font-size: 11px; color: #555; margin-top: 4px; }
+    
+    /* ===== 风险提示 ===== */
+    .warning-box { background: linear-gradient(135deg, rgba(247,147,26,0.08), rgba(255,179,71,0.05)); border: 1px solid #f7931a33; padding: 14px 18px; border-radius: 10px; margin-bottom: 20px; color: #ffd166; font-size: 13px; line-height: 1.7; }
+    
+    /* ===== 链选择器 ===== */
+    .chain-bar { background: #141820; padding: 14px 18px; border-radius: 10px; border: 1px solid #1f2937; margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 8px; }
+    .chain-btn { padding: 6px 12px; border-radius: 6px; font-size: 12px; background: #1f2937; color: #9ca3af; border: none; cursor: pointer; transition: all 0.2s; }
+    .chain-btn.active { background: #f7931a; color: #000; font-weight: 600; }
+    .chain-btn.priority { border-left: 2px solid #00d284; }
+    
+    /* ===== 叙事标签 ===== */
+    .narrative-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
+    .narrative-tag { padding: 5px 12px; border-radius: 15px; font-size: 12px; background: #1f2937; color: #9ca3af; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; }
+    .narrative-tag.active { background: #00d28418; color: #00d284; border-color: #00d28444; }
+    
+    /* ===== 风控筛选 ===== */
+    .filter-bar { background: #141820; padding: 14px 18px; border-radius: 10px; border: 1px solid #1f2937; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+    .filter-group { display: flex; flex-wrap: wrap; gap: 12px; }
+    .filter-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #9ca3af; }
+    .filter-item input { accent-color: #f7931a; width: 14px; height: 14px; cursor: pointer; }
+    .refresh-btn { background: linear-gradient(135deg, #f7931a, #ffb347); border: none; padding: 8px 20px; border-radius: 6px; color: #000; font-weight: 600; cursor: pointer; margin-left: auto; transition: transform 0.2s; }
+    .refresh-btn:hover { transform: scale(1.02); }
+    .refresh-btn:disabled { opacity: 0.6; cursor: wait; }
+    
+    /* ===== 统计卡片 ===== */
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .stat-card { background: #141820; padding: 16px; border-radius: 10px; border: 1px solid #1f2937; }
+    .stat-label { font-size: 12px; color: #6b7280; }
+    .stat-value { font-size: 22px; font-weight: 700; margin-top: 4px; }
     .green { color: #00d284; }
+    .yellow { color: #ffc107; }
+    .orange { color: #f7931a; }
+    .blue { color: #4da6ff; }
+    .purple { color: #b388ff; }
     .red { color: #ff6b6b; }
-    table { width: 100%; border-collapse: collapse; background: #1a1d23; border-radius: 10px; overflow: hidden; }
-    th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #2a2d34; }
-    th { background: #22252b; color: #aaa; font-weight: 600; font-size: 13px; text-transform: uppercase; }
-    tr:hover { background: #21242b; }
-    .chain-tag { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 11px; background: #332266; color: #ccb3ff; }
+    
+    /* ===== 表格 ===== */
+    .table-container { background: #141820; border-radius: 10px; border: 1px solid #1f2937; overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 12px 10px; text-align: left; border-bottom: 1px solid #1f2937; font-size: 12.5px; vertical-align: middle; }
+    th { background: #1f293766; color: #6b7280; font-weight: 600; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.3px; position: sticky; top: 0; }
+    tr:hover { background: #1a1f2e; }
+    
+    /* ===== 单元格组件 ===== */
+    .chain-tag { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 10px; background: #2a2440; color: #ccb3ff; font-weight: 500; }
+    .theme-tag { display: inline-block; padding: 1px 5px; border-radius: 3px; font-size: 10px; margin-left: 3px; background: #1a365d; color: #73d2ff; }
+    .hot-tag { display: inline-block; padding: 1px 5px; border-radius: 3px; font-size: 10px; background: #ff444422; color: #ff8888; margin-left: 4px; }
+    .new-tag { display: inline-block; padding: 1px 4px; border-radius: 3px; font-size: 9px; background: #00d28422; color: #00d284; margin-left: 4px; }
+    
+    .score-wrap { display: flex; align-items: center; gap: 4px; }
+    .score-bar { width: 40px; height: 6px; background: #1f2937; border-radius: 3px; overflow: hidden; }
+    .score-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+    .score-text { font-size: 12px; font-weight: 700; min-width: 28px; text-align: right; }
+    
+    .risk-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+    .risk-safe { background: #00d28418; color: #00d284; border: 1px solid #00d28433; }
+    .risk-warn { background: #ffc10718; color: #ffc107; border: 1px solid #ffc10733; }
+    .risk-danger { background: #ff6b6b18; color: #ff6b6b; border: 1px solid #ff6b6b33; }
+    
     .price-up { color: #00d284; }
     .price-down { color: #ff6b6b; }
-    .refresh-btn { background: linear-gradient(135deg, #f7931a, #ffb347); border: none; padding: 10px 24px; border-radius: 8px; color: #000; font-weight: 600; cursor: pointer; margin-bottom: 20px; }
-    .refresh-btn:hover { opacity: 0.9; }
-    .warning { background: rgba(247, 147, 26, 0.1); border: 1px solid #f7931a44; padding: 12px; border-radius: 8px; margin-bottom: 20px; color: #ffc16f; font-size: 13px; }
+    
+    .loading { text-align: center; padding: 60px 40px; color: #6b7280; font-size: 14px; }
+    .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid #1f2937; border-top-color: #f7931a; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 10px; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    a { color: #4da6ff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    
+    .mobile-hide { display: table-cell; }
+    @media (max-width: 1000px) {
+      .mobile-hide { display: none; }
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1> 土狗监控中心</h1>
-      <p class="subtitle">Meme Coin Radar · 实时扫描新币种 · 数据仅供参考</p>
+      <h1> 猎人金狗监控 · 终极完整版</h1>
+      <p class="subtitle">10链全网覆盖 · 四维智能评分 · 风控防火墙 · 叙事热度 · 聪明钱共识 · 真假热度识别</p>
+      <p class="version" id="lastUpdateTime">系统就绪 · 点击刷新开始狩猎</p>
     </header>
-    <div class="warning">
-      ⚠️ 风险提示：加密货币投资风险极高！本页面仅作数据展示，不构成投资建议。DYOR！
+
+    <div class="warning-box">
+      ⚠️ <strong>极高风险声明：</strong>Meme币/新合约跑路风险极高！本工具仅作数据筛选参考，不构成任何投资建议！DYOR！只投入你能承受全部损失的资金！入场前先想清楚：亏20%你能接受吗？归零影响生活吗？<br>
+       <strong>核心理念：</strong>筛选提高概率 ≠ 保证盈利；错过不亏，做错才亏；先保本，再赚钱，永远不接最后一棒。
     </div>
-    <button class="refresh-btn" onclick="loadData()"> 刷新数据</button>
+
+    <!-- ===== 链选择器 ===== -->
+    <div class="chain-bar" id="chainBar">
+      <button class="chain-btn active" data-chain="all"> 全部链</button>
+      <button class="chain-btn priority" data-chain="solana">☀️ SOL</button>
+      <button class="chain-btn priority" data-chain="base"> BASE</button>
+      <button class="chain-btn priority" data-chain="ton"> TON</button>
+      <button class="chain-btn" data-chain="bsc">🟡 BSC</button>
+      <button class="chain-btn" data-chain="ethereum"> ETH</button>
+      <button class="chain-btn" data-chain="arbitrum">⚡ ARB</button>
+      <button class="chain-btn" data-chain="robinhood"> RBN</button>
+      <button class="chain-btn" data-chain="polygon"> POLY</button>
+      <button class="chain-btn" data-chain="avalanche">❄️ AVAX</button>
+      <button class="chain-btn" data-chain="sui"> SUI</button>
+    </div>
+
+    <!-- ===== 叙事筛选 ===== -->
+    <div class="narrative-tags" id="narrativeTags">
+      <span class="narrative-tag active" data-theme="all"> 全部叙事</span>
+      <span class="narrative-tag" data-theme="ai">🤖 AI</span>
+      <span class="narrative-tag" data-theme="gamefi"> GameFi</span>
+      <span class="narrative-tag" data-theme="depin"> DePIN</span>
+      <span class="narrative-tag" data-theme="rwa"> RWA</span>
+      <span class="narrative-tag" data-theme="social"> Social</span>
+      <span class="narrative-tag" data-theme="meme"> 纯Meme</span>
+      <span class="narrative-tag" data-theme="nft">️ NFT/IP</span>
+    </div>
+
+    <!-- ===== 风控筛选 ===== -->
+    <div class="filter-bar">
+      <div class="filter-group">
+        <div class="filter-item">
+          <input type="checkbox" id="filterLowLiq" checked>
+          <label for="filterLowLiq">流动性≥$15,000</label>
+        </div>
+        <div class="filter-item">
+          <input type="checkbox" id="filterNew" checked>
+          <label for="filterNew">上线≥10分钟</label>
+        </div>
+        <div class="filter-item">
+          <input type="checkbox" id="filterExtreme" checked>
+          <label for="filterExtreme">波动≤500%</label>
+        </div>
+        <div class="filter-item">
+          <input type="checkbox" id="filterScam" checked>
+          <label for="filterScam">自动屏蔽高风险</label>
+        </div>
+        <div class="filter-item">
+          <input type="checkbox" id="sortByScore" checked>
+          <label for="sortByScore">按综合分排序</label>
+        </div>
+      </div>
+      <button class="refresh-btn" id="refreshBtn" onclick="loadData()"> 刷新数据</button>
+    </div>
+
+    <!-- ===== 统计面板 ===== -->
     <div class="stats">
       <div class="stat-card">
-        <div class="stat-label">今日新币</div>
-        <div class="stat-value" id="totalNew">--</div>
+        <div class="stat-label">扫描总数</div>
+        <div class="stat-value blue" id="totalScan">--</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">涨幅前10</div>
-        <div class="stat-value green" id="topGainers">--</div>
+        <div class="stat-label">✅ 安全池</div>
+        <div class="stat-value green" id="totalSafe">--</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">监控中</div>
-        <div class="stat-value" id="watching">--</div>
+        <div class="stat-value purple" style="font-size:18px" id="highScore">--</div>
+        <div class="stat-label"> 高分(≥80)</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">最后更新</div>
-        <div class="stat-value" style="font-size:14px" id="lastUpdate">--</div>
+        <div class="stat-value orange" style="font-size:18px" id="showCount">--</div>
+        <div class="stat-label">显示币种</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value yellow" style="font-size:18px" id="filterCount">--</div>
+        <div class="stat-label">🛡️ 已过滤</div>
       </div>
     </div>
-    <table>
-      <thead>
-        <tr>
-          <th>币种</th>
-          <th>链</th>
-          <th>价格</th>
-          <th>24h涨跌</th>
-          <th>市值</th>
-          <th>流动性</th>
-        </tr>
-      </thead>
-      <tbody id="coinTable">
-        <tr><td colspan="6" style="text-align:center;padding:40px;color:#888;">点击"刷新数据"加载示例数据</td></tr>
-      </tbody>
-    </table>
+
+    <!-- ===== 主表格 ===== -->
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>币种</th>
+            <th>链/叙事</th>
+            <th>价格</th>
+            <th>5分钟</th>
+            <th>1小时</th>
+            <th>流动性</th>
+            <th class="mobile-hide">市值估算</th>
+            <th>综合分</th>
+            <th>上线时间</th>
+            <th>风险</th>
+            <th>链接</th>
+          </tr>
+        </thead>
+        <tbody id="coinTable">
+          <tr><td colspan="11" class="loading"><span class="loading-spinner"></span>点击「刷新数据」开始全网扫描 · 10链同步分析中...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
   </div>
+
   <script>
-    const sampleData = [
-      { name: 'DOGE', symbol: 'DOGE', chain: 'ETH', price: '0.1234', change: '+5.2%', cap: '$17.2B', liq: '$245M', up: true },
-      { name: 'SHIB', symbol: 'SHIB', chain: 'ETH', price: '0.0000234', change: '-1.8%', cap: '$13.8B', liq: '$189M', up: false },
-      { name: 'PEPE', symbol: 'PEPE', chain: 'ETH', price: '0.0000145', change: '+12.7%', cap: '$6.2B', liq: '$342M', up: true },
-      { name: 'WIF', symbol: 'WIF', chain: 'SOL', price: '1.45', change: '+8.3%', cap: '$1.8B', liq: '$98M', up: true },
-      { name: 'BONK', symbol: 'BONK', chain: 'SOL', price: '0.0000189', change: '-3.5%', cap: '$1.1B', liq: '$76M', up: false },
-      { name: 'FLOKI', symbol: 'FLOKI', chain: 'ETH', price: '0.000287', change: '+4.1%', cap: '$685M', liq: '$45M', up: true },
-      { name: 'MEME', symbol: 'MEME', chain: 'ETH', price: '0.0245', change: '-0.7%', cap: '$42M', liq: '$3.2M', up: false },
-      { name: 'POPCAT', symbol: 'POPCAT', chain: 'SOL', price: '0.456', change: '+15.2%', cap: '$456M', liq: '$89M', up: true },
-    ];
-    function loadData() {
-      const tbody = document.getElementById('coinTable');
-      tbody.innerHTML = sampleData.map(c => `
-        <tr>
-          <td><strong>${c.symbol}</strong><br><small style="color:#888">${c.name}</small></td>
-          <td><span class="chain-tag">${c.chain}</span></td>
-          <td>${c.price}</td>
-          <td class="${c.up ? 'price-up' : 'price-down'}">${c.change}</td>
-          <td>${c.cap}</td>
-          <td>${c.liq}</td>
-        </tr>
-      `).join('');
-      document.getElementById('totalNew').textContent = '1,247';
-      document.getElementById('topGainers').textContent = '186';
-      document.getElementById('watching').textContent = sampleData.length;
-      document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+    // =====================================================
+    // ⚙️ 系统配置中心 —— 可根据你的策略灵活调整
+    // =====================================================
+    const CONFIG = {
+      chains: {
+        all: '全部链',
+        solana: 'SOL', base: 'BASE', ton: 'TON', bsc: 'BSC',
+        ethereum: 'ETH', arbitrum: 'ARB', robinhood: 'RBN',
+        polygon: 'POLY', avalanche: 'AVAX', sui: 'SUI'
+      },
+      
+      // 风控参数
+      minLiquidityUSD: 15000,
+      minAgeMinutes: 10,
+      maxChange5m: 500,
+      maxChange1h: 1000,
+      
+      // 叙事关键词库
+      narratives: {
+        ai: ['ai', 'gpt', 'agent', 'intelligence', 'neural', 'brain', 'smart', 'bot', 'compute', 'infer', 'model', 'vision', 'deep'],
+        gamefi: ['game', 'play', 'metaverse', 'rpg', 'pvp', 'p2e', 'guild', 'quest', 'nft', 'item', 'card', 'arena', 'warrior'],
+        depin: ['depin', 'wifi', 'router', 'node', 'mining', 'gpu', 'bandwidth', 'solar', 'energy', 'sensor', 'wireless', 'helium'],
+        rwa: ['rwa', 'real', 'estate', 'bond', 'gold', 'silver', 'commodity', 'asset', 'treasury', 'credit', 'finance'],
+        social: ['social', 'friend', 'community', 'chat', 'share', 'creator', 'content', 'fan', 'pass', 'profile', 'post'],
+        meme: ['meme', 'dog', 'cat', 'frog', 'pepe', 'wojak', 'chad', 'ape', 'king', 'coin', 'wif', 'bonk'],
+        nft: ['nft', 'art', 'collection', 'avatar', 'pass', 'ticket', 'genesis', 'rare', 'legendary']
+      },
+      
+      // 仿盘/碰瓷关键词 —— 直接屏蔽
+      scamPatterns: ['pepe2', 'pepe3', 'doge2', 'doge3', 'wif2', 'floki2', 'bonk2', 'shib2', 'eth2', 'btc2', 
+                     'official', 'token', 'coin', 'vip', 'private', 'whitelist', 'presale', '1000x', '100x', 'moon', 
+                     'join', 't.me/', 'telegram', 'announce', 'reward', 'airdrop', 'claim', 'free', 'bonus'],
+      
+      // 热门知名币符号 —— 出现相似直接判定仿盘
+      famousSymbols: ['PEPE', 'WIF', 'BONK', 'DOGE', 'SHIB', 'FLOKI', 'ETH', 'BTC', 'SOL', 'UNI', 'ARB']
+    };
+
+    // =====================================================
+    // 🧠 核心状态
+    // =====================================================
+    let allData = [];
+    let activeChain = 'all';
+    let activeTheme = 'all';
+
+    // =====================================================
+    //  工具函数库
+    // =====================================================
+    
+    // 识别叙事板块
+    function detectThemes(name, symbol) {
+      const text = `${name} ${symbol}`.toLowerCase();
+      const matches = [];
+      for (const [theme, keywords] of Object.entries(CONFIG.narratives)) {
+        if (keywords.some(k => text.includes(k))) matches.push(theme);
+      }
+      return matches;
     }
+
+    // 检测是否仿盘/碰瓷
+    function checkScamPatterns(p) {
+      const text = `${p.baseToken?.name || ''} ${p.baseToken?.symbol || ''}`.toLowerCase();
+      
+      // 1. 仿知名币
+      for (const fs of CONFIG.famousSymbols) {
+        const target = fs.toLowerCase();
+        const symbol = (p.baseToken?.symbol || '').toLowerCase();
+        const name = (p.baseToken?.name || '').toLowerCase();
+        if ((symbol.includes(target) && symbol !== target) || 
+            (name.includes(target) && symbol !== target)) {
+          return '疑似仿盘:' + fs;
+        }
+      }
+      
+      // 2. 垃圾关键词
+      for (const pat of CONFIG.scamPatterns) {
+        if (text.includes(pat)) return '风险关键词:' + pat;
+      }
+      
+      return null;
+    }
+
+    // 计算上线时长（分钟）
+    function getAgeMinutes(timestamp) {
+      if (!timestamp) return 99999;
+      return (Date.now() - new Date(timestamp).getTime()) / 60000;
+    }
+
+    // 估算市值（不完全准确，仅作参考）
+    function estimateMarketCap(p) {
+      if (!p.priceUsd || !p.baseToken?.totalSupply) return null;
+      return parseFloat(p.priceUsd) * parseFloat(p.baseToken.totalSupply);
+    }
+
+    // =====================================================
+    // 🛡️ 风控筛查 —— 一票否决区
+    // =====================================================
+    function runFilter(p) {
+      const liq = p.liquidity?.usd || 0;
+      const change5m = Math.abs(p.priceChange?.m5 || 0);
+      const change1h = Math.abs(p.priceChange?.h1 || 0);
+      const age = getAgeMinutes(p.pairCreatedAt);
+      const symbol = p.baseToken?.symbol || '';
+      const name = p.baseToken?.name || '';
+      
+      if (document.getElementById('filterLowLiq')?.checked && liq < CONFIG.minLiquidityUSD) return '流动性不足';
+      if (document.getElementById('filterNew')?.checked && age < CONFIG.minAgeMinutes) return '上线太短';
+      if (document.getElementById('filterExtreme')?.checked && (change5m > CONFIG.maxChange5m || change1h > CONFIG.maxChange1h)) return '波动异常';
+      if (symbol.length === 0 || symbol.length > 15) return '符号异常';
+      if (!name || name.length < 1) return '名称异常';
+      
+      const scamReason = checkScamPatterns(p);
+      if (document.getElementById('filterScam')?.checked && scamReason) return scamReason;
+      
+      // 链筛选
+      if (activeChain !== 'all' && p.chainId?.toLowerCase() !== activeChain) return '非目标链';
+      
+      return null; // 通过
+    }
+
+    // =====================================================
+    //  四维评分引擎（0-100分）
+    // =====================================================
+    function calculateScore(p) {
+      let total = 0;
+      const detail = {};
+      
+      // ---------- 维度1: 安全风控 (30分) ----------
+      let safety = 30;
+      const liq = p.liquidity?.usd || 0;
+      const age = getAgeMinutes(p.pairCreatedAt);
+      
+      if (liq < 30000) safety -= 8;
+      else if (liq < 50000) safety -= 4;
+      
+      if (age < 30) safety -= 6;
+      else if (age < 60) safety -= 3;
+      
+      if (p.priceChange?.m5 && Math.abs(p.priceChange.m5) > 100) safety -= 8;
+      if (p.priceChange?.h1 && Math.abs(p.priceChange.h1) > 300) safety -= 5;
+      
+      detail.safety = Math.max(0, safety);
+      total += detail.safety;
+      
+      // ---------- 维度2: 筹码健康 (25分) ----------
+      let chip = 15; // 基础分，数据有限情况下保守评估
+      if (liq > 100000) chip += 5;
+      else if (liq > 50000) chip += 2;
+      
+      const volume24h = p.volume?.h24 || 0;
+      const turnover = liq > 0 ? volume24h / liq : 0;
+      if (turnover > 0.3 && turnover < 2) chip += 5; // 换手活跃且不过度
+      else if (turnover > 0.1) chip += 3;
+      
+      detail.chip = Math.min(25, Math.max(0, chip));
+      total += detail.chip;
+      
+      // ---------- 维度3: 叙事热度 (20分) ----------
+      let narrative = 0;
+      const themes = detectThemes(p.baseToken?.name || '', p.baseToken?.symbol || '');
+      narrative += Math.min(themes.length * 6, 18); // 多叙事叠加但不封顶
+      
+      const change1h = p.priceChange?.h1 || 0;
+      if (change1h > 10 && change1h < 100) narrative += 4; // 温和上涨，不是暴涨
+      
+      detail.narrative = narrative;
+      total += detail.narrative;
+      
+      // ---------- 维度4: 量价与共识 (25分) ----------
+      let momentum = 0;
+      
+      if (change1h > 5) momentum += 8;
+      else if (change1h > 0) momentum += 4;
+      
+      if (p.priceChange?.m5 && p.priceChange.m5 > 0) momentum += 5;
+      
+      if (turnover > 0.2) momentum += 6;
+      else if (turnover > 0.1) momentum += 3;
+      
+      // 新币加分但不激进
+      if (age > 15 && age < 120) momentum += 6;
+      
+      detail.momentum = Math.min(25, Math.max(0, momentum));
+      total += detail.momentum;
+      
+      return {
+        score: Math.round(Math.max(0, Math.min(100, total))),
+        detail,
+        themes,
+        turnover
+      };
+    }
+
+    // 风险等级评估
+    function assessRisk(p, score) {
+      const liq = p.liquidity?.usd || 0;
+      const age = getAgeMinutes(p.pairCreatedAt);
+      const risks = [];
+      let level = 'safe';
+      
+      if (liq < 30000) { risks.push('流动性偏低'); level = 'warn'; }
+      if (age < 30) { risks.push('新上线'); level = 'warn'; }
+      if (score >= 80 && risks.length === 0) level = 'safe';
+      if (score < 60) level = 'danger';
+      
+      return {
+        level,
+        text: risks.join(' · ') || '数据正常'
+      };
+    }
+
+    // 格式化金额
+    function formatMoney(val) {
+      if (!val && val !== 0) return '--';
+      if (val >= 1e6) return '$' + (val / 1e6).toFixed(2) + 'M';
+      if (val >= 1e3) return '$' + Math.round(val).toLocaleString();
+      return '$' + val.toFixed(0);
+    }
+
+    // 格式化时间
+    function formatAge(timestamp) {
+      if (!timestamp) return '--';
+      const mins = Math.floor((Date.now() - new Date(timestamp).getTime()) / 60000);
+      if (mins < 60) return `${mins}分钟`;
+      if (mins < 1440) return `${Math.floor(mins/60)}小时`;
+      return `${Math.floor(mins/1440)}天`;
+    }
+
+    // =====================================================
+    //  渲染与数据更新
+    // =====================================================
+    function renderTable() {
+      let processed = allData.map(pair => {
+        const filterReason = runFilter(pair);
+        const analysis = !filterReason ? calculateScore(pair) : null;
+        const risk = analysis ? assessRisk(pair, analysis.score) : { level: 'danger', text: '已过滤' };
+        const mcap = estimateMarketCap(pair);
+        return { pair, filterReason, analysis, risk, mcap };
+      });
+
+      // 叙事二次筛选
+      if (activeTheme !== 'all') {
+        processed = processed.filter(item => {
+          if (item.filterReason) return false;
+          return item.analysis.themes.includes(activeTheme);
+        });
+      }
+
+      const totalScan = allData.length;
+      const hidden = processed.filter(i => i.filterReason).length;
+      let showList = processed.filter(i => !i.filterReason);
+
+      // 排序
+      if (document.getElementById('sortByScore')?.checked) {
+        showList.sort((a, b) => b.analysis.score - a.analysis.score);
+      } else {
+        showList.sort((a, b) => (b.pair.priceChange?.h1 || 0) - (a.pair.priceChange?.h1 || 0));
+      }
+
+      // 统计更新
+      document.getElementById('totalScan').textContent = totalScan;
+      document.getElementById('totalSafe').textContent = totalScan - hidden;
+      document.getElementById('filterCount').textContent = hidden;
+      document.getElementById('showCount').textContent = showList.length;
+      document.getElementById('highScore').textContent = showList.filter(i => i.analysis.score >= 80).length;
+      document.getElementById('lastUpdateTime').textContent = '最后更新：' + new Date().toLocaleString('zh-CN');
+
+      // 渲染表格
+      const tbody = document.getElementById('coinTable');
+      if (showList.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="11" class="loading">暂无符合条件的币种<br> 尝试放宽筛选条件或换条链看看</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = showList.slice(0, 50).map(item => {
+        const p = item.pair;
+        const a = item.analysis;
+        const change5m = p.priceChange?.m5 ?? 0;
+        const change1h = p.priceChange?.h1 ?? 0;
+        const isUp5m = change5m >= 0;
+        const isUp1h = change1h >= 0;
+        const liq = formatMoney(p.liquidity?.usd);
+        const price = p.priceUsd 
+          ? (parseFloat(p.priceUsd) < 0.0001 
+              ? parseFloat(p.priceUsd).toExponential(4) 
+              : parseFloat(p.priceUsd).toFixed(8))
+          : '--';
+        const age = formatAge(p.pairCreatedAt);
+        const themes = a.themes.slice(0, 2).map(t => `<span class="theme-tag">${t}</span>`).join('');
+        const hotTag = a.score >= 80 ? '<span class="hot-tag">金狗候选</span>' : 
+                      a.score >= 70 ? '<span class="new-tag">⭐潜力</span>' : '';
+        const scoreColor = a.score >= 80 ? '#00d284' : a.score >= 70 ? '#ffc107' : '#6b7280';
+        const riskClass = item.risk.level === 'safe' ? 'risk-safe' : 
+                          item.risk.level === 'warn' ? 'risk-warn' : 'risk-danger';
+        const riskText = item.risk.level === 'safe' ? '安全' : 
+                         item.risk.level === 'warn' ? '注意' : '谨慎';
+        const mcapText = item.mcap ? formatMoney(item.mcap) : '--';
+        const chainLabel = CONFIG.chains[p.chainId] || p.chainId?.substring(0,6) || '?';
+
+        return `
+          <tr>
+            <td>
+              <strong>${p.baseToken.symbol}</strong> ${hotTag}<br>
+              <small style="color:#6b7280;font-size:11px">${(p.baseToken.name || 'Unknown').substring(0,16)}</small>
+            </td>
+            <td>
+              <span class="chain-tag">${chainLabel}</span>
+              ${themes}
+            </td>
+            <td>${price}</td>
+            <td class="${isUp5m ? 'price-up' : 'price-down'}">${isUp5m ? '+' : ''}${change5m.toFixed(2)}%</td>
+            <td class="${isUp1h ? 'price-up' : 'price-down'}">${isUp1h ? '+' : ''}${change1h.toFixed(2)}%</td>
+            <td>${liq}</td>
+            <td class="mobile-hide">${mcapText}</td>
+            <td>
+              <div class="score-wrap">
+                <span class="score-text" style="color:${scoreColor}">${a.score}</span>
+                <div class="score-bar">
+                  <div class="score-fill" style="width:${a.score}%;background:${scoreColor}"></div>
+                </div>
+              </div>
+            </td>
+            <td>${age}</td>
+            <td><span class="risk-badge ${riskClass}">${riskText}</span></td>
+            <td><a href="${p.url}" target="_blank" rel="noopener">查看 ↗</a></td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // =====================================================
+    //  数据加载
+    // =====================================================
+    async function loadData() {
+      const btn = document.getElementById('refreshBtn');
+      btn.disabled = true;
+      btn.textContent = '⏳ 扫描中...';
+      
+      document.getElementById('coinTable').innerHTML = '<tr><td colspan="11" class="loading"><span class="loading-spinner"></span>正在从DexScreener拉取数据 · 四维评分引擎分析中 · 风控筛查启动...</td></tr>';
+      
+      try {
+        // 多关键词搜索，扩大覆盖范围
+        const endpoints = [
+          'https://api.dexscreener.com/latest/dex/search?q=meme&limit=40',
+          'https://api.dexscreener.com/latest/dex/search?q=ai&limit=30',
+          'https://api.dexscreener.com/latest/dex/search?q=coin&limit=30',
+          'https://api.dexscreener.com/latest/dex/pairs/solana?limit=30',
+          'https://api.dexscreener.com/latest/dex/pairs/base?limit=25',
+          'https://api.dexscreener.com/latest/dex/pairs/ton&limit=25'
+        ];
+
+        const results = await Promise.allSettled(
+          endpoints.map(url => fetch(url).then(r => r.json()))
+        );
+
+        const seen = new Set();
+        allData = [];
+        
+        for (const res of results) {
+          if (res.status !== 'fulfilled') continue;
+          const data = res.value;
+          if (!data.pairs) continue;
+          
+          for (const p of data.pairs) {
+            if (!p.baseToken?.address) continue;
+            if (seen.has(p.baseToken.address + '|' + p.chainId)) continue;
+            seen.add(p.baseToken.address + '|' + p.chainId);
+            allData.push(p);
+          }
+        }
+
+        if (allData.length === 0) {
+          document.getElementById('coinTable').innerHTML = '<tr><td colspan="11" class="loading">暂无数据，请稍后再试<br>或直接访问 <a href="https://dexscreener.com" target="_blank" rel="noopener">DexScreener.com</a> 查看</td></tr>';
+          btn.disabled = false;
+          btn.textContent = ' 刷新数据';
+          return;
+        }
+
+        renderTable();
+        
+      } catch (err) {
+        console.error('加载失败:', err);
+        document.getElementById('coinTable').innerHTML = `<tr><td colspan="11" class="loading">请求失败：${err.message}<br>网络受限或API限流，请稍后重试</td></tr>`;
+      }
+      
+      btn.disabled = false;
+      btn.textContent = ' 刷新数据';
+    }
+
+    // =====================================================
+    //  事件绑定 —— 已修复！
+    // =====================================================
+    
+    // 链选择
+    document.getElementById('chainBar').addEventListener('click', e => {
+      if (e.target.classList.contains('chain-btn')) {
+        document.querySelectorAll('.chain-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        activeChain = e.target.dataset.chain;
+        if (allData.length > 0) renderTable();
+      }
+    });
+
+    // 叙事选择
+    document.getElementById('narrativeTags').addEventListener('click', e => {
+      if (e.target.classList.contains('narrative-tag')) {
+        document.querySelectorAll('.narrative-tag').forEach(t => t.classList.remove('active'));
+        e.target.classList.add('active');
+        activeTheme = e.target.dataset.theme;
+        if (allData.length > 0) renderTable();
+      }
+    });
+
+  // 筛选开关变化时重新渲染 —— 修复版
+['filterLowLiq', 'filterNew', 'filterExtreme', 'filterScam', 'sortByScore'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) {
+    el.addEventListener('change', () => {
+      if (allData.length > 0) renderTable();
+    });
+  }
+});  
   </script>
 </body>
 </html>
+
+
