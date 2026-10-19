@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DOG HUNTER — 全配置增强版 · 实链监控</title>
+  <title>DOG HUNTER — 修复版 · 实链监控</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Microsoft YaHei", sans-serif; }
     :root {
@@ -121,6 +121,8 @@
     .update-time { font-size:11px; color:var(--text-weak); }
     .status-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:4px; }
     .status-dot.ok { background:var(--green); box-shadow:0 0 4px var(--green); }
+    .status-dot.warn { background:var(--warn); }
+    .status-dot.err { background:var(--red); box-shadow:0 0 4px var(--red); }
     .hidden { display:none !important; }
     .input-sm { max-width:100px; }
   </style>
@@ -134,7 +136,7 @@
         <div class="brand-icon">🐶</div>
         <div>
           <div style="font-size:18px; font-weight:700;">DOG HUNTER</div>
-          <div style="font-size:11px; color:var(--text-sub);">增强配置版 · 实链直连 · DexScreener</div>
+          <div style="font-size:11px; color:var(--text-sub);">API修复版 · DexScreener官方接口</div>
         </div>
         <div class="chain-filters">
           <div class="chain-tab active" data-chain="all">全部链</div>
@@ -144,7 +146,7 @@
         </div>
       </div>
       <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-        <span id="connStatus" style="font-size:11px; color:var(--green);"><span class="status-dot ok"></span>API已连接</span>
+        <span id="connStatus" style="font-size:11px; color:var(--warn);"><span class="status-dot warn"></span>等待刷新</span>
         <span class="update-time" id="lastUpdate">--:--:--</span>
         <button id="refreshBtn" class="btn btn-primary">🔄 刷新数据</button>
         <label style="font-size:11px; color:var(--text-sub); display:flex; align-items:center; gap:4px; margin:0;">
@@ -299,9 +301,9 @@
       <div class="card" style="flex:1; overflow:hidden;">
         <div class="card-hd"><span class="card-tt">⚡ 实时日志</span></div>
         <div id="eventLog" style="font-size:11px; line-height:2; max-height:200px; overflow-y:auto;">
-          <p style="color:var(--cyan);">✅ 增强配置版初始化完成</p>
-          <p style="color:var(--green);">📡 数据源：DexScreener API（真实链上数据）</p>
-          <p style="color:var(--warn);">💡 改筛选→点「应用设置」立即生效</p>
+          <p style="color:var(--cyan);">✅ API修复版初始化完成</p>
+          <p style="color:var(--green);">📡 数据源：DexScreener 官方API（已修正接口地址）</p>
+          <p style="color:var(--warn);">💡 如仍有404 → 网络/地区限制，换手机热点试试</p>
         </div>
       </div>
     </aside>
@@ -323,15 +325,14 @@
       chains: {
         bsc: { id: 'bsc', name: 'BSC', gmgn: 'bsc', debot: 'bsc' },
         sol: { id: 'solana', name: 'SOL', gmgn: 'sol', debot: 'sol' },
-        base: { id: 'base', name: 'BASE', gmgn: 'base', debot: 'base' },
-        rhc: { id: 'robinhood', name: 'RHC', gmgn: '', debot: '' }
+        base: { id: 'base', name: 'BASE', gmgn: 'base', debot: 'base' }
       },
       platforms: {
         four: { keywords: ['four.meme','fourmeme'], chain: 'bsc' },
         pump: { keywords: ['pump.fun','pumpfun'], chain: 'sol' },
         bonk: { keywords: ['letsbonk','bonk.fun'], chain: 'sol' },
         flash: { keywords: ['flashpump'], chain: 'base' },
-        pons: { keywords: ['pons.ai','pons'], chain: 'rhc' },
+        pons: { keywords: ['pons.ai','pons'], chain: 'bsc' },
         ray: { keywords: ['raydium','launchlab'], chain: 'sol' }
       },
       blackList: [], whiteList: [], blockAddrs: new Set()
@@ -358,10 +359,19 @@
     }
     function detectPlat(p){const t=((p.url||'')+' '+(p.baseToken?.name||'')+' '+(p.baseToken?.symbol||'')).toLowerCase();for(const[k,v]of Object.entries(CONFIG.platforms))if(v.keywords.some(x=>t.includes(x)))return k;return'other';}
     function getStatus(p,plat){const l=p.liquidity?.usd||0;if(plat==='four'){if(l>6300)return{text:'✅毕业',cls:'ok'};if(l>5000)return{text:'推进中',cls:'warn'};return{text:'发射中',cls:'cyan'}}if(plat==='pump'){if(l>69000)return{text:'✅毕业',cls:'ok'};if(l>10000)return{text:'曲线中',cls:'purple'};return{text:'新发射',cls:'cyan'}}if(l>50000)return{text:'活跃',cls:'ok'};if(l>5000)return{text:'观察',cls:'warn'};return{text:'新币',cls:'cyan'}}
-    function mkUrl(typ,ck,addr){const m={gmgn:{bsc:'https://gmgn.ai/bsc/token/',sol:'https://gmgn.ai/sol/token/',base:'https://gmgn.ai/base/token/'},debot:{bsc:'https://debot.ai/?chain=bsc&ca=',sol:'https://debot.ai/?chain=sol&ca=',base:'https://debot.ai/?chain=base&ca='},plat:{four:'https://four.meme/token/',pump:'https://pump.fun/',bonk:'https://letsbonk.fun/',flash:'https://flashpump.fun/',pons:'https://pons.ai/',ray:'https://raydium.io/launchlab/'}};return m[typ]?.[ck]?m[typ][ck]+addr:null;}
+    function mkUrl(typ,ck,addr){const m={gmgn:{bsc:'https://gmgn.ai/bsc/token/',sol:'https://gmgn.ai/sol/token/',base:'https://gmgn.ai/base/token/'},debot:{bsc:'https://debot.ai/?chain=bsc&ca=',sol:'https://debot.ai/?chain=sol&ca=',base:'https://debot.ai/?chain=base&ca='},plat:{four:'https://four.meme/token/',pump:'https://pump.fun/',bonk:'https://letsbonk.fun/',flash:'https://flashpump.fun/',pons:'https://pons.ai/?token=',ray:'https://raydium.io/launchlab/'}};return m[typ]?.[ck]?m[typ][ck]+encodeURIComponent(addr):null;}
 
-    async function fetchChain(ck){const cid=CONFIG.chains[ck].id;const res=await fetch(`https://api.dexscreener.com/latest/dex/pairs/${cid}?limit=${CONFIG.limitPerChain}`);if(!res.ok)throw new Error(res.status);const d=await res.json();return(d.pairs||[]).map(p=>{p._ck=ck;return p;});}
-    async function fetchAll(){let r=[];for(const k of Object.keys(CONFIG.chains))try{const a=await fetchChain(k);r=r.concat(a);}catch(e){log(CONFIG.chains[k].name+'链失败:'+e.message,'red');}return r;}
+    // ✅ 修复后的API地址 — 用官方正确格式
+    async function fetchChain(ck){
+      const cid = CONFIG.chains[ck].id;
+      // 优先用搜索接口，更稳定
+      const res = await fetch(`https://api.dexscreener.com/latest/dex/search?q=${cid}&limit=${CONFIG.limitPerChain}`);
+      if(!res.ok) throw new Error(`HTTP ${res.status}`);
+      const d = await res.json();
+      return (d.pairs||[]).filter(p=>p.chainId===cid).map(p=>{p._ck=ck;return p;});
+    }
+
+    async function fetchAll(){let r=[];for(const k of Object.keys(CONFIG.chains))try{const a=await fetchChain(k);r=r.concat(a);log(`${CONFIG.chains[k].name}链: 获取${a.length}个币种`,'green');}catch(e){log(`${CONFIG.chains[k].name}链失败:${e.message}`,'red');}return r;}
 
     function processPairs(pairs){let nn=0,filtered=0;for(const p of pairs){const a=p.baseToken?.address;if(!a){filtered++;continue;}const al=a.toLowerCase(),tx=((p.baseToken?.name||'')+' '+(p.baseToken?.symbol||'')).toLowerCase();const chk=shouldFilter(p,tx,al);if(!chk.pass){filtered++;continue;}if(seenAddresses.has(al))continue;seenAddresses.add(al);const plat=detectPlat(p),st=getStatus(p,plat);allCoins.unshift({address:a,symbol:p.baseToken?.symbol||'?',name:p.baseToken?.name||'?',chainKey:p._ck,platform:plat,liquidity:p.liquidity?.usd||0,mcap:p.fdv?.usd,createdAt:p.createdAt,status:st,gmgnUrl:mkUrl('gmgn',p._ck,a),debotUrl:mkUrl('debot',p._ck,a),platUrl:mkUrl('plat',plat,a),isNew:true});nn++;totalNew++;if(st.text.includes('✅'))totalGrad++;}totalRisk+=filtered;return{newCount:nn,filtered};}
 
@@ -370,7 +380,7 @@
     function selectCoin(c){selectedCoin=c;document.getElementById('selTitle').textContent=`${c.symbol} · ${c.chainKey.toUpperCase()}`;document.getElementById('selDetail').innerHTML=`<p><b>全称：</b>${c.name}</p><p><b>合约：</b><span style="font-family:monospace;color:var(--cyan);font-size:10px;word-break:break-all;">${c.address}</span></p><p><b>链/来源：</b>${c.chainKey.toUpperCase()} / ${c.platform}</p><p><b>流动性：</b>$${fmtNum(c.liquidity)}</p><p><b>市值：</b>$${fmtNum(c.mcap)}</p><p><b>首次发现：</b>${c.createdAt?new Date(c.createdAt).toLocaleString('zh-CN'):'--'}</p><p><b>状态：</b><span class="tag ${c.status.cls}">${c.status.text}</span></p><div style="margin-top:10px;">${c.platUrl?`<a href="${c.platUrl}" target="_blank" class="btn-link btn-plat" style="padding:5px 10px;font-size:12px;">🚀 打开平台</a>`:''}${c.gmgnUrl?`<a href="${c.gmgnUrl}" target="_blank" class="btn-link btn-gmgn" style="padding:5px 10px;font-size:12px;">📈 GMGN</a>`:''}${c.debotUrl?`<a href="${c.debotUrl}" target="_blank" class="btn-link btn-debot" style="padding:5px 10px;font-size:12px;">🔬 Debot</a>`:''}</div>`;renderList();}
     function updStats(nf){document.getElementById('totalCount').textContent=allCoins.length;document.getElementById('riskCount').textContent=totalRisk;document.getElementById('bscCount').textContent=allCoins.filter(c=>c.chainKey==='bsc').length;document.getElementById('solCount').textContent=allCoins.filter(c=>c.chainKey==='sol').length;document.getElementById('ftNew').textContent=nf;document.getElementById('ftGrad').textContent=totalGrad;document.getElementById('ftFilter').textContent=totalRisk;document.getElementById('ftLast').textContent=new Date().toLocaleTimeString('zh-CN');document.getElementById('lastUpdate').textContent='更新：'+new Date().toLocaleTimeString('zh-CN');}
 
-    async function doRefresh(){const btn=document.getElementById('refreshBtn');btn.disabled=true;btn.textContent='拉取中...';try{const pairs=await fetchAll();const{newCount,filtered}=processPairs(pairs);newCount?log(`✅ 新币${newCount}个 · 过滤${filtered}条`,'green'):log(`本轮无新币 · 过滤${filtered}条`,'warn');Object.keys(CONFIG.platforms).forEach(p=>renderPlat(p,p+'Count',p+'List'));renderList();updStats(newCount);document.getElementById('connStatus').innerHTML=`<span class="status-dot ok"></span>API已连接`;}catch(e){log('❌ 失败：'+e.message,'red');document.getElementById('connStatus').innerHTML=`<span class="status-dot" style="background:var(--red);"></span>连接异常`;}btn.disabled=false;btn.textContent='🔄 刷新数据';}
+    async function doRefresh(){const btn=document.getElementById('refreshBtn');btn.disabled=true;btn.textContent='拉取中...';try{const pairs=await fetchAll();const{newCount,filtered}=processPairs(pairs);newCount?log(`✅ 本轮新币${newCount}个 · 过滤${filtered}条`,'green'):log(`本轮无新币 · 过滤${filtered}条`,'warn');Object.keys(CONFIG.platforms).forEach(p=>renderPlat(p,p+'Count',p+'List'));renderList();updStats(newCount);document.getElementById('connStatus').innerHTML=`<span class="status-dot ok"></span>API连接正常`;}catch(e){log('❌ 失败：'+e.message,'red');document.getElementById('connStatus').innerHTML=`<span class="status-dot err"></span>连接异常`;}btn.disabled=false;btn.textContent='🔄 刷新数据';}
     function setAuto(on){if(refreshTimer){clearInterval(refreshTimer);refreshTimer=null;}document.getElementById('ftAuto').style.color=on?'var(--green)':'var(--text-weak)';if(on){doRefresh();refreshTimer=setInterval(doRefresh,CONFIG.refreshInterval);log(`自动刷新开启 (${CONFIG.refreshInterval/1000}秒)`,'green');}else log('自动刷新已关闭','warn');}
     function applyCfg(){const ml=parseInt(document.getElementById('cfg_minLiq').value)||500;const iv=(parseInt(document.getElementById('cfg_interval').value)||8)*1000;const bl=parseListText(document.getElementById('cfg_black').value);const wl=parseListText(document.getElementById('cfg_white').value);const ba=parseAddrSet(document.getElementById('cfg_blockAddr').value);CONFIG.minLiquidityUSD=ml;CONFIG.refreshInterval=iv;CONFIG.blackList=bl;CONFIG.whiteList=wl;CONFIG.blockAddrs=ba;if(refreshTimer&&document.getElementById('autoRefresh').checked){setAuto(false);setAuto(true);}updateStatBar();log('✅ 设置已应用','green');}
     function resetCfg(){document.getElementById('cfg_minLiq').value=DEFAULT_CFG.minLiq;document.getElementById('cfg_interval').value=DEFAULT_CFG.interval;document.getElementById('cfg_black').value=DEFAULT_CFG.black;document.getElementById('cfg_white').value=DEFAULT_CFG.white;document.getElementById('cfg_blockAddr').value=DEFAULT_CFG.blockAddr;applyCfg();log('已恢复默认设置','warn');}
