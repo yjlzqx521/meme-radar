@@ -3,404 +3,386 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SPACE HUNTER — 资产监控系统</title>
+  <title>DOG HUNTER — 大金狗全链路监控系统</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Microsoft YaHei", sans-serif; }
     :root {
-      --cyan: #00e5ff;
-      --gold: #ffb800;
-      --green: #00d084;
-      --red: #ff4d4f;
-      --bg-dark: #02071a;
-      --bg-panel: rgba(8, 22, 48, 0.65);
-      --border-cyan: rgba(0, 229, 255, 0.25);
-      --text-main: #e6f7ff;
-      --text-sub: #7ab8d6;
-      --blur: 10px;
+      --cyan: #00e5ff; --cyan-deep: #0099aa;
+      --gold: #ffb800; --gold-deep: #cc9200;
+      --green: #00d084; --red: #ff4d4f; --warn: #ff9500;
+      --bg-dark: #01030a; --bg-card: rgba(10, 22, 50, 0.7);
+      --border-cyan: rgba(0, 229, 255, 0.25); --border-gold: rgba(255, 184, 0, 0.25);
+      --text-main: #e6f7ff; --text-sub: #7ab8d6; --text-weak: #4a7090;
+      --blur: 12px;
+      --ok: linear-gradient(90deg, #00a86b, #00d084);
+      --danger: linear-gradient(90deg, #d63031, #ff4d4f);
+      --warngrad: linear-gradient(90deg, #cc8800, #ffb800);
     }
-    html, body { width: 100%; height: 100%; overflow: hidden; }
-    body { background: var(--bg-dark); color: var(--text-main); }
+    html,body { width:100%; height:100%; overflow:hidden; background:var(--bg-dark); color:var(--text-main); }
+    .bg-layer { position:fixed; inset:0; z-index:0; background:radial-gradient(circle at 20% 20%, rgba(0,229,255,0.08), transparent 45%), radial-gradient(circle at 80% 70%, rgba(255,184,0,0.06), transparent 45%), linear-gradient(135deg, #01030a, #050c20, #01030a); }
 
-    .bg-layer {
-      position: fixed; inset: 0; z-index: 0;
-      background: linear-gradient(135deg, #02071a, #050c2e, #02071a);
-    }
-
-    .page-container {
-      position: relative; z-index: 10;
-      width: 100%; height: 100%;
-      display: grid;
-      grid-template-columns: 220px 1fr 320px;
-      grid-template-rows: 70px 1fr 100px;
+    /* 整体布局 */
+    .page { position:relative; z-index:1; width:100%; height:100%; padding:12px; display:grid; gap:12px;
+      grid-template-columns: 260px 1fr 340px;
+      grid-template-rows: 60px 1fr 110px;
       grid-template-areas:
-        "header      header      header"
-        "sidebar     main        aside"
-        "footer      footer      footer";
-      gap: 15px 20px;
-      padding: 0 20px 20px;
-    }
+        "hd hd hd"
+        "lb main rb"
+        "ft ft ft"; }
 
-    /* 顶部 */
-    .header {
-      grid-area: header;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 10px;
-      border-bottom: 1px solid var(--border-cyan);
-      background: linear-gradient(180deg, rgba(0,15,40,0.6), transparent);
-    }
-    .brand { display: flex; align-items: center; gap: 12px; }
-    .brand-icon {
-      width: 34px; height: 34px;
-      background: linear-gradient(135deg, var(--cyan), #66f5ff);
-      clip-path: polygon(0 25%, 25% 0, 75% 0, 100% 25%, 100% 75%, 75% 100%, 25% 100%, 0 75%);
-    }
-    .brand-name { font-size: 19px; font-weight: 700; }
-    .nav-main { display: flex; gap: 40px; margin-left: 30px; }
-    .nav-tab {
-      color: var(--text-sub); font-size: 15px; padding: 8px 4px; cursor: pointer;
-      border-bottom: 2px solid transparent;
-    }
-    .nav-tab:hover, .nav-tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
-    .header-right { display: flex; align-items: center; gap: 25px; }
-    .user-info { font-size: 13px; color: var(--text-sub); }
-    .btn {
-      border: none; border-radius: 6px; padding: 9px 22px;
-      font-weight: 600; cursor: pointer;
-    }
-    .btn-primary { background: linear-gradient(90deg, #00a8cc, var(--cyan)); color: #000; }
+    /* 通用组件 */
+    .card { border:1px solid var(--border-cyan); border-radius:10px; padding:16px; background:var(--bg-card); backdrop-filter:blur(var(--blur)); position:relative; overflow:hidden; }
+    .corner { position:absolute; width:12px; height:12px; border-color:var(--cyan); border-style:solid; opacity:.4; pointer-events:none; }
+    .corner.tl { top:0; left:0; border-width:1px 0 0 1px; }
+    .corner.tr { top:0; right:0; border-width:1px 1px 0 0; }
+    .corner.bl { bottom:0; left:0; border-width:0 0 1px 1px; }
+    .corner.br { bottom:0; right:0; border-width:0 1px 1px 0; }
+    .card-hd { display:flex; justify-content:space-between; align-items:center; padding-bottom:10px; margin-bottom:12px; border-bottom:1px solid rgba(0,229,255,.1); }
+    .card-tt { font-size:14px; color:var(--cyan); letter-spacing:1px; font-weight:600; display:flex; align-items:center; gap:6px; }
+    .tag { font-size:11px; padding:2px 8px; border-radius:12px; }
+    .tag.ok { background:rgba(0,208,132,.15); color:var(--green); border:1px solid rgba(0,208,132,.25); }
+    .tag.warn { background:rgba(255,149,0,.15); color:var(--warn); border:1px solid rgba(255,149,0,.25); }
+    .tag.danger { background:rgba(255,77,79,.15); color:var(--red); border:1px solid rgba(255,77,79,.25); }
+    .tag.cyan { background:rgba(0,229,255,.15); color:var(--cyan); border:1px solid rgba(0,229,255,.25); }
+    .tag.gold { background:rgba(255,184,0,.15); color:var(--gold); border:1px solid rgba(255,184,0,.25); }
+    .grid-2 { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+    .grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+    .stat-box { padding:12px; border-radius:8px; background:rgba(0,229,255,.04); border:1px solid rgba(0,229,255,.08); text-align:center; }
+    .stat-label { font-size:12px; color:var(--text-sub); margin-bottom:4px; }
+    .stat-val { font-size:18px; font-weight:700; }
+    .bar-wrap { height:6px; background:rgba(0,229,255,.12); border-radius:3px; margin-top:6px; overflow:hidden; }
+    .bar { height:100%; border-radius:3px; transition:width .5s ease; }
+    .bar.cg { background:linear-gradient(90deg, var(--cyan), var(--gold)); }
+    .bar.g { background:linear-gradient(90deg, var(--gold-deep), var(--gold)); }
+    table { width:100%; border-collapse:collapse; font-size:13px; }
+    th { text-align:left; padding:10px 8px; color:var(--text-sub); font-weight:500; border-bottom:1px solid rgba(0,229,255,.1); }
+    td { padding:12px 8px; border-bottom:1px solid rgba(0,229,255,.06); vertical-align:middle; }
+    .flash { animation:flash 1s infinite alternate; }
+    @keyframes flash { from {opacity:.7;} to {opacity:1;} }
+    .scroll-list { max-height:260px; overflow-y:auto; }
+    .scroll-list::-webkit-scrollbar { width:4px; }
+    .scroll-list::-webkit-scrollbar-thumb { background:rgba(0,229,255,.2); border-radius:2px; }
 
-    /* 左侧 */
-    .sidebar {
-      grid-area: sidebar;
-      padding: 10px;
-      border: 1px solid var(--border-cyan);
-      border-radius: 8px;
-      background: var(--bg-panel);
-      backdrop-filter: blur(var(--blur));
-    }
-    .sidebar-title {
-      font-size: 13px; color: var(--text-sub); padding: 10px 14px 6px;
-      text-transform: uppercase; letter-spacing: 1px;
-    }
-    .menu-item {
-      display: flex; align-items: center; gap: 10px; padding: 12px 14px; margin-bottom: 4px;
-      border-radius: 5px; cursor: pointer; transition: all 0.25s;
-      border-left: 3px solid transparent;
-      color: var(--text-sub); font-size: 14px;
-    }
-    .menu-item:hover { background: rgba(0,229,255,0.06); color: var(--cyan); }
-    .menu-item.active {
-      background: linear-gradient(90deg, rgba(255,184,0,0.15), rgba(0,229,255,0.05));
-      color: var(--gold); border-left-color: var(--gold);
-    }
-    .menu-dot {
-      width: 8px; height: 8px; border-radius: 50%; border: 1px solid currentColor; opacity: 0.6;
-    }
-    .menu-item.active .menu-dot { background: var(--gold); opacity: 1; }
-
-    /* 中间主内容区 */
-    .main {
-      grid-area: main;
-      display: flex; flex-direction: column; gap: 15px;
-    }
-    .card {
-      border: 1px solid var(--border-cyan);
-      border-radius: 8px; padding: 20px;
-      background: var(--bg-panel);
-      backdrop-filter: blur(var(--blur));
-      position: relative;
-    }
-    .card-corner { position: absolute; width: 12px; height: 12px; border-color: var(--cyan); border-style: solid; opacity: 0.4; }
-    .card-corner.tl { top: 0; left: 0; border-width: 1px 0 0 1px; }
-    .card-corner.tr { top: 0; right: 0; border-width: 1px 1px 0 0; }
-    .card-corner.bl { bottom: 0; left: 0; border-width: 0 0 1px 1px; }
-    .card-corner.br { bottom: 0; right: 0; border-width: 0 1px 1px 0; }
-
-    .card-header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding-bottom: 12px; margin-bottom: 15px;
-      border-bottom: 1px solid rgba(0,229,255,0.1);
-    }
-    .card-title { font-size: 15px; color: var(--cyan); letter-spacing: 1px; }
-
-    /* 资产总览 */
-    .asset-overview { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 10px; }
-    .asset-card {
-      background: rgba(0,229,255,0.05);
-      border: 1px solid rgba(0,229,255,0.15);
-      border-radius: 8px;
-      padding: 15px;
-      text-align: center;
-    }
-    .asset-name { font-size: 13px; color: var(--text-sub); margin-bottom: 8px; }
-    .asset-value { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
-    .asset-value.gold { color: var(--gold); }
-    .asset-value.cyan { color: var(--cyan); }
-    .asset-change { font-size: 12px; }
-    .up { color: var(--green); }
-    .down { color: var(--red); }
-
-    /* 币明细列表 */
-    .coin-list { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    .coin-list th {
-      text-align: left; padding: 12px 10px;
-      color: var(--text-sub); font-size: 13px; border-bottom: 1px solid rgba(0,229,255,0.1);
-    }
-    .coin-list td {
-      padding: 14px 10px; border-bottom: 1px solid rgba(0,229,255,0.08);
-      font-size: 14px;
-    }
-    .coin-name { display: flex; align-items: center; gap: 10px; }
-    .coin-icon {
-      width: 28px; height: 28px; border-radius: 50%;
-      background: linear-gradient(135deg, var(--gold), #ffd766);
-      display: flex; align-items: center; justify-content: center;
-      color: #000; font-weight: 700; font-size: 13px;
-    }
-    .coin-num { color: var(--text-main); }
-    .coin-total { color: var(--gold); font-weight: 600; }
-
-    /* 右侧 */
-    .aside {
-      grid-area: aside;
-      display: flex; flex-direction: column; gap: 15px;
-    }
-    .stat-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(0,229,255,0.08); }
-    .stat-label { color: var(--text-sub); font-size: 13px; }
-    .stat-value { color: var(--text-main); font-size: 14px; }
-    .stat-value.highlight { color: var(--gold); font-weight: 600; font-size: 16px; }
-
-    /* 底部快捷状态 */
-    .footer {
-      grid-area: footer;
-      display: flex; justify-content: center; gap: 15px;
-      padding-top: 10px;
-      border-top: 1px solid var(--border-cyan);
-    }
-    .mini-card {
-      min-width: 160px; padding: 15px 20px; text-align: center;
-      border: 1px solid var(--border-cyan); border-radius: 8px;
-      background: var(--bg-panel); backdrop-filter: blur(var(--blur));
-    }
-    .mini-label { font-size: 12px; color: var(--text-sub); margin-bottom: 6px; }
-    .mini-value { font-size: 15px; color: var(--gold); font-weight: 600; }
+    /* 区块定位 */
+    .hd { grid-area:hd; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-cyan); padding:0 10px; }
+    .brand { display:flex; align-items:center; gap:10px; }
+    .brand-icon { width:36px; height:36px; border-radius:6px; background:linear-gradient(135deg, var(--cyan), var(--gold)); display:flex; align-items:center; justify-content:center; font-weight:900; color:#000; }
+    .nav-tabs { display:flex; gap:6px; margin-left:20px; }
+    .tab { padding:8px 16px; cursor:pointer; border-bottom:2px solid transparent; color:var(--text-sub); font-size:14px; }
+    .tab:hover, .tab.active { color:var(--cyan); border-bottom-color:var(--cyan); }
+    .lb { grid-area:lb; display:flex; flex-direction:column; gap:12px; }
+    .menu-title { font-size:12px; color:var(--text-weak); padding:8px 14px 4px; text-transform:uppercase; letter-spacing:1px; }
+    .menu-item { display:flex; align-items:center; gap:8px; padding:10px 14px; margin-bottom:3px; border-radius:6px; cursor:pointer; border-left:3px solid transparent; color:var(--text-sub); font-size:14px; transition:all .2s; }
+    .menu-item:hover { background:rgba(0,229,255,.06); color:var(--cyan); }
+    .menu-item.active { background:linear-gradient(90deg, rgba(255,184,0,.15), rgba(0,229,255,.05)); color:var(--gold); border-left-color:var(--gold); }
+    .dot { width:8px; height:8px; border-radius:50%; border:1px solid currentColor; opacity:.6; }
+    .menu-item.active .dot { background:var(--gold); opacity:1; box-shadow:0 0 6px var(--gold); }
+    .main { grid-area:main; display:flex; flex-direction:column; gap:12px; overflow:hidden; }
+    .rb { grid-area:rb; display:flex; flex-direction:column; gap:12px; overflow:hidden; }
+    .ft { grid-area:ft; display:flex; justify-content:center; gap:12px; border-top:1px solid var(--border-cyan); padding-top:10px; }
+    .mini { min-width:160px; padding:14px 16px; text-align:center; border-radius:8px; background:var(--bg-card); border:1px solid var(--border-cyan); }
+    .mini-lb { font-size:12px; color:var(--text-sub); margin-bottom:4px; }
+    .mini-val { font-size:15px; font-weight:700; letter-spacing:.5px; }
   </style>
 </head>
 <body>
   <div class="bg-layer"></div>
 
-  <div class="page-container">
+  <div class="page">
     <!-- 顶部 -->
-    <header class="header">
+    <header class="hd">
       <div class="brand">
-        <div class="brand-icon"></div>
-        <span class="brand-name">SPACE HUNTER</span>
-        <nav class="nav-main">
-          <div class="nav-tab active">资产首页</div>
-          <div class="nav-tab">币钱包</div>
-          <div class="nav-tab">交易记录</div>
-          <div class="nav-tab">数据中心</div>
+        <div class="brand-icon">🐶</div>
+        <div>
+          <div style="font-size:18px; font-weight:700;">DOG HUNTER</div>
+          <div style="font-size:11px; color:var(--text-sub);">大金狗全链路监控系统 · Meme/土狗专用台</div>
+        </div>
+        <nav class="nav-tabs">
+          <div class="tab active">📡 共振雷达</div>
+          <div class="tab">🔥 热门/新币</div>
+          <div class="tab">🛡️ 安全筛查</div>
+          <div class="tab">💰 钱包/资金</div>
+          <div class="tab">📊 毕业/二段</div>
         </nav>
       </div>
-      <div class="header-right">
-        <span class="user-info">账户：DASIEORS</span>
-        <button class="btn btn-primary">充值/提币</button>
+      <div style="display:flex; align-items:center; gap:20px;">
+        <span style="font-size:13px; color:var(--text-sub);">链：SOL · ETH · BSC · BASE</span>
+        <span style="font-size:13px;">更新：<span style="color:var(--green);">实时</span></span>
+        <button style="border:none; border-radius:6px; padding:8px 18px; background:linear-gradient(90deg,var(--cyan-deep),var(--cyan)); color:#000; font-weight:600; cursor:pointer;">+ 订阅异动</button>
       </div>
     </header>
 
-    <!-- 左侧 -->
-    <aside class="sidebar">
-      <div class="sidebar-title">资产导航</div>
-      <div class="menu-item active"><span class="menu-dot"></span>资产总览</div>
-      <div class="menu-item"><span class="menu-dot"></span>我的币</div>
-      <div class="menu-item"><span class="menu-dot"></span>收益明细</div>
-      <div class="menu-item"><span class="menu-dot"></span>充值记录</div>
-      <div class="menu-item"><span class="menu-dot"></span>提币记录</div>
-      <div class="sidebar-title" style="margin-top:15px;">系统功能</div>
-      <div class="menu-item"><span class="menu-dot"></span>账户设置</div>
-      <div class="menu-item"><span class="menu-dot"></span>安全中心</div>
+    <!-- 左侧：导航+专项筛查 -->
+    <aside class="lb">
+      <div class="card" style="flex:0 0 auto;">
+        <div class="menu-title">信号体系</div>
+        <div class="menu-item active"><span class="dot"></span>共振雷达 <span style="margin-left:auto; font-size:11px; color:var(--gold);">9个强信号</span></div>
+        <div class="menu-item"><span class="dot"></span>初信号预警</div>
+        <div class="menu-item"><span class="dot"></span>二次信号确认</div>
+        <div class="menu-item"><span class="dot"></span>五位闸门 <span style="margin-left:auto; font-size:11px; color:var(--cyan);">支撑/压力/加减/止损</span></div>
+        <div class="menu-item"><span class="dot"></span>币异动提醒</div>
+
+        <div class="menu-title">安全风控</div>
+        <div class="menu-item"><span class="dot"></span>貔貅检测 <span style="margin-left:auto; font-size:11px; color:var(--green);">全筛查</span></div>
+        <div class="menu-item"><span class="dot"></span>流动性/池子厚薄</div>
+        <div class="menu-item"><span class="dot"></span>合约/权限/锁仓</div>
+        <div class="menu-item"><span class="dot"></span>能买状态检查</div>
+
+        <div class="menu-title">资金与盘口</div>
+        <div class="menu-item"><span class="dot"></span>庄家体检</div>
+        <div class="menu-item"><span class="dot"></span>钱包/聪明钱/巨鲸</div>
+        <div class="menu-item"><span class="dot"></span>成本线/筹码分布</div>
+        <div class="menu-item"><span class="dot"></span>热度/叙事/传播质量</div>
+      </div>
+
+      <div class="card" style="flex:1; overflow:hidden;">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="card-hd"><span class="card-tt">⚠️ 风险速览</span></div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:12px;">
+          <div style="padding:8px; border-radius:6px; background:rgba(0,208,132,.08); border:1px solid rgba(0,208,132,.15);">
+            <div style="color:var(--green);">安全通过</div>
+            <div style="font-size:16px; font-weight:700;">18</div>
+          </div>
+          <div style="padding:8px; border-radius:6px; background:rgba(255,77,79,.08); border:1px solid rgba(255,77,79,.15);">
+            <div style="color:var(--red);">貔貅/拉黑</div>
+            <div style="font-size:16px; font-weight:700;">3</div>
+          </div>
+          <div style="padding:8px; border-radius:6px; background:rgba(255,149,0,.08); border:1px solid rgba(255,149,0,.15);">
+            <div style="color:var(--warn);">流动性不足</div>
+            <div style="font-size:16px; font-weight:700;">5</div>
+          </div>
+          <div style="padding:8px; border-radius:6px; background:rgba(0,229,255,.08); border:1px solid rgba(0,229,255,.15);">
+            <div style="color:var(--cyan);">待观察</div>
+            <div style="font-size:16px; font-weight:700;">7</div>
+          </div>
+        </div>
+      </div>
     </aside>
 
-    <!-- 中间主内容：币资产核心展示 -->
+    <!-- 中间主区：雷达+列表 -->
     <main class="main">
-      <div class="card">
-        <div class="card-corner tl"></div>
-        <div class="card-corner tr"></div>
-        <div class="card-corner bl"></div>
-        <div class="card-corner br"></div>
-        <div class="card-header">
-          <h3 class="card-title">💰 资产总览</h3>
-          <span style="color:var(--text-sub); font-size:13px;">更新时间：2026-10-19 20:28:00</span>
+      <div class="card" style="flex:0 0 auto;">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <div class="card-hd">
+          <span class="card-tt">📡 共振雷达 — 多维度同时触发 = 大金狗起爆确认</span>
+          <span style="font-size:12px; color:var(--text-sub);">5/15分+1小时 · 价格+量能+资金+热度+链上 · 同步强度</span>
         </div>
-
-        <!-- 关键数据卡片 -->
-        <div class="asset-overview">
-          <div class="asset-card">
-            <div class="asset-name">总资产(折合)</div>
-            <div class="asset-value gold">¥ 128,560.80</div>
-            <div class="asset-change up">↑ 2.36%</div>
+        <div class="grid-4">
+          <div class="stat-box">
+            <div class="stat-label">共振强度</div>
+            <div class="stat-val" style="color:var(--gold); font-size:22px;">92%</div>
+            <div class="bar-wrap"><div class="bar g" style="width:92%;"></div></div>
+            <div style="font-size:11px; color:var(--green); margin-top:4px;">强共振 · 高确定性</div>
           </div>
-          <div class="asset-card">
-            <div class="asset-name">可用余额</div>
-            <div class="asset-value cyan">¥ 96,200.50</div>
-            <div class="asset-change up">↑ 1.85%</div>
+          <div class="stat-box">
+            <div class="stat-label">初信号</div>
+            <div class="stat-val" style="color:var(--cyan);">14</div>
+            <div style="font-size:11px; color:var(--text-sub);">今日新增预警</div>
           </div>
-          <div class="asset-card">
-            <div class="asset-name">锁定金额</div>
-            <div class="asset-value">¥ 32,360.30</div>
-            <div class="asset-change down">↓ 0.52%</div>
+          <div class="stat-box">
+            <div class="stat-label">二次信号确认</div>
+            <div class="stat-val" style="color:var(--green);">5</div>
+            <div style="font-size:11px; color:var(--text-sub);">进入主升候选</div>
           </div>
-          <div class="asset-card">
-            <div class="asset-name">今日收益</div>
-            <div class="asset-value gold">+¥ 528.60</div>
-            <div class="asset-change up">↑ 5.20%</div>
+          <div class="stat-box">
+            <div class="stat-label">毕业/二段预警</div>
+            <div class="stat-val" style="color:var(--gold);">2</div>
+            <div style="font-size:11px; color:var(--warn);">重点盯防</div>
           </div>
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-corner tl"></div>
-        <div class="card-corner tr"></div>
-        <div class="card-corner bl"></div>
-        <div class="card-corner br"></div>
-        <div class="card-header">
-          <h3 class="card-title">🪙 我的币种明细</h3>
+      <div class="card" style="flex:1; overflow:hidden; display:flex; flex-direction:column;">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="card-hd">
+          <span class="card-tt">🔥 热门/起爆候选池 — 叙事+热度+资金共振中</span>
+          <span style="display:flex; gap:8px;">
+            <span class="tag gold">叙事龙头</span>
+            <span class="tag cyan">新币30分内</span>
+            <span class="tag ok">可入</span>
+          </span>
         </div>
-        <table class="coin-list">
-          <thead>
-            <tr>
-              <th>币种</th>
-              <th>持有数量</th>
-              <th>当前单价</th>
-              <th>折合人民币</th>
-              <th>24小时涨跌</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><div class="coin-name"><div class="coin-icon">B</div> BTC</div></td>
-              <td class="coin-num">1.8500</td>
-              <td class="coin-num">¥ 68,200.00</td>
-              <td class="coin-total">¥ 126,170.00</td>
-              <td class="up">↑ 2.36%</td>
-            </tr>
-            <tr>
-              <td><div class="coin-name"><div class="coin-icon" style="background:linear-gradient(135deg, #00e5ff, #66f5ff);">E</div> ETH</div></td>
-              <td class="coin-num">8.5000</td>
-              <td class="coin-num">¥ 2,620.00</td>
-              <td class="coin-total">¥ 22,270.00</td>
-              <td class="up">↑ 1.58%</td>
-            </tr>
-            <tr>
-              <td><div class="coin-name"><div class="coin-icon" style="background:linear-gradient(135deg, #ff4d4f, #ff9e9e);">U</div> USDT</div></td>
-              <td class="coin-num">52,800.0000</td>
-              <td class="coin-num">¥ 7.25</td>
-              <td class="coin-total">¥ 52,800.00</td>
-              <td class="down">— 0.01%</td>
-            </tr>
-            <tr>
-              <td><div class="coin-name"><div class="coin-icon" style="background:linear-gradient(135deg, #b066ff, #d4b8ff);">S</div> SPACE</div></td>
-              <td class="coin-num">5,000.0000</td>
-              <td class="coin-num">¥ 1.25</td>
-              <td class="coin-total">¥ 6,250.00</td>
-              <td class="up">↑ 8.60%</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="scroll-list" style="flex:1;">
+          <table>
+            <thead>
+              <tr>
+                <th>代币/叙事</th>
+                <th>链/上线</th>
+                <th>池子/市值</th>
+                <th>共振/信号</th>
+                <th>安全状态</th>
+                <th>五位闸门</th>
+                <th>状态</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="background:rgba(255,184,0,.06);">
+                <td><div style="font-weight:600;">DOGX</div><div style="font-size:11px; color:var(--text-sub);">超狗叙事 · 全链联动 · KOL扎堆</div></td>
+                <td>SOL · 28分</td>
+                <td>🔷 18.5K · 1.2M</td>
+                <td><span class="tag gold flash">强共振</span><span class="tag ok">二次信号</span></td>
+                <td><span class="tag ok">✅ 纯金安全</span></td>
+                <td>支撑0.08M · 突破0.12M · 目标0.3M</td>
+                <td><span class="tag gold flash">🚀 起爆中</span></td>
+              </tr>
+              <tr>
+                <td><div style="font-weight:600;">MEMEAI</div><div style="font-size:11px; color:var(--text-sub);">AI+Meme · 新叙事龙头 · 热度扩散</div></td>
+                <td>ETH · 1.2h</td>
+                <td>🔷 42K · 8.6M</td>
+                <td><span class="tag cyan">共振80%</span><span class="tag cyan">初信号</span></td>
+                <td><span class="tag ok">✅ 通过</span></td>
+                <td>站稳8.2M · 下一目标12M</td>
+                <td><span class="tag cyan">观察确认</span></td>
+              </tr>
+              <tr>
+                <td><div style="font-weight:600;">PIGSUN</div><div style="font-size:11px; color:var(--text-sub);">补涨龙头 · 老币新故事 · 资金切换</div></td>
+                <td>BSC · 3h</td>
+                <td>🔷 12K · 3.2M</td>
+                <td><span class="tag warn">共振65%</span><span class="tag warn">二次偏弱</span></td>
+                <td><span class="tag ok">✅ 通过</span></td>
+                <td>压力3.5M · 过不去减仓</td>
+                <td><span class="tag warn">洗盘/确认</span></td>
+              </tr>
+              <tr>
+                <td><div style="font-weight:600;">DOGCLASS</div><div style="font-size:11px; color:var(--text-sub);">经典土狗 · 社区强共识 · 毕业预期</div></td>
+                <td>BASE · 5h</td>
+                <td>🔷 8.8K · 6.8M</td>
+                <td><span class="tag gold">毕业预警</span><span class="tag gold">二段蓄力</span></td>
+                <td><span class="tag ok">✅ 锁仓100%</span></td>
+                <td>前高6.9M · 突破=正式毕业</td>
+                <td><span class="tag gold">🎓 毕业临界点</span></td>
+              </tr>
+              <tr>
+                <td><div style="font-weight:600;">FAKECOIN</div><div style="font-size:11px; color:var(--text-sub);">仿盘 · 无真实叙事 · 热度虚高</div></td>
+                <td>SOL · 15分</td>
+                <td>🔸 1.2K · 240K</td>
+                <td><span class="tag danger">共振失效</span></td>
+                <td><span class="tag danger">⚠ 权限未放弃</span></td>
+                <td>支撑破位 离场</td>
+                <td><span class="tag danger">❌ 排除/拉黑</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </main>
 
-    <!-- 右侧 -->
-    <aside class="aside">
-      <div class="card">
-        <div class="card-corner tl"></div>
-        <div class="card-corner tr"></div>
-        <div class="card-corner bl"></div>
-        <div class="card-corner br"></div>
-        <div class="card-header">
-          <h3 class="card-title">账户概览</h3>
+    <!-- 右侧：专项详情 -->
+    <aside class="rb">
+      <div class="card" style="flex:0 0 auto;">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="card-hd">
+          <span class="card-tt">🛡️ 安全速检 · DOGX（起爆标的）</span>
+          <span style="font-size:12px; color:var(--green);">全部通过 ✅</span>
         </div>
-        <div class="stat-row">
-          <span class="stat-label">账户等级</span>
-          <span class="stat-value">VIP 5</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">累计充值</span>
-          <span class="stat-value highlight">¥ 258,000.00</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">累计提币</span>
-          <span class="stat-value">¥ 129,439.20</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">累计收益</span>
-          <span class="stat-value highlight" style="color:var(--green);">+¥ 32,560.80</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">推荐人数</span>
-          <span class="stat-value">18 人</span>
-        </div>
-        <div class="stat-row" style="border-bottom:none;">
-          <span class="stat-label">账户状态</span>
-          <span class="stat-value" style="color:var(--green);">● 正常</span>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:12px;">
+          <div style="padding:8px; border-radius:6px; background:rgba(0,208,132,.08);">
+            <div style="color:var(--text-sub);">貔貅检测</div>
+            <div style="color:var(--green); font-weight:600;">✅ 非貔貅 · 买卖正常</div>
+          </div>
+          <div style="padding:8px; border-radius:6px; background:rgba(0,208,132,.08);">
+            <div style="color:var(--text-sub);">流动性</div>
+            <div style="color:var(--green); font-weight:600;">✅ 锁仓100% · 池子厚</div>
+          </div>
+          <div style="padding:8px; border-radius:6px; background:rgba(0,208,132,.08);">
+            <div style="color:var(--text-sub);">合约权限</div>
+            <div style="color:var(--green); font-weight:600;">✅ 开源 · 权限放弃</div>
+          </div>
+          <div style="padding:8px; border-radius:6px; background:rgba(0,208,132,.08);">
+            <div style="color:var(--text-sub);">能买状态</div>
+            <div style="color:var(--green); font-weight:600;">✅ 无限制 · 通道通畅</div>
+          </div>
+          <div style="padding:8px; border-radius:6px; background:rgba(0,208,132,.08);">
+            <div style="color:var(--text-sub);">大户持仓</div>
+            <div style="color:var(--green); font-weight:600;">✅ 无集中砸盘风险</div>
+          </div>
+          <div style="padding:8px; border-radius:6px; background:rgba(0,208,132,.08);">
+            <div style="color:var(--text-sub);">社交真实度</div>
+            <div style="color:var(--green); font-weight:600;">✅ 真实扩散 · 非刷量</div>
+          </div>
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-corner tl"></div>
-        <div class="card-corner tr"></div>
-        <div class="card-corner bl"></div>
-        <div class="card-corner br"></div>
-        <div class="card-header">
-          <h3 class="card-title">今日动态</h3>
+      <div class="card" style="flex:1; overflow:hidden;">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="card-hd">
+          <span class="card-tt">🧠 庄家体检 · 钱包/资金</span>
         </div>
-        <div style="font-size:13px; line-height:2; color:var(--text-sub);">
-          <p>• BTC 收益到账 +¥ 268.50</p>
-          <p>• ETH 收益到账 +¥ 156.20</p>
-          <p>• SPACE 涨幅 8.6% 收益提升</p>
-          <p>• 提币申请 ¥5,000 已审核通过</p>
+        <div style="display:flex; flex-direction:column; gap:10px; font-size:13px;">
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <span style="color:var(--text-sub);">控盘集中度</span>
+              <span style="color:var(--green); font-weight:600;">适中健康 32%</span>
+            </div>
+            <div class="bar-wrap"><div class="bar cg" style="width:32%;"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <span style="color:var(--text-sub);">聪明钱/巨鲸参与</span>
+              <span style="color:var(--gold); font-weight:600;">7个知名地址 · 同步进场</span>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <span style="color:var(--text-sub);">平均持仓成本</span>
+              <span style="color:var(--cyan); font-weight:600;">当前在成本上方 18% · 安全</span>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <span style="color:var(--text-sub);">筹码分散速度</span>
+              <span style="color:var(--green); font-weight:600;">持币地址↑ 10分钟+86 · 真实扩散</span>
+            </div>
+          </div>
+          <div style="border-top:1px solid rgba(0,229,255,.1); padding-top:10px;">
+            <div style="color:var(--text-sub); margin-bottom:6px;">🚨 异动/预警</div>
+            <div style="font-size:12px; line-height:1.8;">
+              <p style="color:var(--gold);">• DOGX 5分钟放量↑ 280% · 买盘强劲</p>
+              <p style="color:var(--cyan);">• MEMEAI 热度持续爬升 · 关注二次确认</p>
+              <p style="color:var(--warn);">• PIGSUN 量能减弱 · 不突破先减</p>
+              <p style="color:var(--danger);">• FAKECOIN 资金流出 · 已拉黑</p>
+            </div>
+          </div>
         </div>
       </div>
     </aside>
 
-    <!-- 底部快捷入口 -->
-    <footer class="footer">
-      <div class="mini-card">
-        <div class="mini-label">总资产</div>
-        <div class="mini-value">¥128,560.80</div>
+    <!-- 底部：关键状态速览 -->
+    <footer class="ft">
+      <div class="mini">
+        <div class="mini-lb">今日起爆候选</div>
+        <div class="mini-val" style="color:var(--gold);">4</div>
       </div>
-      <div class="mini-card">
-        <div class="mini-label">昨日收益</div>
-        <div class="mini-value">+¥426.30</div>
+      <div class="mini">
+        <div class="mini-lb">二次信号确认</div>
+        <div class="mini-val" style="color:var(--green);">2</div>
       </div>
-      <div class="mini-card">
-        <div class="mini-label">本月收益</div>
-        <div class="mini-value">+¥12,580.50</div>
+      <div class="mini">
+        <div class="mini-lb">毕业/二段机会</div>
+        <div class="mini-val" style="color:var(--cyan);">1</div>
       </div>
-      <div class="mini-card">
-        <div class="mini-label">推荐奖励</div>
-        <div class="mini-value">+¥3,260.00</div>
+      <div class="mini">
+        <div class="mini-lb">今日拦截风险</div>
+        <div class="mini-val" style="color:var(--red);">3</div>
       </div>
-      <div class="mini-card">
-        <div class="mini-label">待确认</div>
-        <div class="mini-value" style="color:var(--cyan);">¥2,500.00</div>
+      <div class="mini">
+        <div class="mini-lb">五位闸门总控</div>
+        <div class="mini-val" style="color:var(--gold);">DOGX 持有待突破</div>
+      </div>
+      <div class="mini">
+        <div class="mini-lb">信号失效/离场</div>
+        <div class="mini-val" style="color:var(--text-sub);">已清理 2</div>
       </div>
     </footer>
   </div>
 
   <script>
-    // 导航点击切换
-    document.querySelectorAll('.nav-tab').forEach(tab => {
-      tab.onclick = () => {
-        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-      };
+    // 导航高亮
+    document.querySelectorAll('.tab').forEach(t=>{
+      t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); t.classList.add('active');};
     });
-    document.querySelectorAll('.menu-item').forEach(item => {
-      item.onclick = () => {
-        document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
-        item.classList.add('active');
-      };
+    document.querySelectorAll('.menu-item').forEach(i=>{
+      i.onclick=()=>{document.querySelectorAll('.menu-item').forEach(x=>x.classList.remove('active')); i.classList.add('active');};
     });
   </script>
 </body>
