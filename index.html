@@ -255,8 +255,8 @@ input:checked + .slider:before { transform: translateX(18px); }
 
   <div class="section-all">
     <div class="section-header">
-      <span class="all-title">🔍 全链扫描区 · 热门/新币</span>
-      <span class="section-desc">ETH / BSC / SOL / BASE / ARB 实时覆盖</span>
+      <span class="all-title">🔍 全链扫描区 · 热门币种</span>
+      <span class="section-desc">CoinGecko 全球数据覆盖</span>
     </div>
     <div class="table-header">
       <span>头像</span>
@@ -272,25 +272,26 @@ input:checked + .slider:before { transform: translateX(18px); }
 
 <script>
 const CONFIG = {
-  AUTO_REFRESH_SEC: 30,
+  AUTO_REFRESH_SEC: 60,      // 刷新间隔：CoinGecko有频率限制，设为60秒
   TOP_TOKENS_LIMIT: 50,
   SOUND_ENABLED: true,
-  POOL_OK: 50,
-  VOLUME_OK: 10,
-  RES_OK: 2,
+  PRIME_MCAP_MIN: 5000,      // 精选最低市值(万美元)
+  PRIME_VOL_RATIO: 0.05,     // 交易量/市值比
+  PRIME_CHANGE_UP: 5,        // 24h涨幅%
   COOLDOWN: 3600000,
   HIGHLIGHT: 5000
 };
 
 const CHAIN_MAP = {
-  'ethereum': 'ETH', 'bsc': 'BSC', 'solana': 'SOL', 'base': 'BASE',
-  'arbitrum': 'ARB', 'polygon': 'POLYGON', 'avalanche': 'AVAX', 'optimism': 'OP'
+  'ethereum': 'ETH', 'binance-smart-chain': 'BSC', 'solana': 'SOL', 
+  'base': 'BASE', 'arbitrum-one': 'ARB', 'polygon-pos': 'POLYGON',
+  'avalanche': 'AVAX', 'optimism': 'OP'
 };
 
 const CHAIN_EXPLORER = {
   'ETH': 'https://etherscan.io/token/',
   'BSC': 'https://bscscan.com/token/',
-  'SOL': 'https://dexscreener.com/solana/',
+  'SOL': 'https://solscan.io/token/',
   'BASE': 'https://basescan.org/token/',
   'ARB': 'https://arbiscan.io/token/',
   'POLYGON': 'https://polygonscan.com/token/',
@@ -323,90 +324,90 @@ function say(text) {
   synth.speak(u);
 }
 
-// ✅ 按官方文档修正接口地址 + 双代理防跨域
-async function fetchDexScreenerData() {
-  // 官方正确接口：/latest/dex/search
-  const endpoints = [
-    'https://api.dexscreener.com/latest/dex/search?q=*',
-    'https://api.allorigins.win/raw?url=https://api.dexscreener.com/latest/dex/search?q=*',
-    'https://corsproxy.io/?https://api.dexscreener.com/latest/dex/search?q=*'
-  ];
-  
-  for (const url of endpoints) {
-    try {
-      console.log('尝试连接:', url);
-      const res = await fetch(url, {
-        method: 'GET',
-        headers: { 'Accept': 'application/json' },
-        cache: 'no-store'
-      });
-      if (!res.ok) {
-        console.warn('接口返回异常:', res.status);
-        continue;
-      }
-      const json = await res.json();
-      if (json && json.pairs) {
-        document.getElementById('sourceStatus').textContent = '✅ DexScreener 实时连接';
-        document.getElementById('sourceStatus').className = 'status-ok';
-        return json.pairs;
-      }
-    } catch (e) {
-      console.warn('连接失败:', url, e.message);
-    }
+// ✅ CoinGecko 官方接口 —— 跨域友好、无需密钥、新加坡网络直连
+async function fetchCoinGeckoData() {
+  try {
+    // 获取市值前50币种，含价格/市值/交易量/涨跌幅/合约地址
+    const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false&price_change_percentage=24h';
+    
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' },
+      cache: 'no-store'
+    });
+    
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    
+    document.getElementById('sourceStatus').textContent = '✅ CoinGecko 实时连接';
+    document.getElementById('sourceStatus').className = 'status-ok';
+    return data;
+  } catch (err) {
+    console.warn('CoinGecko 连接失败：', err);
+    document.getElementById('sourceStatus').innerHTML = '❌ 连接失败<br><small style="color:#ffcc00">请检查网络或稍后再试</small>';
+    document.getElementById('sourceStatus').className = 'status-err';
+    return null;
   }
-  
-  document.getElementById('sourceStatus').innerHTML = '❌ 全部连接失败<br><small style="color:#ffcc00">可能网络限制，稍后再试</small>';
-  document.getElementById('sourceStatus').className = 'status-err';
-  return null;
 }
 
-function normalizePairs(pairs) {
-  if (!pairs) return [];
-  const tokenMap = new Map();
+function normalizeCoins(coins) {
+  if (!coins) return [];
   
-  for (const p of pairs) {
-    if (!p.baseToken) continue;
-    const chainRaw = p.chainId || 'unknown';
-    const chain = CHAIN_MAP[chainRaw] || chainRaw.toUpperCase();
-    const addr = p.baseToken.address || 'unknown';
-    const id = `${chain}_${addr}`;
-    if (tokenMap.has(id)) continue;
+  return coins.map(c => {
+    const mcapUsd = c.market_cap || 0;
+    const volUsd = c.total_volume || 0;
+    const mcapWan = mcapUsd / 10000;
+    const volWan = volUsd / 10000;
+    const priceChange24h = c.price_change_percentage_24h || 0;
+    const volRatio = mcapUsd > 0 ? volUsd / mcapUsd : 0;
     
-    const liquidityUsd = (p.liquidity?.usd || 0) / 10000;
-    const volume24h = (p.volume?.h24 || 0) / 10000;
-    const marketCap = (p.fdv || 0) / 10000;
-    const priceChange24h = p.priceChange?.h24 || 0;
-    const isNew = (p.pairCreatedAt && Date.now() - p.pairCreatedAt < 86400000);
-    const hasGoodLiq = liquidityUsd >= CONFIG.POOL_OK;
-    const hasGoodVol = volume24h >= CONFIG.VOLUME_OK;
-    const priceUp = priceChange24h > 0;
-    const isResonance = [hasGoodLiq, hasGoodVol, priceUp, isNew].filter(Boolean).length >= CONFIG.RES_OK;
+    // 主链映射
+    const chainRaw = c.platforms ? Object.keys(c.platforms)[0] : null;
+    const chain = chainRaw ? (CHAIN_MAP[chainRaw] || chainRaw.toUpperCase()) : 'ETH';
+    const contractAddress = c.contract_address || (c.platforms ? Object.values(c.platforms)[0] : '') || '原生代币';
     
-    let grade, label;
-    if (isResonance && hasGoodLiq && hasGoodVol && priceUp && isNew) {
-      grade = 'top-gold'; label = '🏆🔥 顶级金狗';
-    } else if (isResonance && hasGoodLiq && hasGoodVol) {
-      grade = 'prime'; label = '🥇 优质潜力';
-    } else if (isResonance && hasGoodLiq) {
-      grade = 'ok'; label = '🟢 共振可进';
-    } else if (hasGoodLiq) {
+    // 大金狗评级
+    const hasGoodMcap = mcapWan >= CONFIG.PRIME_MCAP_MIN;
+    const hasGoodVol = volRatio >= CONFIG.PRIME_VOL_RATIO;
+    const hasGoodChange = priceChange24h >= CONFIG.PRIME_CHANGE_UP;
+    const isNew = (c.last_updated && Date.now() - new Date(c.last_updated).getTime() < 86400000);
+    
+    let grade, label, isResonance = false;
+    
+    if (hasGoodMcap && hasGoodVol && hasGoodChange) {
+      isResonance = true;
+      if (priceChange24h >= 20) {
+        grade = 'top-gold'; label = '🏆🔥 顶级金狗';
+      } else if (priceChange24h >= 10) {
+        grade = 'prime'; label = '🥇 优质潜力';
+      } else {
+        grade = 'ok'; label = '🟢 共振可进';
+      }
+    } else if (hasGoodMcap && priceChange24h > 0) {
       grade = 'ok'; label = '🟢 可关注';
-    } else if (liquidityUsd >= 10) {
+    } else if (mcapWan >= 100) {
       grade = 'warn'; label = '⏳ 观察确认';
     } else {
-      grade = 'danger'; label = '🚫 流动性弱';
+      grade = 'danger'; label = '🚫 市值偏小';
     }
     
-    tokenMap.set(id, {
-      id, symbol: p.baseToken.symbol || '???', name: p.baseToken.name || '',
-      chain, contractAddress: addr, marketCap, liquidityUsd, volume24h,
-      priceChange24h, isNew, isResonance, grade, label,
-      avatar: p.baseToken.thumb || p.baseToken.small || null
-    });
-  }
-  return Array.from(tokenMap.values())
-    .sort((a, b) => (b.liquidityUsd + b.volume24h) - (a.liquidityUsd + a.volume24h))
-    .slice(0, CONFIG.TOP_TOKENS_LIMIT);
+    return {
+      id: c.id,
+      symbol: c.symbol?.toUpperCase() || '???',
+      name: c.name || '',
+      chain,
+      contractAddress,
+      marketCap: mcapWan,
+      volume24h: volWan,
+      volumeRatio: volRatio,
+      priceChange24h,
+      isResonance,
+      isNew,
+      grade,
+      label,
+      avatar: c.image || DEFAULT_AVATAR
+    };
+  });
 }
 
 function fmtMoney(wan) {
@@ -416,8 +417,9 @@ function fmtMoney(wan) {
 }
 
 function getExplorerLink(item) {
+  if (item.contractAddress === '原生代币') return 'https://www.coingecko.com/en/coins/' + item.id;
   const base = CHAIN_EXPLORER[item.chain] || '';
-  return base ? `${base}${item.contractAddress}` : '#';
+  return base ? `${base}${item.contractAddress}` : 'https://www.coingecko.com/en/coins/' + item.id;
 }
 
 function buildRow(item, isNewToken = false) {
@@ -444,17 +446,21 @@ function buildRow(item, isNewToken = false) {
       <div class="grade-tag ${item.grade}" title="点击展开详情">${item.label} ▾</div>
       <div class="detail-row">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
-          <div>💰 流动性：${item.liquidityUsd.toFixed(2)}万 ${item.liquidityUsd >= CONFIG.POOL_OK ? '✅' : '❌'}</div>
-          <div>📈 24h成交：${item.volume24h.toFixed(2)}万 ${item.volume24h >= CONFIG.VOLUME_OK ? '✅' : '❌'}</div>
+          <div>💰 24h成交：${item.volume24h.toFixed(2)}万 ${item.volumeRatio >= CONFIG.PRIME_VOL_RATIO ? '✅' : '❌'}</div>
           <div>📊 24h涨跌：${item.priceChange24h >= 0 ? '+' : ''}${item.priceChange24h.toFixed(2)}% ${item.priceChange24h > 0 ? '✅' : '❌'}</div>
-          <div>🆕 新币(24h内)：${item.isNew ? '✅' : '❌'}</div>
+          <div>📈 市值门槛：${item.marketCap.toFixed(0)}万 ${item.marketCap >= CONFIG.PRIME_MCAP_MIN ? '✅' : '❌'}</div>
+          <div>🔄 量价比：${(item.volumeRatio*100).toFixed(2)}% ${item.volumeRatio >= CONFIG.PRIME_VOL_RATIO ? '✅' : '❌'}</div>
         </div>
-        <div><strong>链/合约：</strong>${item.chain} / ${item.contractAddress}<br><strong>共振信号：</strong>${item.isResonance ? '✅ 已触发' : '❌ 未达标'}</div>
+        <div>
+          <strong>币种：</strong>${item.name} (${item.symbol})<br>
+          <strong>链/合约：</strong>${item.chain} / ${item.contractAddress}<br>
+          <strong>共振信号：</strong>${item.isResonance ? '✅ 已触发' : '❌ 未达标'}
+        </div>
       </div>
     </div>
     <div class="action-links">
       <a href="${getExplorerLink(item)}" target="_blank" class="link-btn">去链上</a>
-      <a href="${getExplorerLink(item)}" target="_blank" class="link-btn">看趋势</a>
+      <a href="https://www.coingecko.com/en/coins/${item.id}" target="_blank" class="link-btn">看详情</a>
     </div>
   `;
   
@@ -468,7 +474,7 @@ function buildRow(item, isNewToken = false) {
     notified.set(item.id, Date.now());
     if (item.grade === 'top-gold' || item.grade === 'prime') {
       beep(960); setTimeout(() => beep(1200), 150);
-      setTimeout(() => say(`${item.grade.includes('顶级') ? '顶级金狗' : '优质新币'} ${item.symbol} ${item.chain}`), 400);
+      setTimeout(() => say(`${item.grade.includes('顶级') ? '顶级金狗' : '优质币种'} ${item.symbol} ${item.chain}`), 400);
     }
   }
   return row;
@@ -506,9 +512,9 @@ function renderAll(data, isFresh = false) {
 }
 
 async function updateLoop() {
-  const pairs = await fetchDexScreenerData();
-  if (!pairs) return;
-  renderAll(normalizePairs(pairs), true);
+  const coins = await fetchCoinGeckoData();
+  if (!coins) return;
+  renderAll(normalizeCoins(coins), true);
 }
 
 document.getElementById('clearBtn').addEventListener('click', () => {
@@ -524,9 +530,9 @@ document.addEventListener('click', initAudio, { once: true });
 updateLoop();
 setInterval(updateLoop, CONFIG.AUTO_REFRESH_SEC * 1000);
 
-console.log('%c===== 全链大金狗 · 官方API修正版 =====', 'color:#00d4ff;font-weight:bold;');
-console.log('接口地址：https://api.dexscreener.com/latest/dex/search?q=*');
-console.log('直接双击打开即可，自动尝试代理跨域');
+console.log('%c===== 全链大金狗 · CoinGecko直连版 =====', 'color:#00d4ff;font-weight:bold;');
+console.log('数据源：CoinGecko API (无需密钥 · 跨域友好)');
+console.log('刷新频率：每' + CONFIG.AUTO_REFRESH_SEC + '秒');
 </script>
 </body>
 </html>
