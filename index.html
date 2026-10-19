@@ -3,97 +3,89 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>土狗扫描台 · 头像优先版</title>
+<title>土狗扫描台 · 最终纯净版</title>
 <style>
 :root {
-  --bg-main: #050714;
-  --bg-card: #0c1029;
-  --bg-row: rgba(12, 16, 41, 0.6);
-  --accent-cyan: #00f0ff;
-  --accent-green: #00ff88;
-  --accent-yellow: #ffcc00;
-  --accent-red: #ff4455;
-  --accent-purple: #9966ff;
+  --bg-main: #0a0e27;
+  --bg-card: #101636;
+  --bg-row: rgba(16, 22, 54, 0.6);
+  --accent-cyan: #00d4ff;
+  --ok: #00e080;
+  --warn: #ffcc00;
+  --danger: #ff4455;
   --text-primary: #e6f0ff;
   --text-secondary: #7a8ab8;
-  --line-grad: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
-  --radius: 16px;
   --avatar-size: 48px;
+  --radius: 12px;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
 body {
-  background: radial-gradient(circle at top left, #0f1535, #050714 60%);
+  background: radial-gradient(circle at top left, #141d42, #0a0e27 60%);
   color: var(--text-primary);
   min-height: 100vh;
-  padding: 24px;
+  padding: 20px;
 }
-.container { max-width: 1200px; margin: 0 auto; }
+.container { max-width: 1100px; margin: 0 auto; }
 
-/* === 顶部 === */
 .top-bar {
   display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
+  margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
 }
-h1 { font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
-h1 span { font-size: 0.85rem; color: var(--text-secondary); font-weight: 400; }
-.ctrl-group { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+h1 { font-size: 1.3rem; display: flex; align-items: center; gap: 8px; }
+.ctrl-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .btn {
-  background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.25);
-  color: var(--accent-cyan); padding: 9px 16px; border-radius: 10px;
-  cursor: pointer; transition: all 0.3s ease; font-size: 0.9rem;
+  background: rgba(0, 212, 255, 0.08); border: 1px solid rgba(0, 212, 255, 0.2);
+  color: var(--accent-cyan); padding: 8px 14px; border-radius: 8px;
+  cursor: pointer; transition: 0.25s; font-size: 0.85rem;
 }
-.btn:hover { background: rgba(0, 240, 255, 0.15); border-color: var(--accent-cyan); }
-.sound-label { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer; }
-.switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+.btn:hover { background: rgba(0, 212, 255, 0.15); }
+.sound-label { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; cursor: pointer; }
+.switch { position: relative; display: inline-block; width: 40px; height: 22px; }
 .switch input { opacity: 0; width: 0; height: 0; }
 .slider {
-  position: absolute; cursor: pointer; inset: 0; background: #1e2548; border-radius: 24px; transition: 0.3s;
+  position: absolute; inset: 0; background: #1e2548; border-radius: 22px; transition: 0.3s;
 }
 .slider:before {
-  content: ""; position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px;
+  content: ""; position: absolute; height: 16px; width: 16px; left: 3px; bottom: 3px;
   background: white; border-radius: 50%; transition: 0.3s;
 }
-input:checked + .slider { background: var(--accent-green); }
-input:checked + .slider:before { transform: translateX(20px); }
+input:checked + .slider { background: var(--ok); }
+input:checked + .slider:before { transform: translateX(18px); }
 
-/* === 状态横幅 === */
 .banner {
-  background: rgba(0, 240, 255, 0.06); border: 1px solid rgba(0, 240, 255, 0.18);
-  border-radius: var(--radius); padding: 14px 18px; margin-bottom: 20px;
-  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
-  font-size: 0.9rem;
+  background: rgba(0, 212, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.15);
+  border-radius: var(--radius); padding: 12px 16px; margin-bottom: 16px;
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
+  font-size: 0.85rem;
 }
 .banner strong { color: var(--accent-cyan); }
 
-/* === 表头 === */
 .table-header {
   display: grid;
-  grid-template-columns: 64px 120px 1fr 130px 100px 140px;
-  gap: 12px; padding: 10px 14px; color: var(--text-secondary); font-size: 0.8rem;
-  border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 8px;
+  grid-template-columns: 56px 110px 1fr 110px 110px 130px;
+  gap: 10px; padding: 8px 12px; color: var(--text-secondary); font-size: 0.75rem;
+  border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 6px;
 }
 
-/* === 主行 · 头像优先 === */
 .row {
   display: grid;
-  grid-template-columns: 64px 120px 1fr 130px 100px 140px;
-  gap: 12px; padding: 14px; margin-bottom: 10px;
+  grid-template-columns: 56px 110px 1fr 110px 110px 130px;
+  gap: 10px; padding: 12px; margin-bottom: 8px;
   background: var(--bg-row); border-radius: var(--radius); align-items: center;
   position: relative; overflow: hidden;
-  opacity: 0; transform: translateX(30px); transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  opacity: 0; transform: translateX(20px); transition: all 0.4s ease;
   border: 1px solid transparent;
 }
 .row.visible { opacity: 1; transform: translateX(0); }
-.row:hover { background: rgba(18, 24, 60, 0.8); border-color: rgba(255,255,255,0.08); }
+.row:hover { background: rgba(20, 28, 68, 0.8); border-color: rgba(255,255,255,0.06); }
 
-/* 流光入场线 */
+/* 流光入场 */
 .row::before {
   content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.12), transparent);
-  transition: left 0s;
+  background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.1), transparent);
 }
-.row.new-animate::before {
-  left: 100%; transition: left 0.9s cubic-bezier(0.2, 1, 0.3, 1);
+.row.new-in::before {
+  left: 100%; transition: left 0.7s ease;
 }
 
 /* 头像区 */
@@ -101,85 +93,109 @@ input:checked + .slider:before { transform: translateX(20px); }
 .avatar {
   width: var(--avatar-size); height: var(--avatar-size); border-radius: 50%;
   object-fit: cover; background: #1e2548; border: 2px solid rgba(255,255,255,0.1);
-  transition: all 0.4s ease;
+  transition: transform 0.3s ease;
 }
-/* 头像脉冲光晕 */
 .avatar-ring {
   position: absolute; inset: -4px; border-radius: 50%; border: 2px solid transparent;
-  opacity: 0; transform: scale(0.8); transition: all 0.5s ease;
+  opacity: 0; transition: all 0.4s ease;
 }
-.row.status-ok .avatar-ring { border-color: var(--accent-green); animation: pulseGreen 2s infinite; opacity: 1; transform: scale(1); }
-.row.status-warn .avatar-ring { border-color: var(--accent-yellow); animation: pulseWarn 2.5s infinite; opacity: 1; transform: scale(1); }
-.row.status-danger .avatar-ring { border-color: var(--accent-red); animation: pulseDanger 3s infinite; opacity: 1; transform: scale(1); }
-.row.resonance-strong .avatar-ring { border-width: 3px; animation: pulseStrong 1.2s infinite; }
 
-@keyframes pulseGreen {
-  0% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.4); }
-  70% { box-shadow: 0 0 0 10px rgba(0, 255, 136, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); }
+/* ========== 三级呼吸动效 ========== */
+/* 普通可进 —— 标准呼吸 */
+.row.ok .avatar-ring {
+  border-color: var(--ok); opacity: 1;
+  animation: pulseNormal 2.2s infinite;
 }
-@keyframes pulseWarn {
-  0% { box-shadow: 0 0 0 0 rgba(255, 204, 0, 0.35); }
-  70% { box-shadow: 0 0 0 8px rgba(255, 204, 0, 0); }
+/* 共振 —— 加强呼吸 */
+.row.resonance .avatar-ring {
+  border-color: var(--accent-cyan); border-width: 3px; opacity: 1;
+  animation: pulseStrong 1.6s infinite;
+}
+.row.resonance .avatar {
+  transform: scale(1.05);
+}
+/* 强共振 —— 高亮+放大+高频呼吸 */
+.row.strong-res .avatar-ring {
+  border-color: var(--accent-cyan); border-width: 3px; opacity: 1;
+  animation: pulseBright 1.2s infinite;
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.35);
+}
+.row.strong-res .avatar {
+  transform: scale(1.1);
+}
+/* 观察 —— 柔和慢呼吸 */
+.row.warn .avatar-ring {
+  border-color: var(--warn); opacity: 1;
+  animation: pulseSlow 3s infinite;
+}
+/* 回避 —— 静态边框，不呼吸不抢 */
+.row.danger .avatar-ring {
+  border-color: var(--danger); opacity: 0.7;
+  animation: none;
+}
+
+@keyframes pulseNormal {
+  0% { box-shadow: 0 0 0 0 rgba(0, 224, 128, 0.4); }
+  70% { box-shadow: 0 0 0 8px rgba(0, 224, 128, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 224, 128, 0); }
+}
+@keyframes pulseSlow {
+  0% { box-shadow: 0 0 0 0 rgba(255, 204, 0, 0.25); }
+  70% { box-shadow: 0 0 0 6px rgba(255, 204, 0, 0); }
   100% { box-shadow: 0 0 0 0 rgba(255, 204, 0, 0); }
 }
-@keyframes pulseDanger {
-  0% { box-shadow: 0 0 0 0 rgba(255, 68, 85, 0.35); }
-  70% { box-shadow: 0 0 0 8px rgba(255, 68, 85, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(255, 68, 85, 0); }
-}
 @keyframes pulseStrong {
-  0% { box-shadow: 0 0 0 0 rgba(0, 240, 255, 0.5); }
-  60% { box-shadow: 0 0 0 12px rgba(0, 240, 255, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(0, 240, 255, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.45); }
+  70% { box-shadow: 0 0 0 10px rgba(0, 212, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0); }
+}
+@keyframes pulseBright {
+  0% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.6); }
+  50% { box-shadow: 0 0 0 14px rgba(0, 212, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0); }
 }
 
-/* 币种名：默认精简hover才展开 */
-.coin-short { font-weight: 700; font-size: 1.1rem; }
-.coin-full { font-size: 0.75rem; color: var(--text-secondary); opacity: 0; height: 0; overflow: hidden; transition: all 0.3s ease; }
+.coin-name { font-weight: 600; font-size: 1rem; }
+.coin-full { font-size: 0.7rem; color: var(--text-secondary); opacity: 0; height: 0; overflow: hidden; transition: all 0.25s ease; }
 .row:hover .coin-full { opacity: 1; height: auto; margin-top: 2px; }
-.addr { font-family: monospace; font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px; }
+.addr { font-family: monospace; font-size: 0.75rem; color: var(--text-secondary); margin-top: 3px; }
 
-/* 数值 */
-.market-cap { font-family: monospace; font-size: 1.1rem; font-weight: 600; }
-.market-cap.up { color: var(--accent-green); }
-.market-cap.down { color: var(--accent-red); }
+.cap { font-family: monospace; font-size: 1rem; font-weight: 500; }
+.cap.up { color: var(--ok); }
+.cap.down { color: var(--danger); }
 
-/* 状态标签 */
 .status-tag {
-  display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer;
-  transition: all 0.3s ease;
+  display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; border-radius: 16px;
+  font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: 0.25s;
 }
-.status-tag.ok { background: rgba(0, 255, 136, 0.1); color: var(--accent-green); border: 1px solid rgba(0, 255, 136, 0.25); }
-.status-tag.warn { background: rgba(255, 204, 0, 0.08); color: var(--accent-yellow); border: 1px solid rgba(255, 204, 0, 0.2); }
-.status-tag.danger { background: rgba(255, 68, 85, 0.1); color: var(--accent-red); border: 1px solid rgba(255, 68, 85, 0.2); }
-.status-tag strong { font-size: 0.9rem; }
-.res-badge { font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; background: rgba(0, 240, 255, 0.15); color: var(--accent-cyan); margin-left: 6px; }
+.status-tag.ok { background: rgba(0, 224, 128, 0.1); color: var(--ok); border: 1px solid rgba(0, 224, 128, 0.2); }
+.status-tag.warn { background: rgba(255, 204, 0, 0.08); color: var(--warn); border: 1px solid rgba(255, 204, 0, 0.18); }
+.status-tag.danger { background: rgba(255, 68, 85, 0.1); color: var(--danger); border: 1px solid rgba(255, 68, 85, 0.2); }
+.res-badge { font-size: 0.7rem; padding: 2px 6px; border-radius: 8px; background: rgba(0, 212, 255, 0.12); color: var(--accent-cyan); margin-left: 4px; }
+.res-badge.strong { background: rgba(0, 212, 255, 0.2); box-shadow: 0 0 6px rgba(0, 212, 255, 0.3); }
 
-/* 详情展开 */
 .detail-row {
-  grid-column: 1 / -1; background: rgba(8, 12, 32, 0.7); border-radius: 12px; margin-top: 10px; padding: 16px;
-  display: none; font-size: 0.9rem; line-height: 1.8;
+  grid-column: 1 / -1; background: rgba(8, 12, 32, 0.7); border-radius: 10px; margin-top: 8px; padding: 14px;
+  display: none; font-size: 0.85rem; line-height: 1.7;
 }
-.row.expanded .detail-row { display: block; animation: fadeIn 0.3s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+.row.expanded .detail-row { display: block; animation: fadeIn 0.25s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
 
-/* 响应式 */
-@media (max-width: 900px) {
-  .table-header, .row { grid-template-columns: 64px 100px 1fr 110px 90px; }
+@media (max-width: 850px) {
+  .table-header, .row { grid-template-columns: 56px 100px 1fr 100px 100px; }
   .table-header span:nth-child(6), .row > div:nth-child(6) { display: none; }
 }
-@media (max-width: 600px) {
-  .table-header, .row { grid-template-columns: 64px 100px 1fr 110px; }
+@media (max-width: 550px) {
+  .table-header, .row { grid-template-columns: 56px 100px 1fr 100px; }
   .table-header span:nth-child(5), .row > div:nth-child(5) { display: none; }
-  :root { --avatar-size: 40px; }
+  :root { --avatar-size: 42px; }
 }
 </style>
 </head>
 <body>
 <div class="container">
   <div class="top-bar">
-    <h1>🚀 土狗扫描台 <span>头像优先 · 实时捕捉</span></h1>
+    <h1>🚀 土狗扫描台</h1>
     <div class="ctrl-group">
       <label class="sound-label">
         🔊 声音提醒
@@ -188,7 +204,6 @@ input:checked + .slider:before { transform: translateX(20px); }
           <span class="slider"></span>
         </label>
       </label>
-      <button class="btn" id="simBtn">模拟新币</button>
       <button class="btn" id="clearBtn">清提醒</button>
     </div>
   </div>
@@ -204,14 +219,14 @@ input:checked + .slider:before { transform: translateX(20px); }
     <span>合约地址</span>
     <span>市值</span>
     <span>状态</span>
-    <span>信号/共振</span>
+    <span>信号</span>
   </div>
 
   <div id="listContainer"></div>
 </div>
 
 <script>
-// ========== 配置区 ==========
+// ========== 全部配置与策略完整保留 ==========
 const CONFIG = {
   SOUND_ENABLED: true,
   POOL_RATIO_OK: 45,
@@ -219,205 +234,238 @@ const CONFIG = {
   RESONANCE_OK: 2,
   RESONANCE_STRONG: 3,
   NOTIFY_COOLDOWN: 3600000,
-  HIGHLIGHT_DURATION: 6000,
-  TAKE_PROFIT_1: 50, TAKE_PROFIT_1_RATIO: 0.25,
-  TAKE_PROFIT_2: 100, TAKE_PROFIT_2_RATIO: 0.5,
-  STOP_LOSS: -15, MAX_POSITION: 50, MAX_PARALLEL: 3
+  HIGHLIGHT_DURATION: 5000,
+  TAKE_PROFIT_1: 50,
+  TP1_RATIO: 0.25,
+  TAKE_PROFIT_2: 100,
+  TP2_RATIO: 0.5,
+  STOP_LOSS: -15,
+  MAX_POSITION: 50,
+  MAX_COINS: 3
 };
 
-const notified = new Map();
-const synth = window.speechSynthesis;
-let audioCtx = null;
-
-// 头像库 —— 主流币直接用公开图标，新币填对应头像链接即可
+// 头像库 —— 可继续添加
 const AVATAR_LIBRARY = {
   BTC: 'https://assets.coingecko.com/coins/images/1/small/bitcoin.png',
   ETH: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png',
   SOL: 'https://assets.coingecko.com/coins/images/4128/small/solana.png',
   BNB: 'https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png',
   USDT: 'https://assets.coingecko.com/coins/images/325/small/Tether.png',
-  DEFAULT: 'https://picsum.photos/id/237/100/100' // 临时兜底，换成你的土狗默认图
+  PEPE: 'https://assets.coingecko.com/coins/images/29851/small/pepe.png',
+  WIF: 'https://assets.coingecko.com/coins/images/33697/small/wif.png',
+  BONK: 'https://assets.coingecko.com/coins/images/30868/small/bonk.png',
+  SHIB: 'https://assets.coingecko.com/coins/images/11938/small/shib.png',
+  DOGE: 'https://assets.coingecko.com/coins/images/5/small/dogecoin.png',
+  DEFAULT: 'https://cdn-icons-png.flaticon.com/512/1046/1046754.png'
 };
 
+const notified = new Map();
+const synth = window.speechSynthesis;
+let audioCtx = null;
+let coinList = [];
+
 // ========== 音频系统 ==========
-function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-function playTone(freq=880, dur=0.2, type='sine', vol=0.22) {
+function initAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+function playTone(freq = 880, dur = 0.2) {
   if (!CONFIG.SOUND_ENABLED || !audioCtx) return;
   const o = audioCtx.createOscillator(), g = audioCtx.createGain();
   o.connect(g); g.connect(audioCtx.destination);
-  o.frequency.value = freq; o.type = type;
+  o.frequency.value = freq;
   g.gain.setValueAtTime(0, audioCtx.currentTime);
-  g.gain.linearRampToValueAtTime(vol, audioCtx.currentTime+0.03);
-  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+dur);
-  o.start(audioCtx.currentTime); o.stop(audioCtx.currentTime+dur);
+  g.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 0.03);
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+  o.start(audioCtx.currentTime);
+  o.stop(audioCtx.currentTime + dur);
 }
-function speak(text, prio=false) {
-  if (!CONFIG.SOUND_ENABLED || (!prio && synth.speaking)) return;
+function speak(text) {
+  if (!CONFIG.SOUND_ENABLED || synth.speaking) return;
   synth.cancel();
   const u = new SpeechSynthesisUtterance(text);
   u.lang = 'zh-CN'; u.volume = 0.7; u.rate = 1.05;
   synth.speak(u);
 }
 
-// ========== 提醒入口 ==========
+// ========== 提醒系统 ==========
 function notifyItem(item) {
   const now = Date.now();
   if (notified.has(item.id) && now - notified.get(item.id) < CONFIG.NOTIFY_COOLDOWN) return;
   notified.set(item.id, now);
 
   if (item.sourceCount >= CONFIG.RESONANCE_STRONG) {
-    playTone(960, 0.2); setTimeout(()=>playTone(1200, 0.15), 150);
-    setTimeout(()=>speak(`强共振信号，${item.symbol}，请查看`), 450);
+    playTone(960); setTimeout(() => playTone(1200), 150);
+    setTimeout(() => speak(`强共振信号，${item.symbol}`), 400);
   } else if (item.sourceCount >= CONFIG.RESONANCE_OK) {
-    playTone(920, 0.25);
-    setTimeout(()=>speak(`发现新币种，${item.symbol}，共振信号`), 300);
+    playTone(920);
+    setTimeout(() => speak(`新币${item.symbol}，共振信号`), 300);
   } else if (item.status === 'ok') {
-    playTone(880, 0.25);
-    setTimeout(()=>speak(`新币种${item.symbol}，可关注`), 300);
+    playTone(880);
+    setTimeout(() => speak(`新币${item.symbol}，可关注`), 300);
   } else if (item.status === 'warn') {
-    playTone(620, 0.2);
-    setTimeout(()=>speak(`${item.symbol}异动，建议观察`), 250);
+    playTone(620);
+    setTimeout(() => speak(`${item.symbol}，观察走势`), 250);
   } else {
-    playTone(380, 0.3, 'triangle');
-    setTimeout(()=>speak(`注意，${item.symbol}存在风险`), 250);
+    playTone(380, 0.3);
+    setTimeout(() => speak(`${item.symbol}，风险回避`), 250);
   }
 }
 
-// ========== 风控判定 ==========
-function evaluate(item) {
-  const { poolRatio, bsRatio, isPixi, isHighRise, hasValidNarrative, sourceCount=1 } = item;
-  const c = {
+// ========== 风控判定系统 ==========
+function evaluateCoin(item) {
+  const { poolRatio, bsRatio, isPixi, isHighRise, hasValidNarrative, sourceCount = 1 } = item;
+  const checks = {
     pool: poolRatio >= CONFIG.POOL_RATIO_OK,
     bs: bsRatio >= CONFIG.BS_RATIO_OK,
     notPixi: !isPixi,
     notHigh: !isHighRise,
     narrative: hasValidNarrative !== false
   };
-  const pass = Object.values(c).filter(Boolean).length;
-  const resOk = sourceCount >= CONFIG.RESONANCE_OK;
-  let status, label, tagClass;
+  const passCount = Object.values(checks).filter(Boolean).length;
+  const isResonance = sourceCount >= CONFIG.RESONANCE_OK;
+  const isStrongRes = sourceCount >= CONFIG.RESONANCE_STRONG;
 
-  if (pass === 5 || (pass >= 4 && resOk)) {
-    status = 'ok'; label = resOk ? '🟢 共振可进' : '🟢 可进场'; tagClass = 'ok';
-  } else if (pass >= 3 && poolRatio >= 20) {
+  let status, label, tagClass;
+  if (passCount === 5 || (passCount >= 4 && isResonance)) {
+    status = 'ok'; label = '🟢 共振可进'; tagClass = 'ok';
+  } else if (passCount >= 3 && poolRatio >= 20) {
     status = 'warn'; label = '⏳ 观察'; tagClass = 'warn';
   } else {
     status = 'danger'; label = '🚫 回避'; tagClass = 'danger';
   }
-  return { status, label, tagClass, checks: c, pass, resOk };
+
+  return { status, label, tagClass, checks, passCount, isResonance, isStrongRes };
 }
 
 // ========== 工具函数 ==========
-function formatNum(n) {
-  if (n >= 1e6) return (n/1e6).toFixed(2)+'M';
-  if (n >= 1e3) return (n/1e3).toFixed(2)+'K';
+function formatNumber(n) {
+  if (n >= 1e6) return (n / 1e6).toFixed(2) + 'M';
+  if (n >= 1e3) return (n / 1e3).toFixed(2) + 'K';
   return n.toFixed(2);
 }
-function formatAddr(s) { return s ? s.slice(0, 6)+'…'+s.slice(-4) : ''; }
-function getAvatar(sym) {
-  return AVATAR_LIBRARY[sym.toUpperCase()] || AVATAR_LIBRARY.DEFAULT;
+function formatAddress(s) {
+  if (!s) return '';
+  return s.slice(0, 6) + '…' + s.slice(-4);
 }
-
-// 数字滚动
-function animateNum(el, from, to) {
-  const dur = 800, startT = performance.now();
-  const step = t => {
-    const p = Math.min(1, (t-startT)/dur);
-    el.textContent = '$'+formatNum(from + (to-from)*(1-Math.pow(1-p,3)));
-    if (p<1) requestAnimationFrame(step);
+function getAvatar(item) {
+  if (item.avatarUrl) return item.avatarUrl;
+  return AVATAR_LIBRARY[item.symbol.toUpperCase()] || AVATAR_LIBRARY.DEFAULT;
+}
+function animateNumber(el, from, to) {
+  const dur = 800, start = performance.now();
+  const step = now => {
+    const p = Math.min(1, (now - start) / dur);
+    el.textContent = '$' + formatNumber(from + (to - from) * (1 - Math.pow(1 - p, 3)));
+    if (p < 1) requestAnimationFrame(step);
   };
   requestAnimationFrame(step);
 }
 
 // ========== 渲染行 ==========
-function createRow(item, isNew=false) {
-  const evalResult = evaluate(item);
+function createRow(item, isNew = false) {
+  const evalResult = evaluateCoin(item);
   Object.assign(item, evalResult);
 
   const row = document.createElement('div');
-  row.className = `row status-${item.tagClass}`;
-  if (item.sourceCount >= CONFIG.RESONANCE_STRONG) row.classList.add('resonance-strong');
-  if (isNew) row.classList.add('new-animate');
+  row.className = `row ${item.tagClass}`;
+  if (item.isResonance) row.classList.add('resonance');
+  if (item.isStrongRes) row.classList.add('strong-res');
+  if (isNew) row.classList.add('new-in');
   row.dataset.id = item.id;
 
   const capClass = item.priceChange > 5 ? 'up' : item.priceChange < -5 ? 'down' : '';
 
-  // 共振徽章
-  let resBadge = '';
-  if (item.sourceCount >= CONFIG.RESONANCE_STRONG) resBadge = '<span class="res-badge">🔥强共振</span>';
-  else if (item.sourceCount >= CONFIG.RESONANCE_OK) resBadge = `<span class="res-badge">共振${item.sourceCount}源</span>`;
-  else resBadge = '<span style="color:var(--text-secondary);font-size:0.8rem">单源信号</span>';
+  // 信号徽章
+  let signalBadge = '';
+  if (item.isStrongRes) {
+    signalBadge = '<span class="res-badge strong">🔥 强共振</span>';
+  } else if (item.isResonance) {
+    signalBadge = `<span class="res-badge">共${item.sourceCount}源</span>`;
+  } else {
+    signalBadge = '<span style="color:var(--text-secondary);font-size:0.75rem">单源信号</span>';
+  }
 
   row.innerHTML = `
     <div class="avatar-wrap">
       <div class="avatar-ring"></div>
-      <img class="avatar" src="${getAvatar(item.symbol)}" alt="${item.symbol}" loading="lazy">
+      <img class="avatar" src="${getAvatar(item)}" alt="${item.symbol}" loading="lazy">
     </div>
     <div>
-      <div class="coin-short">${item.symbol}<span style="color:var(--text-secondary);font-size:0.8rem;margin-left:4px">${item.chain}</span></div>
+      <div class="coin-name">${item.symbol} <span style="color:var(--text-secondary);font-size:0.8rem">${item.chain}</span></div>
       <div class="coin-full">${item.fullName || item.symbol} · 点击展开详情</div>
-      <div class="addr" title="${item.address}">${formatAddr(item.address)}</div>
+      <div class="addr" title="${item.address}">${formatAddress(item.address)}</div>
     </div>
     <div></div>
-    <div class="market-cap ${capClass}" data-val="${item.marketCap}">$0</div>
+    <div class="cap ${capClass}" data-val="${item.marketCap}">$0</div>
     <div>
       <div class="status-tag ${item.tagClass}" title="点击展开详情">
         ${item.label} ▾
       </div>
       <div class="detail-row">
-        <div style="margin-bottom:10px"><strong>判定依据：</strong>${item.label.replace(/[🟢⏳🚫]/g,'').trim()}</div>
+        <div style="margin-bottom:10px"><strong>判定依据：</strong>${item.label.replace(/[🟢⏳🚫]/g, '').trim()}</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
-          <div>池比：${item.poolRatio}% ${item.checks.pool?'✅':'❌'}</div>
+          <div>池资金：${item.poolRatio}% ${item.checks.pool?'✅':'❌'}</div>
           <div>买卖比：${item.bsRatio} ${item.checks.bs?'✅':'❌'}</div>
           <div>非貔貅：${item.checks.notPixi?'✅':'❌'}</div>
           <div>非高位：${item.checks.notHigh?'✅':'❌'}</div>
-          <div>叙事/社区：${item.checks.narrative?'✅':'❌'}</div>
-          <div>信号来源：${item.sourceCount||1} 个独立源</div>
+          <div>项目背景：${item.checks.narrative?'✅':'❌'}</div>
+          <div>信号来源：${item.sourceCount||1} 个</div>
         </div>
         ${item.remark?`<div style="margin-bottom:10px;color:var(--accent-cyan)">💡 ${item.remark}</div>`:''}
-        <div style="background:rgba(0,240,255,0.05);padding:12px;border-radius:10px;margin-bottom:10px">
-          <div style="font-weight:600;margin-bottom:6px">🎯 止盈止损</div>
-          <div>上涨 +${CONFIG.TAKE_PROFIT_1}% → 卖出 ${CONFIG.TAKE_PROFIT_1_RATIO*100}%</div>
-          <div>上涨 +${CONFIG.TAKE_PROFIT_2}% → 卖出 ${CONFIG.TAKE_PROFIT_2_RATIO*100}%</div>
-          <div>下跌 ${CONFIG.STOP_LOSS}% → 全部止损</div>
-          <div style="margin-top:6px;color:var(--accent-cyan)">建议单笔 ≤$${CONFIG.MAX_POSITION}，同时不超过 ${CONFIG.MAX_PARALLEL} 笔</div>
+        <div style="background:rgba(0,212,255,0.05);padding:12px;border-radius:10px;margin-bottom:10px">
+          <div style="font-weight:600;margin-bottom:6px">🎯 止盈止损策略</div>
+          <div>上涨 +${CONFIG.TAKE_PROFIT_1}% → 卖出 ${CONFIG.TP1_RATIO*100}% 仓位</div>
+          <div>上涨 +${CONFIG.TAKE_PROFIT_2}% → 卖出 ${CONFIG.TP2_RATIO*100}% 仓位</div>
+          <div>下跌 ${CONFIG.STOP_LOSS}% → 全部止损离场</div>
+          <div style="margin-top:6px;color:var(--accent-cyan)">建议单笔不超过 $${CONFIG.MAX_POSITION}，同时持有不超过 ${CONFIG.MAX_COINS} 个币种</div>
         </div>
         <div>
           🔗 快速核验：
           ${item.explorer?`<a href="${item.explorer}" target="_blank" style="color:var(--accent-cyan);margin-right:12px">链上合约›</a>`:''}
-          ${item.website?`<a href="${item.website}" target="_blank" style="color:var(--accent-cyan)">官网›</a>`:''}
+          ${item.website?`<a href="${item.website}" target="_blank" style="color:var(--accent-cyan)">项目官网›</a>`:''}
         </div>
       </div>
     </div>
-    <div>${resBadge}</div>
+    <div>${signalBadge}</div>
   `;
 
   // 入场动画时序
   setTimeout(() => row.classList.add('visible'), 10);
   if (isNew) {
-    setTimeout(() => row.classList.remove('new-animate'), CONFIG.HIGHLIGHT_DURATION);
+    setTimeout(() => row.classList.remove('new-in'), CONFIG.HIGHLIGHT_DURATION);
   }
 
   // 数字滚动
   requestAnimationFrame(() => {
-    const capEl = row.querySelector('.market-cap');
-    animateNum(capEl, 0, item.marketCap);
+    const capEl = row.querySelector('.cap');
+    animateNumber(capEl, 0, item.marketCap);
   });
 
   // 展开详情
-  row.querySelector('.status-tag').addEventListener('click', () => row.classList.toggle('expanded'));
+  row.querySelector('.status-tag').addEventListener('click', () => {
+    row.classList.toggle('expanded');
+  });
 
-  // 提醒
+  // 新币提醒
   if (isNew) notifyItem(item);
 
   return row;
 }
 
-// ========== 数据与渲染 ==========
+// ========== 渲染列表 ==========
 const listContainer = document.getElementById('listContainer');
-let coinList = [];
 
-// 示例数据 —— 对接真实接口替换这部分即可
+function renderList(data, isNew = false) {
+  listContainer.innerHTML = '';
+  data.forEach(item => {
+    const isNewCoin = isNew && !notified.has(item.id);
+    listContainer.appendChild(createRow(item, isNewCoin));
+  });
+  document.getElementById('watchCount').textContent = data.length;
+  coinList = [...data];
+}
+
+// ========== 示例数据 —— 替换为真实接口即可 ==========
 const sampleData = [
   {
     id: 'btc-001', symbol: 'BTC', fullName: 'Bitcoin', chain: 'BSC',
@@ -432,51 +480,36 @@ const sampleData = [
     address: '0x33bb937ce41234567890abcdef1234568888',
     marketCap: 5320, poolRatio: 32, bsRatio: 1.2, priceChange: 3.1,
     isPixi: false, isHighRise: false, hasValidNarrative: true,
-    sourceCount: 1, remark: '池比偏低，等资金跟进',
+    sourceCount: 1, remark: '池资金偏低，观察资金变化',
     explorer: 'https://solscan.io/'
   },
   {
-    id: 'unknown-003', symbol: 'DOG', fullName: 'Unknown Meme', chain: 'BSC',
+    id: 'pepe-003', symbol: 'PEPE', fullName: 'Pepe', chain: 'SOL',
     address: '0x44cc048df51234567890abcdef1234569999',
+    marketCap: 11320, poolRatio: 58, bsRatio: 2.3, priceChange: 12.5,
+    isPixi: false, isHighRise: false, hasValidNarrative: true,
+    sourceCount: 3, remark: '🔥 强共振信号，多源同时捕获',
+    explorer: 'https://solscan.io/'
+  },
+  {
+    id: 'shib-004', symbol: 'SHIB', fullName: 'Shiba Inu', chain: 'BSC',
+    address: '0x55dd159ef61234567890abcdef1234560000',
+    marketCap: 16600, poolRatio: 48, bsRatio: 1.8, priceChange: -3.2,
+    isPixi: false, isHighRise: false, hasValidNarrative: true,
+    sourceCount: 2, remark: '共振信号，注意回调风险',
+    explorer: 'https://bscscan.com/'
+  },
+  {
+    id: 'dog-005', symbol: 'DOG', fullName: 'Unknown Meme', chain: 'BSC',
+    address: '0x66ee260fa71234567890abcdef1234561111',
     marketCap: 3000, poolRatio: 8, bsRatio: 0.7, priceChange: -12.5,
     isPixi: true, isHighRise: false, hasValidNarrative: false,
-    sourceCount: 0, remark: '⚠️ 貔貅合约，禁止卖出，远离！',
+    sourceCount: 0, remark: '⚠️ 检测到貔貅合约，禁止买入',
     explorer: 'https://bscscan.com/'
   }
 ];
 
-function renderList(data, isNew=false) {
-  listContainer.innerHTML = '';
-  data.forEach(item => {
-    const isNewCoin = isNew && !notified.has(item.id);
-    listContainer.appendChild(createRow(item, isNewCoin));
-  });
-  document.getElementById('watchCount').textContent = data.length;
-}
-
-// 模拟新币
-document.getElementById('simBtn').addEventListener('click', () => {
-  const syms = ['PEPE','WIF','BONK','SHIB','FLOKI','NEW'+Math.floor(Math.random()*999)];
-  const sym = syms[Math.floor(Math.random()*syms.length)];
-  const srcCount = Math.random()>0.5 ? (Math.random()>0.5?3:2) : 1;
-  const newCoin = {
-    id: 'sim-'+Date.now(), symbol: sym, fullName: `${sym} Token`,
-    chain: Math.random()>0.5?'SOL':'BSC',
-    address: '0x'+Math.random().toString(16).slice(2,18)+'…'+Math.random().toString(16).slice(2,6),
-    marketCap: Math.floor(Math.random()*15000)+1000,
-    poolRatio: Math.floor(Math.random()*60)+15,
-    bsRatio: (Math.random()*2.5+0.5).toFixed(1)*1,
-    priceChange: Math.floor(Math.random()*40)-10,
-    isPixi: Math.random()<0.15,
-    isHighRise: Math.random()<0.1,
-    hasValidNarrative: Math.random()>0.2,
-    sourceCount: srcCount,
-    remark: srcCount>=2?'共振信号，重点关注':'新捕获，观察走势'
-  };
-  coinList.unshift(newCoin);
-  renderList(coinList, true);
-});
-
+// ========== 事件绑定 ==========
 document.getElementById('clearBtn').addEventListener('click', () => {
   notified.clear();
   alert('提醒记录已清除');
@@ -490,8 +523,16 @@ document.getElementById('soundSwitch').addEventListener('change', e => {
 document.addEventListener('click', initAudio, { once: true });
 
 // 初始渲染
-coinList = [...sampleData];
-renderList(coinList);
+renderList(sampleData);
+
+// ========== 对接真实数据说明 ==========
+/*
+  后续接入真实接口，只需做：
+  1. 调用接口拿到最新币种数组
+  2. 格式保持与 sampleData 一致
+  3. 调用 renderList(新数组, true) —— true=触发入场动效+提醒
+  4. 头像优先用接口返回的 avatarUrl 字段，没有则自动匹配头像库
+*/
 </script>
 </body>
 </html>
