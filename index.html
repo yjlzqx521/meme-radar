@@ -3,387 +3,385 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DOG HUNTER — 大金狗全链路监控系统</title>
+  <title>DOG HUNTER — 全配置增强版 · 实链监控</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Microsoft YaHei", sans-serif; }
     :root {
       --cyan: #00e5ff; --cyan-deep: #0099aa;
       --gold: #ffb800; --gold-deep: #cc9200;
       --green: #00d084; --red: #ff4d4f; --warn: #ff9500;
+      --purple: #9945ff; --blue: #4080ff; --orange: #ff7d00;
       --bg-dark: #01030a; --bg-card: rgba(10, 22, 50, 0.7);
-      --border-cyan: rgba(0, 229, 255, 0.25); --border-gold: rgba(255, 184, 0, 0.25);
+      --border-cyan: rgba(0, 229, 255, 0.25);
       --text-main: #e6f7ff; --text-sub: #7ab8d6; --text-weak: #4a7090;
       --blur: 12px;
-      --ok: linear-gradient(90deg, #00a86b, #00d084);
-      --danger: linear-gradient(90deg, #d63031, #ff4d4f);
-      --warngrad: linear-gradient(90deg, #cc8800, #ffb800);
     }
     html,body { width:100%; height:100%; overflow:hidden; background:var(--bg-dark); color:var(--text-main); }
-    .bg-layer { position:fixed; inset:0; z-index:0; background:radial-gradient(circle at 20% 20%, rgba(0,229,255,0.08), transparent 45%), radial-gradient(circle at 80% 70%, rgba(255,184,0,0.06), transparent 45%), linear-gradient(135deg, #01030a, #050c20, #01030a); }
+    .bg-layer { position:fixed; inset:0; z-index:0; background:
+      radial-gradient(circle at 20% 20%, rgba(0,229,255,.08), transparent 45%),
+      radial-gradient(circle at 80% 70%, rgba(255,184,0,.06), transparent 45%),
+      linear-gradient(135deg, #01030a, #050c20, #01030a); }
 
-    /* 整体布局 */
-    .page { position:relative; z-index:1; width:100%; height:100%; padding:12px; display:grid; gap:12px;
+    .page { position:relative; z-index:1; width:100%; height:100%; padding:10px; display:grid; gap:10px;
       grid-template-columns: 260px 1fr 340px;
-      grid-template-rows: 60px 1fr 110px;
+      grid-template-rows: 60px auto auto 1fr 100px;
       grid-template-areas:
         "hd hd hd"
+        "cfg cfg cfg"
+        "launch launch launch"
         "lb main rb"
         "ft ft ft"; }
 
-    /* 通用组件 */
-    .card { border:1px solid var(--border-cyan); border-radius:10px; padding:16px; background:var(--bg-card); backdrop-filter:blur(var(--blur)); position:relative; overflow:hidden; }
-    .corner { position:absolute; width:12px; height:12px; border-color:var(--cyan); border-style:solid; opacity:.4; pointer-events:none; }
-    .corner.tl { top:0; left:0; border-width:1px 0 0 1px; }
-    .corner.tr { top:0; right:0; border-width:1px 1px 0 0; }
-    .corner.bl { bottom:0; left:0; border-width:0 0 1px 1px; }
-    .corner.br { bottom:0; right:0; border-width:0 1px 1px 0; }
-    .card-hd { display:flex; justify-content:space-between; align-items:center; padding-bottom:10px; margin-bottom:12px; border-bottom:1px solid rgba(0,229,255,.1); }
+    .card { border:1px solid var(--border-cyan); border-radius:10px; padding:14px; background:var(--bg-card); backdrop-filter:blur(var(--blur)); position:relative; overflow:hidden; }
+    .card-hd { display:flex; justify-content:space-between; align-items:center; padding-bottom:10px; margin-bottom:10px; border-bottom:1px solid rgba(0,229,255,.1); flex-wrap:wrap; gap:6px; }
     .card-tt { font-size:14px; color:var(--cyan); letter-spacing:1px; font-weight:600; display:flex; align-items:center; gap:6px; }
-    .tag { font-size:11px; padding:2px 8px; border-radius:12px; }
+    .tag { font-size:11px; padding:2px 8px; border-radius:12px; white-space:nowrap; }
     .tag.ok { background:rgba(0,208,132,.15); color:var(--green); border:1px solid rgba(0,208,132,.25); }
     .tag.warn { background:rgba(255,149,0,.15); color:var(--warn); border:1px solid rgba(255,149,0,.25); }
     .tag.danger { background:rgba(255,77,79,.15); color:var(--red); border:1px solid rgba(255,77,79,.25); }
-    .tag.cyan { background:rgba(0,229,255,.15); color:var(--cyan); border:1px solid rgba(0,229,255,.25); }
     .tag.gold { background:rgba(255,184,0,.15); color:var(--gold); border:1px solid rgba(255,184,0,.25); }
-    .grid-2 { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
-    .grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
-    .stat-box { padding:12px; border-radius:8px; background:rgba(0,229,255,.04); border:1px solid rgba(0,229,255,.08); text-align:center; }
-    .stat-label { font-size:12px; color:var(--text-sub); margin-bottom:4px; }
-    .stat-val { font-size:18px; font-weight:700; }
-    .bar-wrap { height:6px; background:rgba(0,229,255,.12); border-radius:3px; margin-top:6px; overflow:hidden; }
-    .bar { height:100%; border-radius:3px; transition:width .5s ease; }
-    .bar.cg { background:linear-gradient(90deg, var(--cyan), var(--gold)); }
-    .bar.g { background:linear-gradient(90deg, var(--gold-deep), var(--gold)); }
+    .tag.purple { background:rgba(153,69,255,.15); color:var(--purple); border:1px solid rgba(153,69,255,.25); }
+    .tag.blue { background:rgba(64,128,255,.15); color:var(--blue); border:1px solid rgba(64,128,255,.25); }
+    .tag.small { font-size:10px; padding:1px 6px; }
+
+    .cfg-area { grid-area:cfg; }
+    .cfg-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:10px; }
+    .cfg-item { display:flex; flex-direction:column; gap:4px; }
+    .cfg-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    label { font-size:12px; color:var(--text-sub); }
+    input,textarea,button {
+      background:rgba(0,0,0,.35); border:1px solid rgba(0,229,255,.2); border-radius:6px;
+      color:var(--text-main); padding:6px 10px; font-size:12px; outline:none;
+    }
+    input:focus,textarea:focus { border-color:var(--cyan); }
+    textarea { resize:vertical; min-height:40px; }
+    .btn { border:none; padding:7px 14px; cursor:pointer; font-weight:600; border-radius:6px; }
+    .btn-primary { background:linear-gradient(90deg,var(--cyan-deep),var(--cyan)); color:#000; }
+    .btn-red { background:linear-gradient(90deg,#aa2222,var(--red)); color:#fff; }
+    .btn-gold { background:linear-gradient(90deg,var(--gold-deep),var(--gold)); color:#000; }
+
+    .launch-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; }
+    .launch-card { border-radius:8px; padding:10px; background:rgba(0,0,0,.35); border-width:2px; border-style:solid; min-height:200px; }
+    .launch-card.four { border-color:var(--gold); background:linear-gradient(135deg, rgba(255,184,0,.12), rgba(20,15,0,.4)); }
+    .launch-card.pump { border-color:var(--purple); background:linear-gradient(135deg, rgba(153,69,255,.12), rgba(15,0,30,.4)); }
+    .launch-card.bonk { border-color:#00d0b6; background:linear-gradient(135deg, rgba(0,208,182,.12), rgba(0,15,20,.4)); }
+    .launch-card.flash { border-color:var(--blue); background:linear-gradient(135deg, rgba(64,128,255,.12), rgba(0,10,30,.4)); }
+    .launch-card.pons { border-color:var(--orange); background:linear-gradient(135deg, rgba(255,125,0,.12), rgba(20,10,0,.4)); }
+    .launch-card.ray { border-color:var(--green); background:linear-gradient(135deg, rgba(0,208,132,.12), rgba(0,15,10,.4)); }
+    .launch-hd { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+    .launch-name { font-size:13px; font-weight:700; }
+    .launch-count { font-size:11px; color:var(--text-sub); }
+    .launch-list { max-height:150px; overflow-y:auto; }
+    .launch-list::-webkit-scrollbar { width:3px; }
+    .launch-list::-webkit-scrollbar-thumb { background:rgba(255,255,255,.1); border-radius:2px; }
+    .launch-item { padding:6px 5px; border-radius:4px; margin-bottom:4px; background:rgba(255,255,255,.03); font-size:11px; transition:all .2s; cursor:pointer; border-left:2px solid transparent; }
+    .launch-item:hover { background:rgba(255,255,255,.08); }
+    .launch-item.new { animation:newPulse 1.5s infinite; border-left-color:var(--green); }
+    @keyframes newPulse {
+      0% { background:rgba(0,208,132,.12); }
+      50% { background:rgba(0,208,132,.04); }
+      100% { background:rgba(255,255,255,.03); }
+    }
+    .contract { font-size:9px; color:var(--text-weak); font-family:monospace; margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:100%; }
+    .btn-row { margin-top:4px; display:flex; gap:3px; flex-wrap:wrap; }
+    .btn-link { font-size:9px; padding:2px 5px; border-radius:3px; text-decoration:none; display:inline-block; cursor:pointer; border:none; }
+    .btn-gmgn { background:linear-gradient(90deg, #9945ff, #00d084); color:#fff; }
+    .btn-debot { background:linear-gradient(90deg, #0099aa, #00e5ff); color:#000; }
+    .btn-plat { background:rgba(255,255,255,.18); color:#fff; }
+    .btn-link:hover { transform:scale(1.05); }
+
     table { width:100%; border-collapse:collapse; font-size:13px; }
-    th { text-align:left; padding:10px 8px; color:var(--text-sub); font-weight:500; border-bottom:1px solid rgba(0,229,255,.1); }
-    td { padding:12px 8px; border-bottom:1px solid rgba(0,229,255,.06); vertical-align:middle; }
-    .flash { animation:flash 1s infinite alternate; }
-    @keyframes flash { from {opacity:.7;} to {opacity:1;} }
+    th { text-align:left; padding:10px 8px; color:var(--text-sub); font-weight:500; border-bottom:1px solid rgba(0,229,255,.1); white-space:nowrap; }
+    td { padding:10px 8px; border-bottom:1px solid rgba(0,229,255,.06); vertical-align:middle; }
     .scroll-list { max-height:260px; overflow-y:auto; }
     .scroll-list::-webkit-scrollbar { width:4px; }
     .scroll-list::-webkit-scrollbar-thumb { background:rgba(0,229,255,.2); border-radius:2px; }
 
-    /* 区块定位 */
-    .hd { grid-area:hd; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-cyan); padding:0 10px; }
+    .hd { grid-area:hd; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-cyan); padding:0 10px; flex-wrap:wrap; gap:8px; }
     .brand { display:flex; align-items:center; gap:10px; }
     .brand-icon { width:36px; height:36px; border-radius:6px; background:linear-gradient(135deg, var(--cyan), var(--gold)); display:flex; align-items:center; justify-content:center; font-weight:900; color:#000; }
-    .nav-tabs { display:flex; gap:6px; margin-left:20px; }
-    .tab { padding:8px 16px; cursor:pointer; border-bottom:2px solid transparent; color:var(--text-sub); font-size:14px; }
-    .tab:hover, .tab.active { color:var(--cyan); border-bottom-color:var(--cyan); }
-    .lb { grid-area:lb; display:flex; flex-direction:column; gap:12px; }
+    .chain-filters { display:flex; gap:6px; margin-left:20px; flex-wrap:wrap; }
+    .chain-tab { padding:6px 12px; cursor:pointer; border-radius:6px; border:1px solid transparent; color:var(--text-sub); font-size:13px; }
+    .chain-tab:hover, .chain-tab.active { border-color:var(--cyan); color:var(--cyan); background:rgba(0,229,255,.08); }
+    .chain-tab.main { border-color:var(--gold); color:var(--gold); background:rgba(255,184,0,.1); }
+    .launch-area { grid-area:launch; }
+    .lb { grid-area:lb; display:flex; flex-direction:column; gap:10px; }
     .menu-title { font-size:12px; color:var(--text-weak); padding:8px 14px 4px; text-transform:uppercase; letter-spacing:1px; }
     .menu-item { display:flex; align-items:center; gap:8px; padding:10px 14px; margin-bottom:3px; border-radius:6px; cursor:pointer; border-left:3px solid transparent; color:var(--text-sub); font-size:14px; transition:all .2s; }
     .menu-item:hover { background:rgba(0,229,255,.06); color:var(--cyan); }
     .menu-item.active { background:linear-gradient(90deg, rgba(255,184,0,.15), rgba(0,229,255,.05)); color:var(--gold); border-left-color:var(--gold); }
     .dot { width:8px; height:8px; border-radius:50%; border:1px solid currentColor; opacity:.6; }
     .menu-item.active .dot { background:var(--gold); opacity:1; box-shadow:0 0 6px var(--gold); }
-    .main { grid-area:main; display:flex; flex-direction:column; gap:12px; overflow:hidden; }
-    .rb { grid-area:rb; display:flex; flex-direction:column; gap:12px; overflow:hidden; }
-    .ft { grid-area:ft; display:flex; justify-content:center; gap:12px; border-top:1px solid var(--border-cyan); padding-top:10px; }
-    .mini { min-width:160px; padding:14px 16px; text-align:center; border-radius:8px; background:var(--bg-card); border:1px solid var(--border-cyan); }
+    .main { grid-area:main; display:flex; flex-direction:column; gap:10px; overflow:hidden; }
+    .rb { grid-area:rb; display:flex; flex-direction:column; gap:10px; overflow:hidden; }
+    .ft { grid-area:ft; display:flex; justify-content:center; gap:12px; border-top:1px solid var(--border-cyan); padding-top:10px; flex-wrap:wrap; }
+    .mini { min-width:140px; padding:14px 16px; text-align:center; border-radius:8px; background:var(--bg-card); border:1px solid var(--border-cyan); }
     .mini-lb { font-size:12px; color:var(--text-sub); margin-bottom:4px; }
     .mini-val { font-size:15px; font-weight:700; letter-spacing:.5px; }
+    .update-time { font-size:11px; color:var(--text-weak); }
+    .status-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:4px; }
+    .status-dot.ok { background:var(--green); box-shadow:0 0 4px var(--green); }
+    .hidden { display:none !important; }
+    .input-sm { max-width:100px; }
   </style>
 </head>
 <body>
   <div class="bg-layer"></div>
 
   <div class="page">
-    <!-- 顶部 -->
     <header class="hd">
       <div class="brand">
         <div class="brand-icon">🐶</div>
         <div>
           <div style="font-size:18px; font-weight:700;">DOG HUNTER</div>
-          <div style="font-size:11px; color:var(--text-sub);">大金狗全链路监控系统 · Meme/土狗专用台</div>
+          <div style="font-size:11px; color:var(--text-sub);">增强配置版 · 实链直连 · DexScreener</div>
         </div>
-        <nav class="nav-tabs">
-          <div class="tab active">📡 共振雷达</div>
-          <div class="tab">🔥 热门/新币</div>
-          <div class="tab">🛡️ 安全筛查</div>
-          <div class="tab">💰 钱包/资金</div>
-          <div class="tab">📊 毕业/二段</div>
-        </nav>
+        <div class="chain-filters">
+          <div class="chain-tab active" data-chain="all">全部链</div>
+          <div class="chain-tab main" data-chain="bsc">🔴 BSC主力</div>
+          <div class="chain-tab" data-chain="sol">SOL</div>
+          <div class="chain-tab" data-chain="base">BASE</div>
+        </div>
       </div>
-      <div style="display:flex; align-items:center; gap:20px;">
-        <span style="font-size:13px; color:var(--text-sub);">链：SOL · ETH · BSC · BASE</span>
-        <span style="font-size:13px;">更新：<span style="color:var(--green);">实时</span></span>
-        <button style="border:none; border-radius:6px; padding:8px 18px; background:linear-gradient(90deg,var(--cyan-deep),var(--cyan)); color:#000; font-weight:600; cursor:pointer;">+ 订阅异动</button>
+      <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+        <span id="connStatus" style="font-size:11px; color:var(--green);"><span class="status-dot ok"></span>API已连接</span>
+        <span class="update-time" id="lastUpdate">--:--:--</span>
+        <button id="refreshBtn" class="btn btn-primary">🔄 刷新数据</button>
+        <label style="font-size:11px; color:var(--text-sub); display:flex; align-items:center; gap:4px; margin:0;">
+          <input type="checkbox" id="autoRefresh" checked>自动刷新
+        </label>
       </div>
     </header>
 
-    <!-- 左侧：导航+专项筛查 -->
+    <section class="cfg-area card">
+      <div class="card-hd">
+        <span class="card-tt">⚙️ 筛选/刷新配置区 — 改完点「应用设置」立即生效</span>
+        <span style="font-size:11px; color:var(--text-sub);">空格或逗号分隔多个词 · 地址一行一个</span>
+      </div>
+      <div class="cfg-grid">
+        <div class="cfg-item">
+          <label>✅ 最低流动性 USD（默认500）</label>
+          <div class="cfg-row">
+            <input type="number" id="cfg_minLiq" value="500" class="input-sm">
+            <span style="font-size:11px; color:var(--text-weak);">只显示≥此金额的币</span>
+          </div>
+        </div>
+        <div class="cfg-item">
+          <label>⏱️ 自动刷新间隔 秒（默认8，别低于5）</label>
+          <div class="cfg-row">
+            <input type="number" id="cfg_interval" value="8" class="input-sm" min="3" max="60">
+            <span style="font-size:11px; color:var(--text-weak);">太快容易被限流</span>
+          </div>
+        </div>
+        <div class="cfg-item">
+          <label>🔒 黑名单 — 包含这些词直接过滤</label>
+          <textarea id="cfg_black" placeholder="例: scam fake copy airdrop"></textarea>
+        </div>
+        <div class="cfg-item">
+          <label>🔑 白名单 — 只保留包含这些词的（留空=全部）</label>
+          <textarea id="cfg_white" placeholder="例: dog cat bnb sol"></textarea>
+        </div>
+        <div class="cfg-item">
+          <label>🚫 拉黑合约地址（一行一个）</label>
+          <textarea id="cfg_blockAddr" placeholder="输入要屏蔽的合约地址，每行一个"></textarea>
+        </div>
+        <div class="cfg-item" style="justify-content:flex-end;">
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button id="applyCfg" class="btn btn-gold">✅ 应用设置</button>
+            <button id="resetCfg" class="btn btn-red">🔄 恢复默认</button>
+            <button id="clearHistory" class="btn btn-red">🗑️ 清空历史记录</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="launch-area card">
+      <div class="card-hd">
+        <span class="card-tt">🚀 实时捕获区 · 6大发射台独立监控 · 新币自动高亮</span>
+        <span style="font-size:11px; color:var(--text-sub);" id="filterStat">当前过滤：流动性≥$500 | 黑名单0 | 白名单0 | 拉黑地址0</span>
+      </div>
+      <div class="launch-grid">
+        <div class="launch-card four" data-platform="four" data-chain="bsc">
+          <div class="launch-hd"><span class="launch-name" style="color:var(--gold);">🔴 Four.meme</span><span class="launch-count" id="fourCount">0</span></div>
+          <div class="launch-list" id="fourList"></div>
+        </div>
+        <div class="launch-card pump" data-platform="pump" data-chain="sol">
+          <div class="launch-hd"><span class="launch-name" style="color:var(--purple);">🟣 Pump.fun</span><span class="launch-count" id="pumpCount">0</span></div>
+          <div class="launch-list" id="pumpList"></div>
+        </div>
+        <div class="launch-card bonk" data-platform="bonk" data-chain="sol">
+          <div class="launch-hd"><span class="launch-name" style="color:#00d0b6;">🟢 LetsBONK</span><span class="launch-count" id="bonkCount">0</span></div>
+          <div class="launch-list" id="bonkList"></div>
+        </div>
+        <div class="launch-card flash" data-platform="flash" data-chain="base">
+          <div class="launch-hd"><span class="launch-name" style="color:var(--blue);">🔵 FlashPump</span><span class="launch-count" id="flashCount">0</span></div>
+          <div class="launch-list" id="flashList"></div>
+        </div>
+        <div class="launch-card pons" data-platform="pons" data-chain="rhc">
+          <div class="launch-hd"><span class="launch-name" style="color:var(--orange);">🟠 Pons</span><span class="launch-count" id="ponsCount">0</span></div>
+          <div class="launch-list" id="ponsList"></div>
+        </div>
+        <div class="launch-card ray" data-platform="ray" data-chain="sol">
+          <div class="launch-hd"><span class="launch-name" style="color:var(--green);">🟩 LaunchLab</span><span class="launch-count" id="rayCount">0</span></div>
+          <div class="launch-list" id="rayList"></div>
+        </div>
+      </div>
+    </section>
+
     <aside class="lb">
       <div class="card" style="flex:0 0 auto;">
         <div class="menu-title">信号体系</div>
-        <div class="menu-item active"><span class="dot"></span>共振雷达 <span style="margin-left:auto; font-size:11px; color:var(--gold);">9个强信号</span></div>
-        <div class="menu-item"><span class="dot"></span>初信号预警</div>
-        <div class="menu-item"><span class="dot"></span>二次信号确认</div>
-        <div class="menu-item"><span class="dot"></span>五位闸门 <span style="margin-left:auto; font-size:11px; color:var(--cyan);">支撑/压力/加减/止损</span></div>
-        <div class="menu-item"><span class="dot"></span>币异动提醒</div>
-
-        <div class="menu-title">安全风控</div>
-        <div class="menu-item"><span class="dot"></span>貔貅检测 <span style="margin-left:auto; font-size:11px; color:var(--green);">全筛查</span></div>
-        <div class="menu-item"><span class="dot"></span>流动性/池子厚薄</div>
-        <div class="menu-item"><span class="dot"></span>合约/权限/锁仓</div>
-        <div class="menu-item"><span class="dot"></span>能买状态检查</div>
-
-        <div class="menu-title">资金与盘口</div>
-        <div class="menu-item"><span class="dot"></span>庄家体检</div>
-        <div class="menu-item"><span class="dot"></span>钱包/聪明钱/巨鲸</div>
-        <div class="menu-item"><span class="dot"></span>成本线/筹码分布</div>
-        <div class="menu-item"><span class="dot"></span>热度/叙事/传播质量</div>
+        <div class="menu-item active"><span class="dot"></span>实时捕获</div>
+        <div class="menu-item"><span class="dot"></span>初信号预警 <span style="margin-left:auto; color:var(--cyan); font-size:11px;" id="alertCount">0</span></div>
+        <div class="menu-item"><span class="dot"></span>安全筛查</div>
+        <div class="menu-item"><span class="dot"></span>异动日志</div>
       </div>
-
       <div class="card" style="flex:1; overflow:hidden;">
-        <div class="corner tl"></div><div class="corner tr"></div>
-        <div class="card-hd"><span class="card-tt">⚠️ 风险速览</span></div>
+        <div class="card-hd"><span class="card-tt">📊 全局统计</span></div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:12px;">
-          <div style="padding:8px; border-radius:6px; background:rgba(0,208,132,.08); border:1px solid rgba(0,208,132,.15);">
-            <div style="color:var(--green);">安全通过</div>
-            <div style="font-size:16px; font-weight:700;">18</div>
+          <div style="padding:10px; border-radius:6px; background:rgba(0,208,132,.08);">
+            <div style="color:var(--green);">今日捕获</div>
+            <div style="font-size:18px; font-weight:700;" id="totalCount">0</div>
           </div>
-          <div style="padding:8px; border-radius:6px; background:rgba(255,77,79,.08); border:1px solid rgba(255,77,79,.15);">
-            <div style="color:var(--red);">貔貅/拉黑</div>
-            <div style="font-size:16px; font-weight:700;">3</div>
+          <div style="padding:10px; border-radius:6px; background:rgba(255,77,79,.08);">
+            <div style="color:var(--red);">已过滤/风险</div>
+            <div style="font-size:18px; font-weight:700;" id="riskCount">0</div>
           </div>
-          <div style="padding:8px; border-radius:6px; background:rgba(255,149,0,.08); border:1px solid rgba(255,149,0,.15);">
-            <div style="color:var(--warn);">流动性不足</div>
-            <div style="font-size:16px; font-weight:700;">5</div>
+          <div style="padding:10px; border-radius:6px; background:rgba(255,184,0,.08);">
+            <div style="color:var(--gold);">BSC主力</div>
+            <div style="font-size:18px; font-weight:700;" id="bscCount">0</div>
           </div>
-          <div style="padding:8px; border-radius:6px; background:rgba(0,229,255,.08); border:1px solid rgba(0,229,255,.15);">
-            <div style="color:var(--cyan);">待观察</div>
-            <div style="font-size:16px; font-weight:700;">7</div>
+          <div style="padding:10px; border-radius:6px; background:rgba(153,69,255,.08);">
+            <div style="color:var(--purple);">SOL大金狗</div>
+            <div style="font-size:18px; font-weight:700;" id="solCount">0</div>
           </div>
         </div>
       </div>
     </aside>
 
-    <!-- 中间主区：雷达+列表 -->
     <main class="main">
-      <div class="card" style="flex:0 0 auto;">
-        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
-        <div class="card-hd">
-          <span class="card-tt">📡 共振雷达 — 多维度同时触发 = 大金狗起爆确认</span>
-          <span style="font-size:12px; color:var(--text-sub);">5/15分+1小时 · 价格+量能+资金+热度+链上 · 同步强度</span>
-        </div>
-        <div class="grid-4">
-          <div class="stat-box">
-            <div class="stat-label">共振强度</div>
-            <div class="stat-val" style="color:var(--gold); font-size:22px;">92%</div>
-            <div class="bar-wrap"><div class="bar g" style="width:92%;"></div></div>
-            <div style="font-size:11px; color:var(--green); margin-top:4px;">强共振 · 高确定性</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-label">初信号</div>
-            <div class="stat-val" style="color:var(--cyan);">14</div>
-            <div style="font-size:11px; color:var(--text-sub);">今日新增预警</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-label">二次信号确认</div>
-            <div class="stat-val" style="color:var(--green);">5</div>
-            <div style="font-size:11px; color:var(--text-sub);">进入主升候选</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-label">毕业/二段预警</div>
-            <div class="stat-val" style="color:var(--gold);">2</div>
-            <div style="font-size:11px; color:var(--warn);">重点盯防</div>
-          </div>
-        </div>
-      </div>
-
       <div class="card" style="flex:1; overflow:hidden; display:flex; flex-direction:column;">
-        <div class="corner tl"></div><div class="corner tr"></div>
         <div class="card-hd">
-          <span class="card-tt">🔥 热门/起爆候选池 — 叙事+热度+资金共振中</span>
-          <span style="display:flex; gap:8px;">
-            <span class="tag gold">叙事龙头</span>
-            <span class="tag cyan">新币30分内</span>
-            <span class="tag ok">可入</span>
-          </span>
+          <span class="card-tt">📋 全部捕获列表 · 真实链上数据</span>
+          <span style="font-size:11px; color:var(--text-sub);">点击「刷新」开始 · 符合筛选条件自动显示</span>
         </div>
         <div class="scroll-list" style="flex:1;">
-          <table>
+          <table id="allCoinTable">
             <thead>
               <tr>
-                <th>代币/叙事</th>
-                <th>链/上线</th>
-                <th>池子/市值</th>
-                <th>共振/信号</th>
-                <th>安全状态</th>
-                <th>五位闸门</th>
+                <th>代币/合约</th>
+                <th>来源平台</th>
+                <th>流动性</th>
+                <th>市值(估算)</th>
+                <th>上线时间</th>
                 <th>状态</th>
+                <th>一键分析</th>
               </tr>
             </thead>
-            <tbody>
-              <tr style="background:rgba(255,184,0,.06);">
-                <td><div style="font-weight:600;">DOGX</div><div style="font-size:11px; color:var(--text-sub);">超狗叙事 · 全链联动 · KOL扎堆</div></td>
-                <td>SOL · 28分</td>
-                <td>🔷 18.5K · 1.2M</td>
-                <td><span class="tag gold flash">强共振</span><span class="tag ok">二次信号</span></td>
-                <td><span class="tag ok">✅ 纯金安全</span></td>
-                <td>支撑0.08M · 突破0.12M · 目标0.3M</td>
-                <td><span class="tag gold flash">🚀 起爆中</span></td>
-              </tr>
-              <tr>
-                <td><div style="font-weight:600;">MEMEAI</div><div style="font-size:11px; color:var(--text-sub);">AI+Meme · 新叙事龙头 · 热度扩散</div></td>
-                <td>ETH · 1.2h</td>
-                <td>🔷 42K · 8.6M</td>
-                <td><span class="tag cyan">共振80%</span><span class="tag cyan">初信号</span></td>
-                <td><span class="tag ok">✅ 通过</span></td>
-                <td>站稳8.2M · 下一目标12M</td>
-                <td><span class="tag cyan">观察确认</span></td>
-              </tr>
-              <tr>
-                <td><div style="font-weight:600;">PIGSUN</div><div style="font-size:11px; color:var(--text-sub);">补涨龙头 · 老币新故事 · 资金切换</div></td>
-                <td>BSC · 3h</td>
-                <td>🔷 12K · 3.2M</td>
-                <td><span class="tag warn">共振65%</span><span class="tag warn">二次偏弱</span></td>
-                <td><span class="tag ok">✅ 通过</span></td>
-                <td>压力3.5M · 过不去减仓</td>
-                <td><span class="tag warn">洗盘/确认</span></td>
-              </tr>
-              <tr>
-                <td><div style="font-weight:600;">DOGCLASS</div><div style="font-size:11px; color:var(--text-sub);">经典土狗 · 社区强共识 · 毕业预期</div></td>
-                <td>BASE · 5h</td>
-                <td>🔷 8.8K · 6.8M</td>
-                <td><span class="tag gold">毕业预警</span><span class="tag gold">二段蓄力</span></td>
-                <td><span class="tag ok">✅ 锁仓100%</span></td>
-                <td>前高6.9M · 突破=正式毕业</td>
-                <td><span class="tag gold">🎓 毕业临界点</span></td>
-              </tr>
-              <tr>
-                <td><div style="font-weight:600;">FAKECOIN</div><div style="font-size:11px; color:var(--text-sub);">仿盘 · 无真实叙事 · 热度虚高</div></td>
-                <td>SOL · 15分</td>
-                <td>🔸 1.2K · 240K</td>
-                <td><span class="tag danger">共振失效</span></td>
-                <td><span class="tag danger">⚠ 权限未放弃</span></td>
-                <td>支撑破位 离场</td>
-                <td><span class="tag danger">❌ 排除/拉黑</span></td>
-              </tr>
+            <tbody id="allCoinBody">
+              <tr><td colspan="7" style="text-align:center; color:var(--text-weak); padding:30px;">点击「刷新数据」开始拉取真实链上新币...</td></tr>
             </tbody>
           </table>
         </div>
       </div>
     </main>
 
-    <!-- 右侧：专项详情 -->
     <aside class="rb">
       <div class="card" style="flex:0 0 auto;">
-        <div class="corner tl"></div><div class="corner tr"></div>
         <div class="card-hd">
-          <span class="card-tt">🛡️ 安全速检 · DOGX（起爆标的）</span>
-          <span style="font-size:12px; color:var(--green);">全部通过 ✅</span>
+          <span class="card-tt">🔍 币种详情</span>
+          <span id="selTitle" style="font-size:11px; color:var(--text-weak);">点击任意币种查看</span>
         </div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:12px;">
-          <div style="padding:8px; border-radius:6px; background:rgba(0,208,132,.08);">
-            <div style="color:var(--text-sub);">貔貅检测</div>
-            <div style="color:var(--green); font-weight:600;">✅ 非貔貅 · 买卖正常</div>
-          </div>
-          <div style="padding:8px; border-radius:6px; background:rgba(0,208,132,.08);">
-            <div style="color:var(--text-sub);">流动性</div>
-            <div style="color:var(--green); font-weight:600;">✅ 锁仓100% · 池子厚</div>
-          </div>
-          <div style="padding:8px; border-radius:6px; background:rgba(0,208,132,.08);">
-            <div style="color:var(--text-sub);">合约权限</div>
-            <div style="color:var(--green); font-weight:600;">✅ 开源 · 权限放弃</div>
-          </div>
-          <div style="padding:8px; border-radius:6px; background:rgba(0,208,132,.08);">
-            <div style="color:var(--text-sub);">能买状态</div>
-            <div style="color:var(--green); font-weight:600;">✅ 无限制 · 通道通畅</div>
-          </div>
-          <div style="padding:8px; border-radius:6px; background:rgba(0,208,132,.08);">
-            <div style="color:var(--text-sub);">大户持仓</div>
-            <div style="color:var(--green); font-weight:600;">✅ 无集中砸盘风险</div>
-          </div>
-          <div style="padding:8px; border-radius:6px; background:rgba(0,208,132,.08);">
-            <div style="color:var(--text-sub);">社交真实度</div>
-            <div style="color:var(--green); font-weight:600;">✅ 真实扩散 · 非刷量</div>
-          </div>
+        <div id="selDetail" style="font-size:12px; line-height:1.8;">
+          <p style="color:var(--text-weak);">点击左边币种行，这里显示合约、链接、K线入口</p>
         </div>
       </div>
-
       <div class="card" style="flex:1; overflow:hidden;">
-        <div class="corner tl"></div><div class="corner tr"></div>
-        <div class="card-hd">
-          <span class="card-tt">🧠 庄家体检 · 钱包/资金</span>
-        </div>
-        <div style="display:flex; flex-direction:column; gap:10px; font-size:13px;">
-          <div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-              <span style="color:var(--text-sub);">控盘集中度</span>
-              <span style="color:var(--green); font-weight:600;">适中健康 32%</span>
-            </div>
-            <div class="bar-wrap"><div class="bar cg" style="width:32%;"></div></div>
-          </div>
-          <div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-              <span style="color:var(--text-sub);">聪明钱/巨鲸参与</span>
-              <span style="color:var(--gold); font-weight:600;">7个知名地址 · 同步进场</span>
-            </div>
-          </div>
-          <div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-              <span style="color:var(--text-sub);">平均持仓成本</span>
-              <span style="color:var(--cyan); font-weight:600;">当前在成本上方 18% · 安全</span>
-            </div>
-          </div>
-          <div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-              <span style="color:var(--text-sub);">筹码分散速度</span>
-              <span style="color:var(--green); font-weight:600;">持币地址↑ 10分钟+86 · 真实扩散</span>
-            </div>
-          </div>
-          <div style="border-top:1px solid rgba(0,229,255,.1); padding-top:10px;">
-            <div style="color:var(--text-sub); margin-bottom:6px;">🚨 异动/预警</div>
-            <div style="font-size:12px; line-height:1.8;">
-              <p style="color:var(--gold);">• DOGX 5分钟放量↑ 280% · 买盘强劲</p>
-              <p style="color:var(--cyan);">• MEMEAI 热度持续爬升 · 关注二次确认</p>
-              <p style="color:var(--warn);">• PIGSUN 量能减弱 · 不突破先减</p>
-              <p style="color:var(--danger);">• FAKECOIN 资金流出 · 已拉黑</p>
-            </div>
-          </div>
+        <div class="card-hd"><span class="card-tt">⚡ 实时日志</span></div>
+        <div id="eventLog" style="font-size:11px; line-height:2; max-height:200px; overflow-y:auto;">
+          <p style="color:var(--cyan);">✅ 增强配置版初始化完成</p>
+          <p style="color:var(--green);">📡 数据源：DexScreener API（真实链上数据）</p>
+          <p style="color:var(--warn);">💡 改筛选→点「应用设置」立即生效</p>
         </div>
       </div>
     </aside>
 
-    <!-- 底部：关键状态速览 -->
     <footer class="ft">
-      <div class="mini">
-        <div class="mini-lb">今日起爆候选</div>
-        <div class="mini-val" style="color:var(--gold);">4</div>
-      </div>
-      <div class="mini">
-        <div class="mini-lb">二次信号确认</div>
-        <div class="mini-val" style="color:var(--green);">2</div>
-      </div>
-      <div class="mini">
-        <div class="mini-lb">毕业/二段机会</div>
-        <div class="mini-val" style="color:var(--cyan);">1</div>
-      </div>
-      <div class="mini">
-        <div class="mini-lb">今日拦截风险</div>
-        <div class="mini-val" style="color:var(--red);">3</div>
-      </div>
-      <div class="mini">
-        <div class="mini-lb">五位闸门总控</div>
-        <div class="mini-val" style="color:var(--gold);">DOGX 持有待突破</div>
-      </div>
-      <div class="mini">
-        <div class="mini-lb">信号失效/离场</div>
-        <div class="mini-val" style="color:var(--text-sub);">已清理 2</div>
-      </div>
+      <div class="mini"><div class="mini-lb">最后刷新</div><div class="mini-val" id="ftLast">--:--</div></div>
+      <div class="mini"><div class="mini-lb">本次新币</div><div class="mini-val" id="ftNew">0</div></div>
+      <div class="mini"><div class="mini-lb">已毕业/推进</div><div class="mini-val" style="color:var(--green);" id="ftGrad">0</div></div>
+      <div class="mini"><div class="mini-lb">已过滤/风险</div><div class="mini-val" style="color:var(--red);" id="ftFilter">0</div></div>
+      <div class="mini"><div class="mini-lb">自动刷新</div><div class="mini-val" id="ftAuto" style="color:var(--green);">开启</div></div>
     </footer>
   </div>
 
   <script>
-    // 导航高亮
-    document.querySelectorAll('.tab').forEach(t=>{
-      t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); t.classList.add('active');};
-    });
-    document.querySelectorAll('.menu-item').forEach(i=>{
-      i.onclick=()=>{document.querySelectorAll('.menu-item').forEach(x=>x.classList.remove('active')); i.classList.add('active');};
-    });
+    let CONFIG = {
+      minLiquidityUSD: 500,
+      limitPerChain: 60,
+      refreshInterval: 8000,
+      chains: {
+        bsc: { id: 'bsc', name: 'BSC', gmgn: 'bsc', debot: 'bsc' },
+        sol: { id: 'solana', name: 'SOL', gmgn: 'sol', debot: 'sol' },
+        base: { id: 'base', name: 'BASE', gmgn: 'base', debot: 'base' },
+        rhc: { id: 'robinhood', name: 'RHC', gmgn: '', debot: '' }
+      },
+      platforms: {
+        four: { keywords: ['four.meme','fourmeme'], chain: 'bsc' },
+        pump: { keywords: ['pump.fun','pumpfun'], chain: 'sol' },
+        bonk: { keywords: ['letsbonk','bonk.fun'], chain: 'sol' },
+        flash: { keywords: ['flashpump'], chain: 'base' },
+        pons: { keywords: ['pons.ai','pons'], chain: 'rhc' },
+        ray: { keywords: ['raydium','launchlab'], chain: 'sol' }
+      },
+      blackList: [], whiteList: [], blockAddrs: new Set()
+    };
+
+    const DEFAULT_CFG = { minLiq:500, interval:8, black:'', white:'', blockAddr:'' };
+    const seenAddresses = new Set();
+    let allCoins = [], totalNew=0, totalRisk=0, totalGrad=0, activeChain='all', refreshTimer=null, selectedCoin=null;
+
+    function parseListText(t){return t.trim()?t.split(/[\s,，\n]+/).map(w=>w.trim().toLowerCase()).filter(w=>w):[];}
+    function parseAddrSet(t){return t.trim()?new Set(t.split('\n').map(a=>a.trim().toLowerCase()).filter(a=>a.length>10)):new Set();}
+    function fmtTime(s){if(!s)return'--';const d=new Date(s),n=new Date(),diff=Math.floor((n-d)/1000);if(diff<60)return diff+'秒前';if(diff<3600)return Math.floor(diff/60)+'分前';if(diff<86400)return Math.floor(diff/3600)+'小时前';return d.toLocaleDateString('zh-CN');}
+    function fmtNum(n){if(!n)return'--';if(n>=1e6)return(n/1e6).toFixed(2)+'M';if(n>=1e3)return(n/1e3).toFixed(2)+'K';return n.toFixed(2);}
+    function shortAddr(a,l=10){return a?a.slice(0,l)+'...'+a.slice(-6):'';}
+    function log(msg,color='cyan'){const el=document.getElementById('eventLog'),p=document.createElement('p');p.style.color=`var(--${color})`;p.textContent=`[${new Date().toLocaleTimeString('zh-CN')}] ${msg}`;el.insertBefore(p,el.firstChild);if(el.children.length>50)el.removeChild(el.lastChild);}
+    function updateStatBar(){document.getElementById('filterStat').textContent=`当前过滤：流动性≥$${CONFIG.minLiquidityUSD} | 黑名单${CONFIG.blackList.length} | 白名单${CONFIG.whiteList.length} | 拉黑${CONFIG.blockAddrs.size}`;}
+
+    function shouldFilter(pair,txtLow,addrLow){
+      if(CONFIG.blockAddrs.has(addrLow))return{pass:false,reason:'拉黑地址'};
+      for(const w of CONFIG.blackList)if(txtLow.includes(w))return{pass:false,reason:'黑名单词:'+w};
+      if(CONFIG.whiteList.length>0){let hit=false;for(const w of CONFIG.whiteList){if(txtLow.includes(w)){hit=true;break;}}if(!hit)return{pass:false,reason:'未匹配白名单'};}
+      if((pair.liquidity?.usd||0)<CONFIG.minLiquidityUSD)return{pass:false,reason:'流动性不足'};
+      return{pass:true};
+    }
+    function detectPlat(p){const t=((p.url||'')+' '+(p.baseToken?.name||'')+' '+(p.baseToken?.symbol||'')).toLowerCase();for(const[k,v]of Object.entries(CONFIG.platforms))if(v.keywords.some(x=>t.includes(x)))return k;return'other';}
+    function getStatus(p,plat){const l=p.liquidity?.usd||0;if(plat==='four'){if(l>6300)return{text:'✅毕业',cls:'ok'};if(l>5000)return{text:'推进中',cls:'warn'};return{text:'发射中',cls:'cyan'}}if(plat==='pump'){if(l>69000)return{text:'✅毕业',cls:'ok'};if(l>10000)return{text:'曲线中',cls:'purple'};return{text:'新发射',cls:'cyan'}}if(l>50000)return{text:'活跃',cls:'ok'};if(l>5000)return{text:'观察',cls:'warn'};return{text:'新币',cls:'cyan'}}
+    function mkUrl(typ,ck,addr){const m={gmgn:{bsc:'https://gmgn.ai/bsc/token/',sol:'https://gmgn.ai/sol/token/',base:'https://gmgn.ai/base/token/'},debot:{bsc:'https://debot.ai/?chain=bsc&ca=',sol:'https://debot.ai/?chain=sol&ca=',base:'https://debot.ai/?chain=base&ca='},plat:{four:'https://four.meme/token/',pump:'https://pump.fun/',bonk:'https://letsbonk.fun/',flash:'https://flashpump.fun/',pons:'https://pons.ai/',ray:'https://raydium.io/launchlab/'}};return m[typ]?.[ck]?m[typ][ck]+addr:null;}
+
+    async function fetchChain(ck){const cid=CONFIG.chains[ck].id;const res=await fetch(`https://api.dexscreener.com/latest/dex/pairs/${cid}?limit=${CONFIG.limitPerChain}`);if(!res.ok)throw new Error(res.status);const d=await res.json();return(d.pairs||[]).map(p=>{p._ck=ck;return p;});}
+    async function fetchAll(){let r=[];for(const k of Object.keys(CONFIG.chains))try{const a=await fetchChain(k);r=r.concat(a);}catch(e){log(CONFIG.chains[k].name+'链失败:'+e.message,'red');}return r;}
+
+    function processPairs(pairs){let nn=0,filtered=0;for(const p of pairs){const a=p.baseToken?.address;if(!a){filtered++;continue;}const al=a.toLowerCase(),tx=((p.baseToken?.name||'')+' '+(p.baseToken?.symbol||'')).toLowerCase();const chk=shouldFilter(p,tx,al);if(!chk.pass){filtered++;continue;}if(seenAddresses.has(al))continue;seenAddresses.add(al);const plat=detectPlat(p),st=getStatus(p,plat);allCoins.unshift({address:a,symbol:p.baseToken?.symbol||'?',name:p.baseToken?.name||'?',chainKey:p._ck,platform:plat,liquidity:p.liquidity?.usd||0,mcap:p.fdv?.usd,createdAt:p.createdAt,status:st,gmgnUrl:mkUrl('gmgn',p._ck,a),debotUrl:mkUrl('debot',p._ck,a),platUrl:mkUrl('plat',plat,a),isNew:true});nn++;totalNew++;if(st.text.includes('✅'))totalGrad++;}totalRisk+=filtered;return{newCount:nn,filtered};}
+
+    function renderPlat(pk,cid,lid){const list=allCoins.filter(c=>c.platform===pk&&(activeChain==='all'||c.chainKey===activeChain)).slice(0,8);document.getElementById(cid).textContent=list.length;const con=document.getElementById(lid);con.innerHTML='';list.forEach(c=>{const d=document.createElement('div');d.className=`launch-item ${c.isNew?'new':''}`;d.onclick=()=>selectCoin(c);d.innerHTML=`<div style="display:flex;justify-content:space-between;"><span style="font-weight:600;">${c.symbol}</span><span style="font-size:9px;color:var(--text-weak);">${fmtTime(c.createdAt)}</span></div><div class="contract">${shortAddr(c.address,8)}</div><div style="display:flex;justify-content:space-between;margin-top:2px;"><span style="font-size:10px;">$${fmtNum(c.liquidity)}</span><span class="tag small ${c.status.cls}">${c.status.text}</span></div><div class="btn-row">${c.platUrl?`<a href="${c.platUrl}" target="_blank" class="btn-link btn-plat">平台</a>`:''}${c.gmgnUrl?`<a href="${c.gmgnUrl}" target="_blank" class="btn-link btn-gmgn">K线</a>`:''}${c.debotUrl?`<a href="${c.debotUrl}" target="_blank" class="btn-link btn-debot">分析</a>`:''}</div>`;con.appendChild(d);c.isNew=false;});}
+    function renderList(){const tb=document.getElementById('allCoinBody'),list=activeChain==='all'?allCoins:allCoins.filter(c=>c.chainKey===activeChain);tb.innerHTML='';if(!list.length){tb.innerHTML=`<tr><td colspan="7" style="text-align:center;color:var(--text-weak);padding:20px;">暂无数据</td></tr>`;return;}const pt={four:'<span class="tag gold small">Four.meme</span>',pump:'<span class="tag purple small">Pump.fun</span>',bonk:'<span class="tag small" style="background:rgba(0,208,182,.15);color:#00d0b6;">LetsBONK</span>',flash:'<span class="tag blue small">FlashPump</span>',pons:'<span class="tag orange small">Pons</span>',ray:'<span class="tag ok small">LaunchLab</span>'};list.forEach(c=>{const tr=document.createElement('tr');tr.style.cursor='pointer';tr.onclick=()=>selectCoin(c);if(selectedCoin?.address===c.address)tr.style.background='rgba(0,229,255,.08)';tr.innerHTML=`<td><div style="font-weight:600;">${c.symbol}</div><div class="contract">${shortAddr(c.address)}</div></td><td>${pt[c.platform]||`<span class="tag small">${c.chainKey.toUpperCase()}</span>`}</td><td>$${fmtNum(c.liquidity)}</td><td>$${fmtNum(c.mcap)}</td><td style="font-size:10px;color:var(--text-sub);">${fmtTime(c.createdAt)}</td><td><span class="tag ${c.status.cls} small">${c.status.text}</span></td><td>${c.gmgnUrl?`<a href="${c.gmgnUrl}" target="_blank" class="btn-link btn-gmgn" onclick="event.stopPropagation()">GMGN</a>`:''}${c.debotUrl?`<a href="${c.debotUrl}" target="_blank" class="btn-link btn-debot" onclick="event.stopPropagation()">Debot</a>`:''}</td>`;tb.appendChild(tr);});}
+    function selectCoin(c){selectedCoin=c;document.getElementById('selTitle').textContent=`${c.symbol} · ${c.chainKey.toUpperCase()}`;document.getElementById('selDetail').innerHTML=`<p><b>全称：</b>${c.name}</p><p><b>合约：</b><span style="font-family:monospace;color:var(--cyan);font-size:10px;word-break:break-all;">${c.address}</span></p><p><b>链/来源：</b>${c.chainKey.toUpperCase()} / ${c.platform}</p><p><b>流动性：</b>$${fmtNum(c.liquidity)}</p><p><b>市值：</b>$${fmtNum(c.mcap)}</p><p><b>首次发现：</b>${c.createdAt?new Date(c.createdAt).toLocaleString('zh-CN'):'--'}</p><p><b>状态：</b><span class="tag ${c.status.cls}">${c.status.text}</span></p><div style="margin-top:10px;">${c.platUrl?`<a href="${c.platUrl}" target="_blank" class="btn-link btn-plat" style="padding:5px 10px;font-size:12px;">🚀 打开平台</a>`:''}${c.gmgnUrl?`<a href="${c.gmgnUrl}" target="_blank" class="btn-link btn-gmgn" style="padding:5px 10px;font-size:12px;">📈 GMGN</a>`:''}${c.debotUrl?`<a href="${c.debotUrl}" target="_blank" class="btn-link btn-debot" style="padding:5px 10px;font-size:12px;">🔬 Debot</a>`:''}</div>`;renderList();}
+    function updStats(nf){document.getElementById('totalCount').textContent=allCoins.length;document.getElementById('riskCount').textContent=totalRisk;document.getElementById('bscCount').textContent=allCoins.filter(c=>c.chainKey==='bsc').length;document.getElementById('solCount').textContent=allCoins.filter(c=>c.chainKey==='sol').length;document.getElementById('ftNew').textContent=nf;document.getElementById('ftGrad').textContent=totalGrad;document.getElementById('ftFilter').textContent=totalRisk;document.getElementById('ftLast').textContent=new Date().toLocaleTimeString('zh-CN');document.getElementById('lastUpdate').textContent='更新：'+new Date().toLocaleTimeString('zh-CN');}
+
+    async function doRefresh(){const btn=document.getElementById('refreshBtn');btn.disabled=true;btn.textContent='拉取中...';try{const pairs=await fetchAll();const{newCount,filtered}=processPairs(pairs);newCount?log(`✅ 新币${newCount}个 · 过滤${filtered}条`,'green'):log(`本轮无新币 · 过滤${filtered}条`,'warn');Object.keys(CONFIG.platforms).forEach(p=>renderPlat(p,p+'Count',p+'List'));renderList();updStats(newCount);document.getElementById('connStatus').innerHTML=`<span class="status-dot ok"></span>API已连接`;}catch(e){log('❌ 失败：'+e.message,'red');document.getElementById('connStatus').innerHTML=`<span class="status-dot" style="background:var(--red);"></span>连接异常`;}btn.disabled=false;btn.textContent='🔄 刷新数据';}
+    function setAuto(on){if(refreshTimer){clearInterval(refreshTimer);refreshTimer=null;}document.getElementById('ftAuto').style.color=on?'var(--green)':'var(--text-weak)';if(on){doRefresh();refreshTimer=setInterval(doRefresh,CONFIG.refreshInterval);log(`自动刷新开启 (${CONFIG.refreshInterval/1000}秒)`,'green');}else log('自动刷新已关闭','warn');}
+    function applyCfg(){const ml=parseInt(document.getElementById('cfg_minLiq').value)||500;const iv=(parseInt(document.getElementById('cfg_interval').value)||8)*1000;const bl=parseListText(document.getElementById('cfg_black').value);const wl=parseListText(document.getElementById('cfg_white').value);const ba=parseAddrSet(document.getElementById('cfg_blockAddr').value);CONFIG.minLiquidityUSD=ml;CONFIG.refreshInterval=iv;CONFIG.blackList=bl;CONFIG.whiteList=wl;CONFIG.blockAddrs=ba;if(refreshTimer&&document.getElementById('autoRefresh').checked){setAuto(false);setAuto(true);}updateStatBar();log('✅ 设置已应用','green');}
+    function resetCfg(){document.getElementById('cfg_minLiq').value=DEFAULT_CFG.minLiq;document.getElementById('cfg_interval').value=DEFAULT_CFG.interval;document.getElementById('cfg_black').value=DEFAULT_CFG.black;document.getElementById('cfg_white').value=DEFAULT_CFG.white;document.getElementById('cfg_blockAddr').value=DEFAULT_CFG.blockAddr;applyCfg();log('已恢复默认设置','warn');}
+    function clearAll(){seenAddresses.clear();allCoins=[];totalNew=0;totalRisk=0;totalGrad=0;renderList();Object.keys(CONFIG.platforms).forEach(p=>{document.getElementById(p+'Count').textContent='0';document.getElementById(p+'List').innerHTML='';});updStats(0);log('历史已清空','warn');}
+
+    document.getElementById('refreshBtn').onclick=doRefresh;
+    document.getElementById('autoRefresh').onchange=e=>setAuto(e.target.checked);
+    document.getElementById('applyCfg').onclick=applyCfg;
+    document.getElementById('resetCfg').onclick=resetCfg;
+    document.getElementById('clearHistory').onclick=clearAll;
+    document.querySelectorAll('.chain-tab').forEach(tab=>{tab.onclick=()=>{document.querySelectorAll('.chain-tab').forEach(x=>x.classList.remove('active','main'));tab.classList.add('active');if(tab.dataset.chain==='bsc')tab.classList.add('main');activeChain=tab.dataset.chain;renderList();Object.keys(CONFIG.platforms).forEach(p=>renderPlat(p,p+'Count',p+'List'));log('切换到：'+(activeChain==='all'?'全部链':activeChain.toUpperCase()),'cyan');};});
   </script>
 </body>
 </html>
