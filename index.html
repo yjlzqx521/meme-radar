@@ -3,312 +3,358 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>土狗猎手 · 终极版 V3｜真实数据直连</title>
+<title>金狗雷达 Pro｜实时监控</title>
 <style>
 :root {
-  --bg-main: #0f1118;
-  --bg-card: #181b28;
-  --bg-hover: #202436;
-  --border: #2a2f44;
-  --text-primary: #e8eaf6;
-  --text-secondary: #8c92b3;
-  --accent-gold: #d4af37;
-  --accent-green: #00c853;
-  --accent-red: #ff5252;
-  --accent-purple: #7c4dff;
-  --accent-orange: #ff9100;
-  --accent-gray: #78909c;
-  --ok: #00c853;
-  --warn: #ffab00;
-  --danger: #ff5252;
-  --radius: 10px;
-  --shadow: 0 2px 12px rgba(0,0,0,0.35);
+  --gold: #d4af37;
+  --gold-light: #f0d775;
+  --green: #34d399;
+  --red: #ef4444;
+  --orange: #f59e0b;
+  --purple: #a78bfa;
+  --bg-main: #0a0b0f;
+  --bg-card: #14151f;
+  --bg-card-2: #1a1c2c;
+  --border-gold: linear-gradient(90deg, #d4af37, #f0d775, #d4af37);
+  --border-green: linear-gradient(90deg, #34d399, #6ee7b7, #34d399);
+  --border-red: linear-gradient(90deg, #ef4444, #fca5a5, #ef4444);
+  --border-yellow: linear-gradient(90deg, #f59e0b, #fcd34d, #f59e0b);
+  --text-primary: #e5e7eb;
+  --text-secondary: #9ca3af;
+  --glow-gold: 0 0 12px rgba(212,175,55,0.4);
+  --glow-green: 0 0 12px rgba(52,211,153,0.35);
+  --glow-red: 0 0 12px rgba(239,68,68,0.35);
 }
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, 'Microsoft YaHei', sans-serif; }
 body {
-  background: linear-gradient(135deg, #0f1118 0%, #141828 100%);
-  color: var(--text-primary);
-  min-height: 100vh;
-  padding: 16px;
+  background: var(--bg-main); color: var(--text-primary); min-height: 100vh; padding: 20px;
+  background-image: 
+    radial-gradient(circle at 20% 20%, rgba(212,175,55,0.03) 0%, transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(52,211,153,0.03) 0%, transparent 40%);
 }
-.container { max-width: 1280px; margin: 0 auto; }
+.container { max-width: 1700px; margin: 0 auto; }
 
-/* ===== 顶部状态栏 ===== */
-.top-bar {
+/* ===== 标题栏 ===== */
+.header {
+  text-align: center; margin-bottom: 24px; position: relative;
+}
+.title {
+  font-size: 2.2rem; font-weight: 800; letter-spacing: 4px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 30px rgba(212,175,55,0.3);
+  position: relative; display: inline-block;
+}
+.title::before, .title::after {
+  content: ''; position: absolute; top: 50%; width: 80px; height: 2px;
+  background: var(--gold); transform: translateY(-50%);
+}
+.title::before { left: -100px; }
+.title::after { right: -100px; }
+.top-meta {
+  position: absolute; right: 0; top: 5px; font-size: 0.85rem; color: var(--text-secondary);
+}
+.top-meta span { color: var(--green); }
+
+/* ===== 筛选标签 ===== */
+.tabs {
+  display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;
+}
+.tab {
+  padding: 10px 28px; border-radius: 6px; border: 1px solid rgba(212,175,55,0.2);
+  background: rgba(20,21,31,0.8); color: var(--text-secondary);
+  cursor: pointer; transition: all 0.3s; font-weight: 600;
+  position: relative; overflow: hidden;
+}
+.tab:hover { border-color: rgba(212,175,55,0.5); color: var(--gold-light); }
+.tab.active {
+  background: linear-gradient(135deg, rgba(212,175,55,0.2), rgba(240,215,117,0.1));
+  border-color: var(--gold); color: var(--gold-light); box-shadow: var(--glow-gold);
+}
+.tab.observe.active { border-color: var(--text-secondary); background: rgba(156,163,175,0.15); color: #fff; }
+.tab.sprout.active { border-color: var(--green); background: rgba(52,211,153,0.15); color: var(--green); box-shadow: var(--glow-green); }
+.tab.launch.active { border-color: var(--orange); background: rgba(245,158,11,0.15); color: var(--orange); box-shadow: 0 0 12px rgba(245,158,11,0.3); }
+.tab.growth.active { border-color: var(--purple); background: rgba(167,139,250,0.15); color: var(--purple); box-shadow: 0 0 12px rgba(167,139,250,0.3); }
+
+/* ===== 四大板块卡片 ===== */
+.cards-row {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;
+}
+.card-box {
+  background: var(--bg-card); border-radius: 10px; padding: 20px 18px;
+  position: relative; border: 1px solid rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+.card-box::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--border-gold); opacity: 0; transition: opacity 0.3s;
+}
+.card-box.observe { border-color: rgba(156,163,175,0.2); }
+.card-box.observe::before { background: linear-gradient(90deg, #6b7280, #9ca3af, #6b7280); opacity: 1; }
+.card-box.sprout { border-color: rgba(52,211,153,0.2); }
+.card-box.sprout::before { background: var(--border-green); opacity: 1; }
+.card-box.launch { border-color: rgba(245,158,11,0.2); }
+.card-box.launch::before { background: var(--border-yellow); opacity: 1; }
+.card-box.growth { border-color: rgba(167,139,250,0.2); }
+.card-box.growth::before { background: linear-gradient(90deg, #a78bfa, #c4b5fd, #a78bfa); opacity: 1; }
+.card-icon { font-size: 1.8rem; margin-bottom: 8px; }
+.card-title { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 6px; }
+.card-count { font-size: 2rem; font-weight: 800; }
+.card-desc { font-size: 0.75rem; color: var(--text-secondary); margin-top: 6px; }
+
+/* ===== 异动提醒区 ===== */
+.alert-section { margin-bottom: 24px; }
+.alert-title {
+  font-size: 1rem; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+}
+.alert-title span { color: var(--gold); }
+.alert-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.alert-card {
+  background: var(--bg-card); border-radius: 10px; padding: 18px 20px;
+  border: 1px solid; position: relative; overflow: hidden;
+}
+.alert-card.stage-1 { border-color: rgba(52,211,153,0.3); box-shadow: inset 0 0 0 1px rgba(52,211,153,0.2); }
+.alert-card.stage-2 { border-color: rgba(245,158,11,0.3); box-shadow: inset 0 0 0 1px rgba(245,158,11,0.2); }
+.alert-card.stage-1::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--border-green);
+}
+.alert-card.stage-2::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--border-yellow);
+}
+.alert-tag {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px;
+  border-radius: 4px; font-weight: 700; margin-bottom: 10px;
+}
+.alert-tag.stage-1 { background: rgba(52,211,153,0.15); color: var(--green); }
+.alert-tag.stage-2 { background: rgba(245,158,11,0.15); color: var(--orange); }
+.alert-content { font-size: 0.9rem; line-height: 1.8; }
+.alert-name { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+.alert-meta { color: var(--text-secondary); font-size: 0.8rem; }
+.flash-anim { animation: flash 2.5s ease; }
+@keyframes flash {
+  0% { box-shadow: 0 0 0 rgba(212,175,55,0); }
+  50% { box-shadow: 0 0 20px rgba(212,175,55,0.3); }
+  100% { box-shadow: 0 0 0 rgba(212,175,55,0); }
+}
+
+/* ===== 主表格区 ===== */
+.table-section {
+  background: var(--bg-card); border-radius: 10px; border: 1px solid rgba(212,175,55,0.15);
+  overflow: hidden;
+}
+.table-header-bar {
+  padding: 14px 20px; border-bottom: 1px solid rgba(212,175,55,0.15);
   display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 16px; flex-wrap: wrap; gap: 12px;
+  background: rgba(212,175,55,0.03);
 }
-h1 { font-size: 1.25rem; display: flex; align-items: center; gap: 10px; }
-h1 span { color: var(--accent-gold); }
-.ctrl-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-.btn {
-  background: var(--bg-card); border: 1px solid var(--border);
-  color: var(--text-secondary); padding: 8px 14px; border-radius: 8px;
-  cursor: pointer; transition: 0.25s; font-size: 0.82rem;
-}
-.btn:hover { border-color: var(--accent-purple); color: var(--accent-purple); }
-.btn.active {
-  background: rgba(124,77,255,0.15);
-  border-color: var(--accent-purple);
-  color: var(--accent-purple);
-}
-.switch-wrap { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; }
-.switch { position: relative; display: inline-block; width: 40px; height: 22px; }
-.switch input { opacity: 0; width: 0; height: 0; }
-.slider {
-  position: absolute; inset: 0; background: #2a2f44; border-radius: 11px; transition: 0.3s;
-}
-.slider:before {
-  content: ""; position: absolute; height: 16px; width: 16px; left: 3px; bottom: 3px;
-  background: white; border-radius: 50%; transition: 0.3s;
-}
-input:checked + .slider { background: var(--accent-green); }
-input:checked + .slider:before { transform: translateX(18px); }
-
-/* ===== 风险置顶提示 ===== */
-.risk-banner {
-  background: rgba(255,82,82,0.08); border: 1px solid rgba(255,82,82,0.25);
-  border-radius: var(--radius); padding: 12px 16px; margin-bottom: 18px;
-  display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap;
-}
-.risk-banner .icon { font-size: 1.2rem; }
-.risk-banner .text { font-size: 0.8rem; line-height: 1.6; color: #ffcdd2; }
-.risk-banner strong { color: #fff; }
-
-/* ===== 数据源状态 ===== */
-.status-bar {
-  background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 12px 18px; margin-bottom: 20px;
-  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
-  font-size: 0.8rem;
-}
-.status-ok { color: var(--accent-green); }
-.status-err { color: var(--accent-red); }
-.status-warn { color: var(--accent-orange); }
-
-/* ===== 板块通用 ===== */
-.section {
-  background: var(--bg-card); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 20px;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow);
-}
-.section.observe { border-left: 3px solid var(--accent-gray); }
-.section.sprout { border-left: 3px solid var(--accent-purple); }
-.section.launch { border-left: 3px solid var(--accent-orange); }
-.section.growth { border-left: 3px solid var(--accent-green); }
-.section-header {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
-}
-.section-title { font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-.section-desc { font-size: 0.72rem; color: var(--text-secondary); }
-
-/* ===== 表格 ===== */
-.table-header {
-  display: grid;
-  grid-template-columns: 44px 110px 2fr 90px 90px 90px 100px 160px;
-  gap: 8px; padding: 8px 6px; color: var(--text-secondary); font-size: 0.7rem;
-}
-.row {
-  display: grid;
-  grid-template-columns: 44px 110px 2fr 90px 90px 90px 100px 160px;
-  gap: 8px; padding: 12px 6px; margin-bottom: 4px;
-  border-radius: 8px; align-items: center;
-  background: transparent; transition: all 0.25s ease;
-  opacity: 0; transform: translateY(6px);
-}
-.row.visible { opacity: 1; transform: translateY(0); }
-.row:hover { background: var(--bg-hover); }
-/* 二段提醒标记 */
-.row.stage-1 { box-shadow: inset 0 0 0 1px var(--accent-purple); }
-.row.stage-2 { box-shadow: inset 0 0 0 1px var(--accent-orange); }
-.row.stage-1.flash { animation: flashPurple 2.5s ease; }
-.row.stage-2.flash { animation: flashOrange 2.5s ease; }
-@keyframes flashPurple {
-  0% { box-shadow: inset 0 0 0 1px var(--accent-purple); background: rgba(124,77,255,0.08); }
-  50% { box-shadow: inset 0 0 0 2px var(--accent-purple); background: rgba(124,77,255,0.12); }
-  100% { box-shadow: inset 0 0 0 1px var(--accent-purple); background: transparent; }
-}
-@keyframes flashOrange {
-  0% { box-shadow: inset 0 0 0 1px var(--accent-orange); background: rgba(255,145,0,0.08); }
-  50% { box-shadow: inset 0 0 0 2px var(--accent-orange); background: rgba(255,145,0,0.12); }
-  100% { box-shadow: inset 0 0 0 1px var(--accent-orange); background: transparent; }
-}
-
-/* 单元格样式 */
-.avatar-wrap { position: relative; display: flex; justify-content: center; }
-.avatar {
-  width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
-  background: #2a2f44; border: 2px solid rgba(255,255,255,0.1);
-}
-.badge {
-  position: absolute; top: -4px; right: -4px; font-size: 0.55rem;
-  padding: 1px 4px; border-radius: 4px; font-weight: 700;
-}
-.badge-new { background: var(--accent-purple); color: #fff; }
-.badge-surge { background: var(--accent-orange); color: #000; }
-.badge-risk { background: var(--accent-red); color: #fff; }
-
-.coin-name { font-weight: 600; font-size: 0.88rem; }
-.chain-tag {
-  display: inline-block; background: rgba(255,255,255,0.06); padding: 2px 6px;
-  border-radius: 4px; font-size: 0.65rem; margin-left: 5px;
-}
-.addr { font-family: monospace; font-size: 0.65rem; color: #6b7294; margin-top: 2px; }
-.num { font-family: monospace; font-size: 0.85rem; font-weight: 500; }
-.up { color: var(--accent-green); }
-.down { color: var(--accent-red); }
-.risk-tag {
-  display: inline-block; padding: 2px 6px; border-radius: 4px;
-  font-size: 0.65rem; font-weight: 600;
-}
-.risk-high { background: rgba(255,82,82,0.15); color: #ff8a8a; }
-.risk-mid { background: rgba(255,171,0,0.15); color: #ffd180; }
-.risk-low { background: rgba(0,200,83,0.15); color: #80e2a8; }
-.links { display: flex; gap: 4px; flex-wrap: wrap; }
-.link {
-  font-size: 0.65rem; padding: 3px 6px; border-radius: 4px;
+.table-title { font-weight: 700; color: var(--gold-light); }
+.table-controls { display: flex; gap: 10px; }
+.btn-sm {
+  padding: 6px 14px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1);
   background: rgba(255,255,255,0.05); color: var(--text-secondary);
-  text-decoration: none; transition: 0.2s;
+  cursor: pointer; font-size: 0.78rem; transition: 0.2s;
 }
-.link:hover { background: rgba(124,77,255,0.2); color: #d4c8ff; }
-.empty { text-align: center; padding: 30px; color: var(--text-secondary); font-size: 0.85rem; }
+.btn-sm:hover { border-color: var(--gold); color: var(--gold-light); }
 
-/* 响应式 */
-@media (max-width: 1100px) {
-  .table-header, .row { grid-template-columns: 44px 100px 1.5fr 90px 90px 90px 100px; }
-  .table-header span:last-child, .row > div:last-child { display: none; }
+/* 表格布局 */
+.table-grid {
+  display: grid;
+  grid-template-columns: 80px 120px 1fr 100px 100px 100px 100px 100px 180px;
+  gap: 10px; padding: 12px 20px; align-items: center; font-size: 0.8rem;
 }
-@media (max-width: 768px) {
-  .table-header, .row { grid-template-columns: 44px 100px 1.5fr 90px 90px; }
-  .table-header span:nth-child(6), .table-header span:nth-child(7),
-  .row > div:nth-child(6), .row > div:nth-child(7) { display: none; }
+.table-head { color: var(--text-secondary); font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.06); padding: 10px 20px; }
+.table-row { border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.25s; }
+.table-row:hover { background: rgba(212,175,55,0.04); }
+.table-row.visible { opacity: 1; transform: translateY(0); }
+.table-row { opacity: 0; transform: translateY(6px); }
+
+/* 风险标签 */
+.risk-tag {
+  display: inline-block; padding: 4px 10px; border-radius: 4px; font-weight: 700; font-size: 0.75rem;
+}
+.risk-high { background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.25); }
+.risk-mid { background: rgba(245,158,11,0.15); color: #fcd34d; border: 1px solid rgba(245,158,11,0.25); }
+.risk-low { background: rgba(52,211,153,0.15); color: #6ee7b7; border: 1px solid rgba(52,211,153,0.25); }
+
+/* 检测链接 */
+.detect-links { display: flex; gap: 6px; flex-wrap: wrap; }
+.d-link {
+  padding: 4px 10px; border-radius: 4px; background: rgba(255,255,255,0.06);
+  color: var(--text-secondary); text-decoration: none; font-size: 0.75rem;
+  transition: 0.2s;
+}
+.d-link:hover { background: rgba(212,175,55,0.2); color: var(--gold-light); }
+.d-link.hp:hover { background: rgba(239,68,68,0.2); color: #fca5a5; }
+.d-link.ts:hover { background: rgba(52,211,153,0.2); color: #6ee7b7; }
+
+/* 买前必看侧边提示 */
+.note-box {
+  position: absolute; right: 20px; margin-top: -60px; width: 260px;
+  background: rgba(20,21,31,0.95); border: 1px solid rgba(212,175,55,0.3);
+  border-radius: 10px; padding: 16px; box-shadow: var(--glow-gold);
+}
+.note-title { font-weight: 700; color: var(--gold-light); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.note-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; font-size: 0.78rem; line-height: 1.6; }
+.note-item .ok { color: var(--green); }
+.note-item .no { color: var(--red); }
+
+/* 状态提示 */
+.status-bar {
+  padding: 12px 20px; background: rgba(212,175,55,0.03); border-radius: 8px; margin-bottom: 16px;
+  display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem;
+}
+.status-ok { color: var(--green); }
+.status-err { color: var(--red); }
+.empty { text-align: center; padding: 40px; color: var(--text-secondary); }
+
+/* 响应适配 */
+@media (max-width: 1400px) {
+  .cards-row { grid-template-columns: repeat(2, 1fr); }
+  .alert-row { grid-template-columns: 1fr; }
+  .note-box { position: static; margin: 16px 0 0 0; width: 100%; }
+}
+@media (max-width: 900px) {
+  .cards-row { grid-template-columns: 1fr; }
+  .table-grid { grid-template-columns: 80px 120px 1fr 100px 100px 100px; }
+  .table-grid span:nth-child(7), .table-grid span:nth-child(8), .table-grid > div:last-child { display: none; }
 }
 </style>
 </head>
 <body>
 <div class="container">
-  <!-- ⚠️ 置顶风险提示 -->
-  <div class="risk-banner">
-    <span class="icon">⚠️</span>
-    <div class="text">
-      <strong>工具仅筛选，不保证安全！</strong> 买入前务必：① 先查 Honeypot/TokenSniffer ② 小额试卖10%能出才留 ③ 没锁仓/没深度/税高 → 直接放弃！<strong>只投能接受全亏的钱！</strong>
-    </div>
+  <!-- 标题 -->
+  <div class="header">
+    <h1 class="title">金狗雷达 Pro</h1>
+    <div class="top-meta">实时监控｜<span id="refreshInfo">90秒刷新</span></div>
   </div>
 
-  <!-- 顶部控制 -->
-  <div class="top-bar">
-    <h1><span>🐶</span> 土狗猎手 · 终极版 V3</h1>
-    <div class="ctrl-group">
-      <button class="btn active" data-filter="all">全部</button>
-      <button class="btn" data-filter="observe">🔍 观察</button>
-      <button class="btn" data-filter="sprout">🌱 萌芽</button>
-      <button class="btn" data-filter="launch">🚀 启动</button>
-      <button class="btn" data-filter="growth">📈 成长</button>
-      <div class="switch-wrap">
-        🔊 提醒
-        <label class="switch">
-          <input type="checkbox" id="soundSwitch" checked>
-          <span class="slider"></span>
-        </label>
-      </div>
-      <button class="btn" id="clearBtn">清提醒</button>
-    </div>
-  </div>
-
-  <!-- 数据源状态 -->
+  <!-- 状态条 -->
   <div class="status-bar">
     <div>
       📡 数据源：<strong id="sourceStatus">连接中...</strong>
-      <span style="margin:0 10px;">|</span>
-      范围：0~10万(严筛≥8%)｜10万~50万｜50万~200万｜200万~800万 USD
+      <span style="margin:0 12px;">|</span>
+      范围：观察$0~10万｜萌芽$10~50万｜启动$50~200万｜成长$200~800万
     </div>
     <div>
       <span id="updateTime">更新：--</span>
-      <span style="margin:0 10px;">|</span>
+      <span style="margin:0 12px;">|</span>
       <span id="countInfo">币种：0</span>
+      <span style="margin:0 12px;">|</span>
+      <label style="display:inline-flex;align-items:center;gap:6px;">
+        🔊 提醒
+        <input type="checkbox" id="soundSwitch" checked style="width:16px;height:16px;">
+      </label>
+      <button class="btn-sm" id="clearBtn" style="margin-left:8px;">清提醒</button>
     </div>
   </div>
 
-  <!-- 🔍 观察区 0~10万 -->
-  <div class="section observe" id="sectObserve">
-    <div class="section-header">
-      <div class="section-title">🔍 观察区 · 0~10万美元</div>
-      <div class="section-desc">量价比≥8%才显示｜风险极高｜貔貅重灾区 ⚠️</div>
-    </div>
-    <div class="table-header">
-      <span></span><span>币种</span><span>合约地址</span><span>市值</span><span>24h涨跌</span><span>量价比</span><span>风险</span><span>检测链接</span>
-    </div>
-    <div id="listObserve"></div>
+  <!-- 筛选标签 -->
+  <div class="tabs">
+    <div class="tab active" data-filter="all">全部</div>
+    <div class="tab observe" data-filter="observe">观察区</div>
+    <div class="tab sprout" data-filter="sprout">萌芽期</div>
+    <div class="tab.launch" data-filter="launch">启动期</div>
+    <div class="tab.growth" data-filter="growth">成长期</div>
   </div>
 
-  <!-- 🌱 萌芽期 10万~50万 -->
-  <div class="section sprout" id="sectSprout">
-    <div class="section-header">
-      <div class="section-title">🌱 萌芽期 · 10万~50万美元</div>
-      <div class="section-desc">纯土狗重点区｜量价比≥5%｜10~100倍潜力</div>
+  <!-- 四大板块卡片 -->
+  <div class="cards-row">
+    <div class="card-box observe" id="cardObserve">
+      <div class="card-icon">⚙️</div>
+      <div class="card-title">观察区 · 0~10万</div>
+      <div class="card-count" id="cntObserve">0</div>
+      <div class="card-desc">量能≥8%｜风险极高</div>
     </div>
-    <div class="table-header">
-      <span></span><span>币种</span><span>合约地址</span><span>市值</span><span>24h涨跌</span><span>量价比</span><span>风险</span><span>检测链接</span>
+    <div class="card-box sprout" id="cardSprout">
+      <div class="card-icon">🌱</div>
+      <div class="card-title">萌芽期 · 10~50万</div>
+      <div class="card-count" id="cntSprout">0</div>
+      <div class="card-desc">量能≥5%｜10~100倍潜力</div>
     </div>
-    <div id="listSprout"></div>
+    <div class="card-box launch" id="cardLaunch">
+      <div class="card-icon">🚀</div>
+      <div class="card-title">启动期 · 50~200万</div>
+      <div class="card-count" id="cntLaunch">0</div>
+      <div class="card-desc">量能≥5%｜5~30倍潜力</div>
+    </div>
+    <div class="card-box growth" id="cardGrowth">
+      <div class="card-icon">📈</div>
+      <div class="card-title">成长期 · 200~800万</div>
+      <div class="card-count" id="cntGrowth">0</div>
+      <div class="card-desc">量能≥5%｜2~10倍潜力</div>
+    </div>
   </div>
 
-  <!-- 🚀 启动期 50万~200万 -->
-  <div class="section launch" id="sectLaunch">
-    <div class="section-header">
-      <div class="section-title">🚀 启动期 · 50万~200万美元</div>
-      <div class="section-desc">黄金爆发区｜量价比≥5%｜5~30倍潜力</div>
+  <!-- 异动提醒区 -->
+  <div class="alert-section">
+    <div class="alert-title"><span>⚡</span> 异动提醒</div>
+    <div class="alert-row">
+      <div class="alert-card stage-1" id="alertStage1">
+        <div class="alert-tag stage-1">✅ 一段提醒 · 新币首发</div>
+        <div class="alert-content" id="alertStage1Content">暂无新币信号</div>
+      </div>
+      <div class="alert-card stage-2" id="alertStage2">
+        <div class="alert-tag stage-2">⚡ 二段提醒 · 老币异动</div>
+        <div class="alert-content" id="alertStage2Content">暂无异动信号</div>
+      </div>
     </div>
-    <div class="table-header">
-      <span></span><span>币种</span><span>合约地址</span><span>市值</span><span>24h涨跌</span><span>量价比</span><span>风险</span><span>检测链接</span>
-    </div>
-    <div id="listLaunch"></div>
   </div>
 
-  <!-- 📈 成长期 200万~800万 -->
-  <div class="section growth" id="sectGrowth">
-    <div class="section-header">
-      <div class="section-title">📈 成长期 · 200万~800万美元</div>
-      <div class="section-desc">稳中有爆｜量价比≥5%｜2~10倍潜力</div>
+  <!-- 买前必看 -->
+  <div class="note-box">
+    <div class="note-title">🛡️ 买前必看</div>
+    <div class="note-item"><span class="no">✗</span> 未锁仓 / 未验证 → 不买</div>
+    <div class="note-item"><span class="no">✗</span> 卖税＞10% → 不买</div>
+    <div class="note-item"><span class="no">✗</span> 深度＜$5000 → 不买</div>
+    <div class="note-item"><span class="ok">✓</span> 买入后先试卖10% → 能出才重仓</div>
+    <div class="note-item"><span class="ok">✓</span> 只投能接受全亏的钱</div>
+  </div>
+
+  <!-- 主表格 -->
+  <div class="table-section" style="margin-top: 40px;">
+    <div class="table-header-bar">
+      <div class="table-title">📊 币种监控列表</div>
+      <div class="table-controls">
+        <span style="color:var(--text-secondary);font-size:0.78rem;">数据来源：CoinGecko API</span>
+      </div>
     </div>
-    <div class="table-header">
-      <span></span><span>币种</span><span>合约地址</span><span>市值</span><span>24h涨跌</span><span>量价比</span><span>风险</span><span>检测链接</span>
+    <div class="table-grid table-head">
+      <span>#</span><span>币种</span><span>合约地址</span><span>市值</span><span>涨幅</span><span>量价比</span><span>深度</span><span>风险</span><span>一键检测</span>
     </div>
-    <div id="listGrowth"></div>
+    <div id="tableBody">
+      <div class="empty">加载中...</div>
+    </div>
   </div>
 </div>
 
 <script>
 // ==========================================
-// ⚙️ 核心配置 —— 完全按咱们定的策略写死
+// ⚙️ 核心配置 —— 完全按定好的策略
 // ==========================================
 const CONFIG = {
-  AUTO_REFRESH_SEC: 90,           // 刷新间隔，别太快被限流
-  TOP_PER_PAGE: 250,              // 拉取足够多币种来筛
+  AUTO_REFRESH_SEC: 90,
+  TOP_PER_PAGE: 250,
 
   // 市值区间
-  OBSERVE_MAX: 100_000,           // 观察：0~10万
-  SPROUT_MAX: 500_000,            // 萌芽：10万~50万
-  LAUNCH_MAX: 2_000_000,          // 启动：50万~200万
-  GROWTH_MAX: 8_000_000,         // 成长：200万~800万
+  OBSERVE_MAX: 100_000,
+  SPROUT_MAX: 500_000,
+  LAUNCH_MAX: 2_000_000,
+  GROWTH_MAX: 8_000_000,
 
   // 筛选门槛
-  OBSERVE_MIN_RATIO: 0.08,        // 观察区更严：量价比≥8%
-  NORMAL_MIN_RATIO: 0.05,         // 其他区：≥5%
-  CHANGE_UP: 0,                   // 必须上涨
+  OBSERVE_RATIO: 0.08,
+  NORMAL_RATIO: 0.05,
+  CHANGE_UP: 0,
 
-  // 异动判定
-  SURGE_CHANGE: 15,               // 涨幅>15%视为异动
-  NEW_HOURS: 24,                  // 24h内为新币 = 一段提醒
-  COOLDOWN: 3600_000,             // 1小时防刷屏提醒
+  // 提醒判定
+  NEW_HOURS: 24,
+  SURGE_RISE: 15,
+  COOLDOWN: 3600_000,
 
-  // 风险判定阈值
-  DEPTH_THRESHOLD_USD: 5000,      // 低于$5000 = 深度不足
-  CONCENTRATION_RISK: 60          // 前10持币>60% = 高风险（注：免费接口拿不到真实数据，仅作提示）
+  // 风险阈值
+  DEPTH_WARN: 5000
 };
 
-// 主流币/稳定币黑名单 —— 直接剔除
 const BLACKLIST = new Set([
   'bitcoin','ethereum','binancecoin','solana','usd-coin','tether',
   'staked-ether','ripple','cardano','dogecoin','tron','polkadot',
@@ -317,7 +363,6 @@ const BLACKLIST = new Set([
   'binance-usd','dai','trueusd','usdd','frax','wrapped-bitcoin'
 ]);
 
-// 链浏览器映射
 const EXPLORER = {
   'ethereum':'https://etherscan.io/token/',
   'binance-smart-chain':'https://bscscan.com/token/',
@@ -329,7 +374,7 @@ const EXPLORER = {
   'optimism':'https://optimistic.etherscan.io/token/'
 };
 
-const DETECT_TOOLS = {
+const DETECT = {
   honeypot: 'https://honeypot.is/',
   tokensniffer: 'https://tokensniffer.com/token/',
   goplus: 'https://gopluslabs.io/token-security/'
@@ -337,11 +382,13 @@ const DETECT_TOOLS = {
 
 const DEFAULT_AVATAR = 'https://cdn-icons-png.flaticon.com/512/1046/1046754.png';
 
-// 状态变量
+// 状态
 const notified = new Set();
-const firstSeen = new Map();  // 记录首次出现时间，用于判断新币
-const prevChange = new Map(); // 记录上次涨幅，用于判断异动
+const firstSeen = new Map();
+const prevChange = new Map();
 let lastIds = new Set();
+let stage1Item = null;
+let stage2Item = null;
 let audioCtx = null;
 let currentFilter = 'all';
 
@@ -369,18 +416,15 @@ function speak(text) {
 }
 
 // ==========================================
-// 📊 数据格式化
+// 📊 格式化与分级
 // ==========================================
 function fmtMoney(usd) {
   if (!usd || usd <= 0) return '—';
-  if (usd >= 1_000_000) return (usd/1_000_000).toFixed(2) + 'M';
-  if (usd >= 1_000) return (usd/1000).toFixed(2) + 'K';
-  return usd.toFixed(0);
+  if (usd >= 1_000_000) return '$' + (usd/1_000_000).toFixed(2) + 'M';
+  if (usd >= 1000) return '$' + (usd/1000).toFixed(2) + 'K';
+  return '$' + usd.toFixed(0);
 }
 
-// ==========================================
-// 🏷️ 分级判定
-// ==========================================
 function getTier(mcap) {
   if (mcap < CONFIG.OBSERVE_MAX) return 'observe';
   if (mcap < CONFIG.SPROUT_MAX) return 'sprout';
@@ -392,132 +436,107 @@ function getTierName(tier) {
   return { observe:'观察', sprout:'萌芽', launch:'启动', growth:'成长' }[tier];
 }
 
-function meetsThreshold(tier, volRatio) {
-  const minRatio = tier === 'observe' ? CONFIG.OBSERVE_MIN_RATIO : CONFIG.NORMAL_MIN_RATIO;
-  return volRatio >= minRatio;
+function meetsThreshold(tier, ratio) {
+  const min = tier === 'observe' ? CONFIG.OBSERVE_RATIO : CONFIG.NORMAL_RATIO;
+  return ratio >= min;
 }
 
-function getStage(item, isNewToSystem) {
-  // 一段提醒：首次出现 + 满足门槛 = 新币首发
-  if (isNewToSystem && meetsThreshold(item.tier, item.volRatio)) return 1;
-  // 二段提醒：已存在 + 涨幅突增 = 老币异动
-  const prev = prevChange.get(item.id);
-  if (prev !== undefined && item.change24h > prev + CONFIG.SURGE_CHANGE && meetsThreshold(item.tier, item.volRatio)) return 2;
-  return 0;
-}
-
-function getRiskLabel(item) {
+function getRiskTag(item) {
   const risks = [];
-  if (item.vol < CONFIG.DEPTH_THRESHOLD_USD) risks.push('深度浅');
+  if (item.vol < CONFIG.DEPTH_WARN) risks.push('深度不足');
   if (item.change24h > 30) risks.push('追高风险');
   if (item.tier === 'observe') risks.push('极高风险');
-  
+
   if (risks.length === 0) return { text: '正常', cls: 'risk-low' };
-  if (risks.includes('极高风险')) return { text: risks.join(' · '), cls: 'risk-high' };
-  if (risks.includes('追高风险')) return { text: risks.join(' · '), cls: 'risk-mid' };
-  return { text: risks.join(' · '), cls: 'risk-mid' };
+  if (risks.includes('极高风险')) return { text: risks.join('·'), cls: 'risk-high' };
+  if (risks.includes('追高风险')) return { text: risks.join('·'), cls: 'risk-mid' };
+  return { text: risks.join('·'), cls: 'risk-mid' };
 }
 
 // ==========================================
-// 🔌 拉取真实数据 —— CoinGecko 直连
+// 🔌 拉取真实数据
 // ==========================================
 async function fetchData() {
   try {
-    const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_asc&per_page=${CONFIG.TOP_PER_PAGE}&page=1&sparkline=false&price_change_percentage=24h`;
-    
-    const res = await fetch(url, {
-      method: 'GET',
-      headers: { 'Accept': 'application/json' },
-      cache: 'no-store'
-    });
-    
+    const res = await fetch(
+      `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_asc&per_page=${CONFIG.TOP_PER_PAGE}&page=1&sparkline=false&price_change_percentage=24h`,
+      { cache: 'no-store' }
+    );
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    
-    document.getElementById('sourceStatus').innerHTML =
-      '<span class="status-ok">✅ CoinGecko 已连接 · 实时数据</span>';
+    document.getElementById('sourceStatus').innerHTML = '<span style="color:#34d399;">✅ CoinGecko 实时连接</span>';
     return data;
   } catch (e) {
-    console.error('获取数据失败:', e);
-    document.getElementById('sourceStatus').innerHTML =
-      `<span class="status-err">❌ 连接失败：${e.message}</span>`;
+    document.getElementById('sourceStatus').innerHTML = `<span style="color:#ef4444;">❌ 失败：${e.message}</span>`;
     return null;
   }
 }
 
 // ==========================================
-// 🧠 核心筛选逻辑
+// 🧠 处理与筛选
 // ==========================================
 function processCoins(raw) {
   if (!raw) return { observe:[], sprout:[], launch:[], growth:[] };
 
   const observe = [], sprout = [], launch = [], growth = [];
   const now = Date.now();
-  let countAll = 0, countFiltered = 0;
+  let total = 0, kept = 0;
 
   for (const c of raw) {
-    countAll++;
-
-    // 1. 黑名单过滤
+    total++;
     if (BLACKLIST.has(c.id)) continue;
 
-    // 2. 市值范围过滤
     const mcap = c.market_cap || 0;
     if (mcap <= 0 || mcap > CONFIG.GROWTH_MAX) continue;
 
-    // 3. 基础数据提取
     const vol = c.total_volume || 0;
     const change24h = c.price_change_percentage_24h || 0;
     const volRatio = mcap > 0 ? vol / mcap : 0;
 
-    // 4. 涨幅必须为正
     if (change24h <= CONFIG.CHANGE_UP) continue;
 
-    // 5. 分级
     const tier = getTier(mcap);
-
-    // 6. 量能门槛筛选
     if (!meetsThreshold(tier, volRatio)) continue;
 
-    countFiltered++;
+    kept++;
 
-    // 7. 新币/异动判定
     if (!firstSeen.has(c.id)) firstSeen.set(c.id, now);
     const seenMs = now - firstSeen.get(c.id);
-    const isNewToSystem = seenMs < CONFIG.NEW_HOURS * 3600_000 && !lastIds.has(c.id);
-    const stage = getStage({ id:c.id, tier, volRatio, change24h }, isNewToSystem);
+    const isNew = seenMs < CONFIG.NEW_HOURS * 3600_000 && !lastIds.has(c.id);
 
-    // 8. 链/合约信息
+    const prev = prevChange.get(c.id);
+    const isSurge = prev !== undefined && change24h > prev + CONFIG.SURGE_RISE;
+
     const platformKey = c.platforms ? Object.keys(c.platforms)[0] : null;
     const chain = platformKey || 'ethereum';
     const contract = c.contract_address || (c.platforms?.[platformKey] || '');
 
-    // 9. 风险标签
-    const risk = getRiskLabel({ vol, change24h, tier });
+    const risk = getRiskTag({ vol, change24h, tier });
 
     const item = {
       id: c.id,
       symbol: c.symbol?.toUpperCase() || '?',
       name: c.name || '',
       mcap, vol, change24h, volRatio,
-      tier, stage, isNewToSystem,
+      tier, isNew, isSurge,
       chain, contract,
       image: c.image || DEFAULT_AVATAR,
-      risk,
-      lastUpdated: c.last_updated
+      risk
     };
 
-    // 10. 分区归类
     if (tier === 'observe') observe.push(item);
     else if (tier === 'sprout') sprout.push(item);
     else if (tier === 'launch') launch.push(item);
     else growth.push(item);
 
-    // 保存上次涨幅，用于下轮异动判定
     prevChange.set(c.id, change24h);
+
+    // 更新一二段提醒
+    if (isNew && meetsThreshold(tier, volRatio)) stage1Item = item;
+    if (isSurge && meetsThreshold(tier, volRatio)) stage2Item = item;
   }
 
-  // 按量价比排序，共振强的在前
+  // 排序
   const sortFn = (a,b) => b.volRatio - a.volRatio;
   const result = {
     observe: observe.sort(sortFn),
@@ -526,133 +545,159 @@ function processCoins(raw) {
     growth: growth.sort(sortFn)
   };
 
-  document.getElementById('countInfo').textContent =
-    `扫描:${countAll} · 筛选:${countFiltered}`;
+  // 更新顶部计数
+  document.getElementById('cntObserve').textContent = result.observe.length;
+  document.getElementById('cntSprout').textContent = result.sprout.length;
+  document.getElementById('cntLaunch').textContent = result.launch.length;
+  document.getElementById('cntGrowth').textContent = result.growth.length;
+  document.getElementById('countInfo').textContent = `扫描:${total} · 筛选:${kept}`;
 
   return result;
 }
 
 // ==========================================
-// 🎨 渲染单行
+// 🎨 渲染
 // ==========================================
-function renderRow(item) {
-  const isNew = !lastIds.has(item.id);
-  const showFlash = isNew && item.stage > 0 && !notified.has(item.id);
-
-  // 提醒发声控制
-  if (showFlash && item.stage === 1) {
-    notified.add(item.id);
-    setTimeout(() => { beep(880); beep(1100); speak(`新币首发 ${item.symbol} ${getTierName(item.tier)}区`); }, 300);
-  } else if (showFlash && item.stage === 2) {
-    notified.add(item.id);
-    setTimeout(() => { beep(660); beep(880); beep(1100); speak(`老币异动 ${item.symbol} ${item.change24h.toFixed(1)}%`); }, 300);
+function renderAlertStage1() {
+  const el = document.getElementById('alertStage1Content');
+  const card = document.getElementById('alertStage1');
+  if (!stage1Item) {
+    el.innerHTML = '<div style="color:#6ee7b780;">暂无新币首发信号</div>';
+    card.classList.remove('flash-anim');
+    return;
   }
 
-  // 检测链接
+  const item = stage1Item;
+  el.innerHTML = `
+    <div class="alert-name">${item.symbol} · ${getTierName(item.tier)}区</div>
+    <div class="alert-meta">
+      市值 ${fmtMoney(item.mcap)} · 涨幅 +${item.change24h.toFixed(2)}% · 量价比 ${(item.volRatio*100).toFixed(1)}% · 深度 ${fmtMoney(item.vol)}
+    </div>
+  `;
+
+  const shouldNotify = !notified.has('s1-' + item.id);
+  if (shouldNotify) {
+    notified.add('s1-' + item.id);
+    card.classList.add('flash-anim');
+    setTimeout(() => { beep(880); beep(1100); speak(`新币首发 ${item.symbol} ${getTierName(item.tier)}区`); }, 300);
+  }
+}
+
+function renderAlertStage2() {
+  const el = document.getElementById('alertStage2Content');
+  const card = document.getElementById('alertStage2');
+  if (!stage2Item) {
+    el.innerHTML = '<div style="color:#fcd34d80;">暂无老币异动信号</div>';
+    card.classList.remove('flash-anim');
+    return;
+  }
+
+  const item = stage2Item;
+  el.innerHTML = `
+    <div class="alert-name">${item.symbol} · ${getTierName(item.tier)}区</div>
+    <div class="alert-meta">
+      市值 ${fmtMoney(item.mcap)} · 涨幅 +${item.change24h.toFixed(2)}% · 量价比 ${(item.volRatio*100).toFixed(1)}% · 深度 ${fmtMoney(item.vol)}
+    </div>
+  `;
+
+  const shouldNotify = !notified.has('s2-' + item.id);
+  if (shouldNotify) {
+    notified.add('s2-' + item.id);
+    card.classList.add('flash-anim');
+    setTimeout(() => { beep(660); beep(880); beep(1100); speak(`老币异动 ${item.symbol} ${item.change24h.toFixed(1)}%`); }, 300);
+  }
+}
+
+function renderRow(item, idx) {
   const explorerBase = EXPLORER[item.chain] || 'https://www.coingecko.com/en/coins/';
-  const tokenLink = item.contract 
-    ? `${explorerBase}${item.contract}` 
-    : `https://www.coingecko.com/en/coins/${item.id}`;
-  const detectLink = item.contract
-    ? `${DETECT_TOOLS.tokensniffer}${item.contract}`
-    : `https://www.coingecko.com/en/coins/${item.id}`;
-  const honeypotLink = item.contract
-    ? `${DETECT_TOOLS.honeypot}${item.contract}`
-    : tokenLink;
+  const tokenLink = item.contract ? `${explorerBase}${item.contract}` : `https://www.coingecko.com/en/coins/${item.id}`;
+  const snifferLink = item.contract ? `${DETECT.tokensniffer}${item.contract}` : tokenLink;
+  const hpLink = item.contract ? `${DETECT.honeypot}${item.contract}` : tokenLink;
 
   return `
-    <div class="row ${item.stage === 1 ? 'stage-1' : ''} ${item.stage === 2 ? 'stage-2' : ''} ${showFlash ? 'flash' : ''}" 
-         data-tier="${item.tier}">
-      <div class="avatar-wrap">
-        <img class="avatar" src="${item.image}" alt="${item.symbol}" onerror="this.src='${DEFAULT_AVATAR}'">
-        ${item.stage === 1 ? '<span class="badge badge-new">🆕</span>' : ''}
-        ${item.stage === 2 ? '<span class="badge badge-surge">⚡</span>' : ''}
-      </div>
-      <div>
-        <div class="coin-name">${item.symbol}<span class="chain-tag">${getTierName(item.tier)}</span></div>
-        <div class="addr">${item.contract ? item.contract.slice(0,14)+'...' : '原生代币'}</div>
-      </div>
-      <div></div>
-      <div class="num">$${fmtMoney(item.mcap)}</div>
-      <div class="num ${item.change24h>=0?'up':'down'}">${item.change24h>=0?'+':''}${item.change24h.toFixed(2)}%</div>
-      <div class="num ${item.volRatio>=0.1?'up':''}">${(item.volRatio*100).toFixed(1)}%</div>
-      <div><span class="risk-tag ${item.risk.cls}">${item.risk.text}</span></div>
-      <div class="links">
-        <a href="${tokenLink}" target="_blank" class="link">链上</a>
-        <a href="${detectLink}" target="_blank" class="link">检测</a>
-        <a href="${honeypotLink}" target="_blank" class="link">蜜罐</a>
-      </div>
+    <div class="table-row table-grid" data-tier="${item.tier}">
+      <span>${idx + 1}</span>
+      <span style="font-weight:700;">${item.symbol}</span>
+      <span style="font-size:0.7rem;color:#6b7294;">${item.contract ? item.contract.slice(0,14)+'...' : '原生'}</span>
+      <span style="font-family:monospace;">${fmtMoney(item.mcap)}</span>
+      <span style="color:#34d399;font-weight:600;">+${item.change24h.toFixed(2)}%</span>
+      <span style="${item.volRatio>=0.1?'color:#34d399;':''}">${(item.volRatio*100).toFixed(1)}%</span>
+      <span>${fmtMoney(item.vol)}</span>
+      <span><span class="risk-tag ${item.risk.cls}">${item.risk.text}</span></span>
+      <span class="detect-links">
+        <a href="${tokenLink}" target="_blank" class="d-link">链上</a>
+        <a href="${hpLink}" target="_blank" class="d-link hp">蜜罐</a>
+        <a href="${snifferLink}" target="_blank" class="d-link ts">检测</a>
+      </span>
     </div>
   `;
 }
 
-function renderSection(containerId, items) {
-  const el = document.getElementById(containerId);
-  if (!items.length) {
-    el.innerHTML = '<div class="empty">暂无符合条件币种</div>';
+function renderAll(list) {
+  const all = [...list.observe, ...list.sprout, ...list.launch, ...list.growth];
+  
+  // 筛选过滤
+  const filtered = currentFilter === 'all' ? all : list[currentFilter];
+  
+  if (!filtered.length) {
+    document.getElementById('tableBody').innerHTML = '<div class="empty">暂无符合条件币种 · 耐心等新信号</div>';
     return;
   }
-  el.innerHTML = items.map(renderRow).join('');
+
+  document.getElementById('tableBody').innerHTML = filtered.map((item, i) => renderRow(item, i)).join('');
+  
   // 渐入动画
-  el.querySelectorAll('.row').forEach((row, i) => {
-    setTimeout(() => row.classList.add('visible'), i * 40);
+  document.querySelectorAll('.table-row').forEach((row, i) => {
+    setTimeout(() => row.classList.add('visible'), i * 30);
   });
 }
 
 // ==========================================
-// 🔄 主刷新循环
+// 🔄 主刷新
 // ==========================================
 async function update() {
+  stage1Item = null;
+  stage2Item = null;
+
   const raw = await fetchData();
-  const { observe, sprout, launch, growth } = processCoins(raw);
+  const lists = processCoins(raw);
 
-  renderSection('listObserve', observe);
-  renderSection('listSprout', sprout);
-  renderSection('listLaunch', launch);
-  renderSection('listGrowth', growth);
+  renderAlertStage1();
+  renderAlertStage2();
+  renderAll(lists);
 
-  // 记录当前ID集合，用于下次判断新币
-  lastIds = new Set([...observe,...sprout,...launch,...growth].map(i => i.id));
+  lastIds = new Set([...lists.observe, ...lists.sprout, ...lists.launch, ...lists.growth].map(i => i.id));
 
-  document.getElementById('updateTime').textContent =
-    '更新：' + new Date().toLocaleTimeString('zh-CN');
+  document.getElementById('updateTime').textContent = '更新：' + new Date().toLocaleTimeString('zh-CN');
 }
 
 // ==========================================
 // 🎛️ 筛选切换
 // ==========================================
-document.querySelectorAll('[data-filter]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentFilter = btn.dataset.filter;
-
-    document.getElementById('sectObserve').style.display = currentFilter==='all'||currentFilter==='observe' ? 'block' : 'none';
-    document.getElementById('sectSprout').style.display = currentFilter==='all'||currentFilter==='sprout' ? 'block' : 'none';
-    document.getElementById('sectLaunch').style.display = currentFilter==='all'||currentFilter==='launch' ? 'block' : 'none';
-    document.getElementById('sectGrowth').style.display = currentFilter==='all'||currentFilter==='growth' ? 'block' : 'none';
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentFilter = tab.dataset.filter;
+    update(); // 重渲染
   });
 });
 
-// 清提醒
 document.getElementById('clearBtn').addEventListener('click', () => {
   notified.clear();
-  firstSeen.clear();
-  lastIds.clear();
   alert('提醒已重置 ✅');
 });
 
-// 初始化音频
 document.addEventListener('click', initAudio, { once: true });
 
 // 启动
 update();
 setInterval(update, CONFIG.AUTO_REFRESH_SEC * 1000);
 
-console.log('%c===== 土狗猎手 · 终极版 V3 已启动 =====', 'color:#7c4dff;font-weight:bold;');
-console.log('数据源：CoinGecko API 直连 · 无需密钥');
-console.log('刷新：每' + CONFIG.AUTO_REFRESH_SEC + '秒');
-console.log('策略：二段提醒｜四大分区｜貔貅防线');
+console.log('%c===== 金狗雷达 Pro 已启动 =====', 'color:#d4af37;font-weight:bold;font-size:14px;');
+console.log('风格：黑金赛博 · 按图还原');
+console.log('数据：CoinGecko 实时直连');
+console.log('策略：二段提醒 · 四大分区 · 貔貅防线');
 </script>
 </body>
 </html>
