@@ -323,31 +323,39 @@ function say(text) {
   synth.speak(u);
 }
 
-// ✅ 用代理接口，直接双击打开也不会跨域
+// ✅ 按官方文档修正接口地址 + 双代理防跨域
 async function fetchDexScreenerData() {
-  const urls = [
+  // 官方正确接口：/latest/dex/search
+  const endpoints = [
+    'https://api.dexscreener.com/latest/dex/search?q=*',
     'https://api.allorigins.win/raw?url=https://api.dexscreener.com/latest/dex/search?q=*',
     'https://corsproxy.io/?https://api.dexscreener.com/latest/dex/search?q=*'
   ];
   
-  for (const url of urls) {
+  for (const url of endpoints) {
     try {
+      console.log('尝试连接:', url);
       const res = await fetch(url, {
         method: 'GET',
         headers: { 'Accept': 'application/json' },
         cache: 'no-store'
       });
-      if (!res.ok) continue;
+      if (!res.ok) {
+        console.warn('接口返回异常:', res.status);
+        continue;
+      }
       const json = await res.json();
-      if (json.pairs) {
-        document.getElementById('sourceStatus').textContent = '实时连接正常';
+      if (json && json.pairs) {
+        document.getElementById('sourceStatus').textContent = '✅ DexScreener 实时连接';
         document.getElementById('sourceStatus').className = 'status-ok';
         return json.pairs;
       }
-    } catch (e) { continue; }
+    } catch (e) {
+      console.warn('连接失败:', url, e.message);
+    }
   }
   
-  document.getElementById('sourceStatus').textContent = '连接失败，请检查网络';
+  document.getElementById('sourceStatus').innerHTML = '❌ 全部连接失败<br><small style="color:#ffcc00">可能网络限制，稍后再试</small>';
   document.getElementById('sourceStatus').className = 'status-err';
   return null;
 }
@@ -516,8 +524,9 @@ document.addEventListener('click', initAudio, { once: true });
 updateLoop();
 setInterval(updateLoop, CONFIG.AUTO_REFRESH_SEC * 1000);
 
-console.log('%c===== 全链大金狗 · 直接双击即用 =====', 'color:#00d4ff;font-weight:bold;');
-console.log('已启用跨域代理，直接双击打开即可自动刷新数据');
+console.log('%c===== 全链大金狗 · 官方API修正版 =====', 'color:#00d4ff;font-weight:bold;');
+console.log('接口地址：https://api.dexscreener.com/latest/dex/search?q=*');
+console.log('直接双击打开即可，自动尝试代理跨域');
 </script>
 </body>
 </html>
