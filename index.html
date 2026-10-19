@@ -1,408 +1,177 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DOG HUNTER — 加关闭按钮版</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Microsoft YaHei", sans-serif; }
-    :root {
-      --cyan: #00e5ff; --cyan-deep: #0099aa;
-      --gold: #ffb800; --gold-deep: #cc9200;
-      --green: #00d084; --red: #ff4d4f; --warn: #ff9500;
-      --purple: #9945ff; --blue: #4080ff; --orange: #ff7d00;
-      --bg-dark: #01030a; --bg-card: rgba(10, 22, 50, 0.7);
-      --border-cyan: rgba(0, 229, 255, 0.25);
-      --text-main: #e6f7ff; --text-sub: #7ab8d6; --text-weak: #4a7090;
-      --blur: 12px;
-    }
-    html,body { width:100%; height:100%; overflow:hidden; background:var(--bg-dark); color:var(--text-main); }
-    .bg-layer { position:fixed; inset:0; z-index:0; background:
-      radial-gradient(circle at 20% 20%, rgba(0,229,255,.08), transparent 45%),
-      radial-gradient(circle at 80% 70%, rgba(255,184,0,.06), transparent 45%),
-      linear-gradient(135deg, #01030a, #050c20, #01030a); }
-
-    .page { position:relative; z-index:1; width:100%; height:100%; padding:10px; display:grid; gap:10px;
-      grid-template-columns: 260px 1fr 340px;
-      grid-template-rows: 60px auto auto 1fr 100px;
-      grid-template-areas:
-        "hd hd hd"
-        "cfg cfg cfg"
-        "launch launch launch"
-        "lb main rb"
-        "ft ft ft"; }
-
-    .card { border:1px solid var(--border-cyan); border-radius:10px; padding:14px; background:var(--bg-card); backdrop-filter:blur(var(--blur)); position:relative; overflow:hidden; }
-    .card-hd { display:flex; justify-content:space-between; align-items:center; padding-bottom:10px; margin-bottom:10px; border-bottom:1px solid rgba(0,229,255,.1); flex-wrap:wrap; gap:6px; }
-    .card-tt { font-size:14px; color:var(--cyan); letter-spacing:1px; font-weight:600; display:flex; align-items:center; gap:6px; }
-    .tag { font-size:11px; padding:2px 8px; border-radius:12px; white-space:nowrap; }
-    .tag.ok { background:rgba(0,208,132,.15); color:var(--green); border:1px solid rgba(0,208,132,.25); }
-    .tag.warn { background:rgba(255,149,0,.15); color:var(--warn); border:1px solid rgba(255,149,0,.25); }
-    .tag.danger { background:rgba(255,77,79,.15); color:var(--red); border:1px solid rgba(255,77,79,.25); }
-    .tag.gold { background:rgba(255,184,0,.15); color:var(--gold); border:1px solid rgba(255,184,0,.25); }
-    .tag.purple { background:rgba(153,69,255,.15); color:var(--purple); border:1px solid rgba(153,69,255,.25); }
-    .tag.blue { background:rgba(64,128,255,.15); color:var(--blue); border:1px solid rgba(64,128,255,.25); }
-    .tag.small { font-size:10px; padding:1px 6px; }
-    .close-btn { background:rgba(255,77,79,.15); color:var(--red); border:none; padding:3px 8px; border-radius:4px; cursor:pointer; font-size:11px; }
-    .close-btn:hover { background:rgba(255,77,79,.3); }
-
-    .cfg-area { grid-area:cfg; }
-    .cfg-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:10px; }
-    .cfg-item { display:flex; flex-direction:column; gap:4px; }
-    .cfg-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-    label { font-size:12px; color:var(--text-sub); }
-    input,textarea,button {
-      background:rgba(0,0,0,.35); border:1px solid rgba(0,229,255,.2); border-radius:6px;
-      color:var(--text-main); padding:6px 10px; font-size:12px; outline:none;
-    }
-    input:focus,textarea:focus { border-color:var(--cyan); }
-    textarea { resize:vertical; min-height:40px; }
-    .btn { border:none; padding:7px 14px; cursor:pointer; font-weight:600; border-radius:6px; }
-    .btn-primary { background:linear-gradient(90deg,var(--cyan-deep),var(--cyan)); color:#000; }
-    .btn-red { background:linear-gradient(90deg,#aa2222,var(--red)); color:#fff; }
-    .btn-gold { background:linear-gradient(90deg,var(--gold-deep),var(--gold)); color:#000; }
-
-    .launch-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; }
-    .launch-card { border-radius:8px; padding:10px; background:rgba(0,0,0,.35); border-width:2px; border-style:solid; min-height:200px; }
-    .launch-card.four { border-color:var(--gold); background:linear-gradient(135deg, rgba(255,184,0,.12), rgba(20,15,0,.4)); }
-    .launch-card.pump { border-color:var(--purple); background:linear-gradient(135deg, rgba(153,69,255,.12), rgba(15,0,30,.4)); }
-    .launch-card.bonk { border-color:#00d0b6; background:linear-gradient(135deg, rgba(0,208,182,.12), rgba(0,15,20,.4)); }
-    .launch-card.flash { border-color:var(--blue); background:linear-gradient(135deg, rgba(64,128,255,.12), rgba(0,10,30,.4)); }
-    .launch-card.pons { border-color:var(--orange); background:linear-gradient(135deg, rgba(255,125,0,.12), rgba(20,10,0,.4)); }
-    .launch-card.ray { border-color:var(--green); background:linear-gradient(135deg, rgba(0,208,132,.12), rgba(0,15,10,.4)); }
-    .launch-hd { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
-    .launch-name { font-size:13px; font-weight:700; }
-    .launch-count { font-size:11px; color:var(--text-sub); }
-    .launch-list { max-height:150px; overflow-y:auto; }
-    .launch-list::-webkit-scrollbar { width:3px; }
-    .launch-list::-webkit-scrollbar-thumb { background:rgba(255,255,255,.1); border-radius:2px; }
-    .launch-item { padding:6px 5px; border-radius:4px; margin-bottom:4px; background:rgba(255,255,255,.03); font-size:11px; transition:all .2s; cursor:pointer; border-left:2px solid transparent; }
-    .launch-item:hover { background:rgba(255,255,255,.08); }
-    .launch-item.new { animation:newPulse 1.5s infinite; border-left-color:var(--green); }
-    @keyframes newPulse {
-      0% { background:rgba(0,208,132,.12); }
-      50% { background:rgba(0,208,132,.04); }
-      100% { background:rgba(255,255,255,.03); }
-    }
-    .contract { font-size:9px; color:var(--text-weak); font-family:monospace; margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:100%; }
-    .btn-row { margin-top:4px; display:flex; gap:3px; flex-wrap:wrap; }
-    .btn-link { font-size:9px; padding:2px 5px; border-radius:3px; text-decoration:none; display:inline-block; cursor:pointer; border:none; }
-    .btn-gmgn { background:linear-gradient(90deg, #9945ff, #00d084); color:#fff; }
-    .btn-debot { background:linear-gradient(90deg, #0099aa, #00e5ff); color:#000; }
-    .btn-plat { background:rgba(255,255,255,.18); color:#fff; }
-    .btn-link:hover { transform:scale(1.05); }
-
-    table { width:100%; border-collapse:collapse; font-size:13px; }
-    th { text-align:left; padding:10px 8px; color:var(--text-sub); font-weight:500; border-bottom:1px solid rgba(0,229,255,.1); white-space:nowrap; }
-    td { padding:10px 8px; border-bottom:1px solid rgba(0,229,255,.06); vertical-align:middle; }
-    .scroll-list { max-height:260px; overflow-y:auto; }
-    .scroll-list::-webkit-scrollbar { width:4px; }
-    .scroll-list::-webkit-scrollbar-thumb { background:rgba(0,229,255,.2); border-radius:2px; }
-
-    .hd { grid-area:hd; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-cyan); padding:0 10px; flex-wrap:wrap; gap:8px; }
-    .brand { display:flex; align-items:center; gap:10px; }
-    .brand-icon { width:36px; height:36px; border-radius:6px; background:linear-gradient(135deg, var(--cyan), var(--gold)); display:flex; align-items:center; justify-content:center; font-weight:900; color:#000; }
-    .chain-filters { display:flex; gap:6px; margin-left:20px; flex-wrap:wrap; }
-    .chain-tab { padding:6px 12px; cursor:pointer; border-radius:6px; border:1px solid transparent; color:var(--text-sub); font-size:13px; }
-    .chain-tab:hover, .chain-tab.active { border-color:var(--cyan); color:var(--cyan); background:rgba(0,229,255,.08); }
-    .chain-tab.main { border-color:var(--gold); color:var(--gold); background:rgba(255,184,0,.1); }
-    .launch-area { grid-area:launch; }
-    .lb { grid-area:lb; display:flex; flex-direction:column; gap:10px; }
-    .menu-title { font-size:12px; color:var(--text-weak); padding:8px 14px 4px; text-transform:uppercase; letter-spacing:1px; }
-    .menu-item { display:flex; align-items:center; gap:8px; padding:10px 14px; margin-bottom:3px; border-radius:6px; cursor:pointer; border-left:3px solid transparent; color:var(--text-sub); font-size:14px; transition:all .2s; }
-    .menu-item:hover { background:rgba(0,229,255,.06); color:var(--cyan); }
-    .menu-item.active { background:linear-gradient(90deg, rgba(255,184,0,.15), rgba(0,229,255,.05)); color:var(--gold); border-left-color:var(--gold); }
-    .dot { width:8px; height:8px; border-radius:50%; border:1px solid currentColor; opacity:.6; }
-    .menu-item.active .dot { background:var(--gold); opacity:1; box-shadow:0 0 6px var(--gold); }
-    .main { grid-area:main; display:flex; flex-direction:column; gap:10px; overflow:hidden; }
-    .rb { grid-area:rb; display:flex; flex-direction:column; gap:10px; overflow:hidden; }
-    .ft { grid-area:ft; display:flex; justify-content:center; gap:12px; border-top:1px solid var(--border-cyan); padding-top:10px; flex-wrap:wrap; }
-    .mini { min-width:140px; padding:14px 16px; text-align:center; border-radius:8px; background:var(--bg-card); border:1px solid var(--border-cyan); }
-    .mini-lb { font-size:12px; color:var(--text-sub); margin-bottom:4px; }
-    .mini-val { font-size:15px; font-weight:700; letter-spacing:.5px; }
-    .update-time { font-size:11px; color:var(--text-weak); }
-    .status-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:4px; }
-    .status-dot.ok { background:var(--green); box-shadow:0 0 4px var(--green); }
-    .status-dot.warn { background:var(--warn); }
-    .status-dot.err { background:var(--red); box-shadow:0 0 4px var(--red); }
-    .hidden { display:none !important; }
-    .input-sm { max-width:100px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DOG HUNTER 精简版</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Microsoft YaHei,sans-serif}
+:root{--cyan:#00e5ff;--gold:#ffb800;--green:#00d084;--red:#ff4d4f;--bg:#050a18;--card:rgba(10,25,50,.7);--border:rgba(0,229,255,.25);--text:#e6f7ff;--sub:#7ab8d6}
+body{background:var(--bg);color:var(--text);padding:10px;line-height:1.5}
+h1{font-size:18px;margin-bottom:10px;color:var(--cyan)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:10px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0}
+label{font-size:12px;color:var(--sub)}
+input,button{background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:4px}
+button{cursor:pointer;font-weight:bold}
+.btn-gold{background:linear-gradient(90deg,#cc9200,var(--gold));color:#000;border:none}
+.btn-cyan{background:linear-gradient(90deg,#0099aa,var(--cyan));color:#000;border:none}
+.stat{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}
+.stat-card{padding:10px;border-radius:6px;background:rgba(0,0,0,.3);text-align:center}
+.stat-val{font-size:20px;font-weight:bold}
+table{width:100%;border-collapse:collapse;margin-top:8px}
+th,td{padding:8px 6px;text-align:left;border-bottom:1px solid rgba(0,229,255,.1)}
+th{color:var(--sub);font-size:12px}
+.new-row{animation:fadeIn .4s ease}
+@keyframes fadeIn{0%{opacity:0;transform:translateY(-5px)}100%{opacity:1}}
+.log{max-height:150px;overflow-y:auto;font-size:11px;line-height:2;margin-top:8px}
+.log p{border-bottom:1px solid rgba(255,255,255,.05);padding:2px 0}
+.ok{color:var(--green)}.warn{color:var(--gold)}.err{color:var(--red)}.cyan{color:var(--cyan)}
+.pulse{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:5px;animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(0,208,132,.4)}70%{box-shadow:0 0 0 6px transparent}}
+.tabs{display:flex;gap:6px;margin-bottom:10px}
+.tab{padding:6px 12px;border-radius:6px;cursor:pointer;border:1px solid transparent}
+.tab.active{border-color:var(--cyan);color:var(--cyan);background:rgba(0,229,255,.1)}
+</style>
 </head>
 <body>
-  <div class="bg-layer"></div>
 
-  <div class="page">
-    <header class="hd">
-      <div class="brand">
-        <div class="brand-icon">🐶</div>
-        <div>
-          <div style="font-size:18px; font-weight:700;">DOG HUNTER</div>
-          <div style="font-size:11px; color:var(--text-sub);">加关闭详情按钮版</div>
-        </div>
-        <div class="chain-filters">
-          <div class="chain-tab active" data-chain="all">全部链</div>
-          <div class="chain-tab main" data-chain="bsc">🔴 BSC主力</div>
-          <div class="chain-tab" data-chain="sol">SOL</div>
-          <div class="chain-tab" data-chain="base">BASE</div>
-        </div>
-      </div>
-      <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-        <span id="connStatus" style="font-size:11px; color:var(--warn);"><span class="status-dot warn"></span>等待刷新</span>
-        <span class="update-time" id="lastUpdate">--:--:--</span>
-        <button id="refreshBtn" class="btn btn-primary">🔄 刷新数据</button>
-        <label style="font-size:11px; color:var(--text-sub); display:flex; align-items:center; gap:4px; margin:0;">
-          <input type="checkbox" id="autoRefresh" checked>自动刷新
-        </label>
-      </div>
-    </header>
+<h1>🐶 DOG HUNTER · 动态精简版</h1>
 
-    <section class="cfg-area card">
-      <div class="card-hd">
-        <span class="card-tt">⚙️ 筛选/刷新配置区 — 改完点「应用设置」立即生效</span>
-        <span style="font-size:11px; color:var(--text-sub);">空格或逗号分隔多个词 · 地址一行一个</span>
-      </div>
-      <div class="cfg-grid">
-        <div class="cfg-item">
-          <label>✅ 最低流动性 USD（默认500）</label>
-          <div class="cfg-row">
-            <input type="number" id="cfg_minLiq" value="500" class="input-sm">
-            <span style="font-size:11px; color:var(--text-weak);">只显示≥此金额的币</span>
-          </div>
-        </div>
-        <div class="cfg-item">
-          <label>⏱️ 自动刷新间隔 秒（默认8，别低于5）</label>
-          <div class="cfg-row">
-            <input type="number" id="cfg_interval" value="8" class="input-sm" min="3" max="60">
-            <span style="font-size:11px; color:var(--text-weak);">太快容易被限流</span>
-          </div>
-        </div>
-        <div class="cfg-item">
-          <label>🔒 黑名单 — 包含这些词直接过滤</label>
-          <textarea id="cfg_black" placeholder="例: scam fake copy airdrop"></textarea>
-        </div>
-        <div class="cfg-item">
-          <label>🔑 白名单 — 只保留包含这些词的（留空=全部）</label>
-          <textarea id="cfg_white" placeholder="例: dog cat bnb sol"></textarea>
-        </div>
-        <div class="cfg-item">
-          <label>🚫 拉黑合约地址（一行一个）</label>
-          <textarea id="cfg_blockAddr" placeholder="输入要屏蔽的合约地址，每行一个"></textarea>
-        </div>
-        <div class="cfg-item" style="justify-content:flex-end;">
-          <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <button id="applyCfg" class="btn btn-gold">✅ 应用设置</button>
-            <button id="resetCfg" class="btn btn-red">🔄 恢复默认</button>
-            <button id="clearHistory" class="btn btn-red">🗑️ 清空历史记录</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="launch-area card">
-      <div class="card-hd">
-        <span class="card-tt">🚀 实时捕获区 · 6大发射台独立监控 · 新币自动高亮</span>
-        <span style="font-size:11px; color:var(--text-sub);" id="filterStat">当前过滤：流动性≥$500 | 黑名单0 | 白名单0 | 拉黑地址0</span>
-      </div>
-      <div class="launch-grid">
-        <div class="launch-card four" data-platform="four" data-chain="bsc">
-          <div class="launch-hd"><span class="launch-name" style="color:var(--gold);">🔴 Four.meme</span><span class="launch-count" id="fourCount">0</span></div>
-          <div class="launch-list" id="fourList"></div>
-        </div>
-        <div class="launch-card pump" data-platform="pump" data-chain="sol">
-          <div class="launch-hd"><span class="launch-name" style="color:var(--purple);">🟣 Pump.fun</span><span class="launch-count" id="pumpCount">0</span></div>
-          <div class="launch-list" id="pumpList"></div>
-        </div>
-        <div class="launch-card bonk" data-platform="bonk" data-chain="sol">
-          <div class="launch-hd"><span class="launch-name" style="color:#00d0b6;">🟢 LetsBONK</span><span class="launch-count" id="bonkCount">0</span></div>
-          <div class="launch-list" id="bonkList"></div>
-        </div>
-        <div class="launch-card flash" data-platform="flash" data-chain="base">
-          <div class="launch-hd"><span class="launch-name" style="color:var(--blue);">🔵 FlashPump</span><span class="launch-count" id="flashCount">0</span></div>
-          <div class="launch-list" id="flashList"></div>
-        </div>
-        <div class="launch-card pons" data-platform="pons" data-chain="bsc">
-          <div class="launch-hd"><span class="launch-name" style="color:var(--orange);">🟠 Pons</span><span class="launch-count" id="ponsCount">0</span></div>
-          <div class="launch-list" id="ponsList"></div>
-        </div>
-        <div class="launch-card ray" data-platform="ray" data-chain="sol">
-          <div class="launch-hd"><span class="launch-name" style="color:var(--green);">🟩 LaunchLab</span><span class="launch-count" id="rayCount">0</span></div>
-          <div class="launch-list" id="rayList"></div>
-        </div>
-      </div>
-    </section>
-
-    <aside class="lb">
-      <div class="card" style="flex:0 0 auto;">
-        <div class="menu-title">信号体系</div>
-        <div class="menu-item active"><span class="dot"></span>实时捕获</div>
-        <div class="menu-item"><span class="dot"></span>初信号预警 <span style="margin-left:auto; color:var(--cyan); font-size:11px;" id="alertCount">0</span></div>
-        <div class="menu-item"><span class="dot"></span>安全筛查</div>
-        <div class="menu-item"><span class="dot"></span>异动日志</div>
-      </div>
-      <div class="card" style="flex:1; overflow:hidden;">
-        <div class="card-hd"><span class="card-tt">📊 全局统计</span></div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:12px;">
-          <div style="padding:10px; border-radius:6px; background:rgba(0,208,132,.08);">
-            <div style="color:var(--green);">今日捕获</div>
-            <div style="font-size:18px; font-weight:700;" id="totalCount">0</div>
-          </div>
-          <div style="padding:10px; border-radius:6px; background:rgba(255,77,79,.08);">
-            <div style="color:var(--red);">已过滤/风险</div>
-            <div style="font-size:18px; font-weight:700;" id="riskCount">0</div>
-          </div>
-          <div style="padding:10px; border-radius:6px; background:rgba(255,184,0,.08);">
-            <div style="color:var(--gold);">BSC主力</div>
-            <div style="font-size:18px; font-weight:700;" id="bscCount">0</div>
-          </div>
-          <div style="padding:10px; border-radius:6px; background:rgba(153,69,255,.08);">
-            <div style="color:var(--purple);">SOL大金狗</div>
-            <div style="font-size:18px; font-weight:700;" id="solCount">0</div>
-          </div>
-        </div>
-      </div>
-    </aside>
-
-    <main class="main">
-      <div class="card" style="flex:1; overflow:hidden; display:flex; flex-direction:column;">
-        <div class="card-hd">
-          <span class="card-tt">📋 全部捕获列表</span>
-          <span style="font-size:11px; color:var(--text-sub);">点击币种行查看详情 · 右上角「×」关闭详情</span>
-        </div>
-        <div class="scroll-list" style="flex:1;">
-          <table id="allCoinTable">
-            <thead>
-              <tr>
-                <th>代币/合约</th>
-                <th>来源平台</th>
-                <th>流动性</th>
-                <th>市值(估算)</th>
-                <th>上线时间</th>
-                <th>状态</th>
-                <th>一键分析</th>
-              </tr>
-            </thead>
-            <tbody id="allCoinBody">
-              <tr><td colspan="7" style="text-align:center; color:var(--text-weak); padding:30px;">点击「刷新数据」开始拉取...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </main>
-
-    <aside class="rb">
-      <div class="card" style="flex:0 0 auto;">
-        <div class="card-hd">
-          <span class="card-tt">🔍 币种详情</span>
-          <div style="display:flex; align-items:center; gap:6px;">
-            <span id="selTitle" style="font-size:11px; color:var(--text-weak);">点击任意币种查看</span>
-            <button id="closeDetail" class="close-btn">✕ 关闭</button>
-          </div>
-        </div>
-        <div id="selDetail" style="font-size:12px; line-height:1.8;">
-          <p style="color:var(--text-weak);">点击左边币种行，这里显示合约、链接、K线入口</p>
-        </div>
-      </div>
-      <div class="card" style="flex:1; overflow:hidden;">
-        <div class="card-hd"><span class="card-tt">⚡ 实时日志</span></div>
-        <div id="eventLog" style="font-size:11px; line-height:2; max-height:200px; overflow-y:auto;">
-          <p style="color:var(--cyan);">✅ 带关闭详情按钮版</p>
-          <p style="color:var(--green);">📡 数据源：DexScreener API</p>
-        </div>
-      </div>
-    </aside>
-
-    <footer class="ft">
-      <div class="mini"><div class="mini-lb">最后刷新</div><div class="mini-val" id="ftLast">--:--</div></div>
-      <div class="mini"><div class="mini-lb">本次新币</div><div class="mini-val" id="ftNew">0</div></div>
-      <div class="mini"><div class="mini-lb">已毕业/推进</div><div class="mini-val" style="color:var(--green);" id="ftGrad">0</div></div>
-      <div class="mini"><div class="mini-lb">已过滤/风险</div><div class="mini-val" style="color:var(--red);" id="ftFilter">0</div></div>
-      <div class="mini"><div class="mini-lb">自动刷新</div><div class="mini-val" id="ftAuto" style="color:var(--green);">开启</div></div>
-    </footer>
+<div class="card">
+  <div class="tabs">
+    <div class="tab active" data-chain="all">全部链</div>
+    <div class="tab" data-chain="bsc">BSC</div>
+    <div class="tab" data-chain="sol">SOL</div>
+    <div class="tab" data-chain="base">BASE</div>
   </div>
 
-  <script>
-    let CONFIG = {
-      minLiquidityUSD: 500,
-      limitPerChain: 60,
-      refreshInterval: 8000,
-      chains: {
-        bsc: { id: 'bsc', name: 'BSC', gmgn: 'bsc', debot: 'bsc' },
-        sol: { id: 'solana', name: 'SOL', gmgn: 'sol', debot: 'sol' },
-        base: { id: 'base', name: 'BASE', gmgn: 'base', debot: 'base' }
-      },
-      platforms: {
-        four: { keywords: ['four.meme','fourmeme'], chain: 'bsc' },
-        pump: { keywords: ['pump.fun','pumpfun'], chain: 'sol' },
-        bonk: { keywords: ['letsbonk','bonk.fun'], chain: 'sol' },
-        flash: { keywords: ['flashpump'], chain: 'base' },
-        pons: { keywords: ['pons.ai','pons'], chain: 'bsc' },
-        ray: { keywords: ['raydium','launchlab'], chain: 'sol' }
-      },
-      blackList: [], whiteList: [], blockAddrs: new Set()
-    };
+  <div class="row">
+    <label>最低流动性$：</label>
+    <input type="number" id="minLiq" value="300" style="width:80px">
+    <label>刷新秒：</label>
+    <input type="number" id="interval" value="8" style="width:60px">
+    <button id="apply" class="btn-gold">✅ 应用</button>
+    <button id="refresh" class="btn-cyan">🔄 立即刷新</button>
+    <label style="margin-left:auto">
+      <input type="checkbox" id="auto" checked> 自动刷新
+    </label>
+  </div>
+</div>
 
-    const DEFAULT_CFG = { minLiq:500, interval:8, black:'', white:'', blockAddr:'' };
-    const seenAddresses = new Set();
-    let allCoins = [], totalNew=0, totalRisk=0, totalGrad=0, activeChain='all', refreshTimer=null, selectedCoin=null;
+<div class="stat">
+  <div class="stat-card"><div>巡检轮次</div><div class="stat-val" id="round">0</div></div>
+  <div class="stat-card"><div>今日新币</div><div class="stat-val" id="new">0</div></div>
+  <div class="stat-card"><div>已过滤</div><div class="stat-val" id="filtered">0</div></div>
+  <div class="stat-card"><div>状态</div><div class="stat-val" id="status"><span class="pulse"></span>监听</div></div>
+</div>
 
-    function parseListText(t){return t.trim()?t.split(/[\s,，\n]+/).map(w=>w.trim().toLowerCase()).filter(w=>w):[];}
-    function parseAddrSet(t){return t.trim()?new Set(t.split('\n').map(a=>a.trim().toLowerCase()).filter(a=>a.length>10)):new Set();}
-    function fmtTime(s){if(!s)return'--';const d=new Date(s),n=new Date(),diff=Math.floor((n-d)/1000);if(diff<60)return diff+'秒前';if(diff<3600)return Math.floor(diff/60)+'分前';if(diff<86400)return Math.floor(diff/3600)+'小时前';return d.toLocaleDateString('zh-CN');}
-    function fmtNum(n){if(!n)return'--';if(n>=1e6)return(n/1e6).toFixed(2)+'M';if(n>=1e3)return(n/1e3).toFixed(2)+'K';return n.toFixed(2);}
-    function shortAddr(a,l=10){return a?a.slice(0,l)+'...'+a.slice(-6):'';}
-    function log(msg,color='cyan'){const el=document.getElementById('eventLog'),p=document.createElement('p');p.style.color=`var(--${color})`;p.textContent=`[${new Date().toLocaleTimeString('zh-CN')}] ${msg}`;el.insertBefore(p,el.firstChild);if(el.children.length>50)el.removeChild(el.lastChild);}
-    function updateStatBar(){document.getElementById('filterStat').textContent=`当前过滤：流动性≥$${CONFIG.minLiquidityUSD} | 黑名单${CONFIG.blackList.length} | 白名单${CONFIG.whiteList.length} | 拉黑${CONFIG.blockAddrs.size}`;}
+<div class="card">
+  <b>📋 捕获列表</b>
+  <table>
+    <thead><tr><th>币种</th><th>链</th><th>流动性$</th><th>市值$</th><th>发现</th><th>链接</th></tr></thead>
+    <tbody id="list"><tr><td colspan="6" style="color:var(--sub)">点「立即刷新」开始...</td></tr></tbody>
+  </table>
+</div>
 
-    function shouldFilter(pair,txtLow,addrLow){
-      if(CONFIG.blockAddrs.has(addrLow))return{pass:false,reason:'拉黑地址'};
-      for(const w of CONFIG.blackList)if(txtLow.includes(w))return{pass:false,reason:'黑名单词:'+w};
-      if(CONFIG.whiteList.length>0){let hit=false;for(const w of CONFIG.whiteList){if(txtLow.includes(w)){hit=true;break;}}if(!hit)return{pass:false,reason:'未匹配白名单'};}
-      if((pair.liquidity?.usd||0)<CONFIG.minLiquidityUSD)return{pass:false,reason:'流动性不足'};
-      return{pass:true};
-    }
-    function detectPlat(p){const t=((p.url||'')+' '+(p.baseToken?.name||'')+' '+(p.baseToken?.symbol||'')).toLowerCase();for(const[k,v]of Object.entries(CONFIG.platforms))if(v.keywords.some(x=>t.includes(x)))return k;return'other';}
-    function getStatus(p,plat){const l=p.liquidity?.usd||0;if(plat==='four'){if(l>6300)return{text:'✅毕业',cls:'ok'};if(l>5000)return{text:'推进中',cls:'warn'};return{text:'发射中',cls:'cyan'}}if(plat==='pump'){if(l>69000)return{text:'✅毕业',cls:'ok'};if(l>10000)return{text:'曲线中',cls:'purple'};return{text:'新发射',cls:'cyan'}}if(l>50000)return{text:'活跃',cls:'ok'};if(l>5000)return{text:'观察',cls:'warn'};return{text:'新币',cls:'cyan'}}
-    function mkUrl(typ,ck,addr){const m={gmgn:{bsc:'https://gmgn.ai/bsc/token/',sol:'https://gmgn.ai/sol/token/',base:'https://gmgn.ai/base/token/'},debot:{bsc:'https://debot.ai/?chain=bsc&ca=',sol:'https://debot.ai/?chain=sol&ca=',base:'https://debot.ai/?chain=base&ca='},plat:{four:'https://four.meme/token/',pump:'https://pump.fun/',bonk:'https://letsbonk.fun/',flash:'https://flashpump.fun/',pons:'https://pons.ai/?token=',ray:'https://raydium.io/launchlab/'}};return m[typ]?.[ck]?m[typ][ck]+encodeURIComponent(addr):null;}
+<div class="card">
+  <b>📈 实时动态流</b>
+  <div class="log" id="log">
+    <p class="cyan">[就绪] 精简版启动</p>
+  </div>
+</div>
 
-    async function fetchChain(ck){
-      const cid = CONFIG.chains[ck].id;
-      const res = await fetch(`https://api.dexscreener.com/latest/dex/search?q=${cid}&limit=${CONFIG.limitPerChain}`);
-      if(!res.ok) throw new Error(`HTTP ${res.status}`);
-      const d = await res.json();
-      return (d.pairs||[]).filter(p=>p.chainId===cid).map(p=>{p._ck=ck;return p;});
-    }
+<script>
+const CONFIG={
+  minLiq:300,interval:8000,
+  chains:{bsc:{id:'bsc'},sol:{id:'solana'},base:{id:'base'}},
+  black:['scam','fake','copy','airdrop','rug'],white:[],seen:new Set()
+};
+let allCoins=[],totalNew=0,totalFilter=0,round=0,timer=null,activeChain='all';
 
-    async function fetchAll(){let r=[];for(const k of Object.keys(CONFIG.chains))try{const a=await fetchChain(k);r=r.concat(a);log(`${CONFIG.chains[k].name}链: 获取${a.length}个币种`,'green');}catch(e){log(`${CONFIG.chains[k].name}链失败:${e.message}`,'red');}return r;}
+function fmt(n){if(!n&&n!==0)return'--';if(n>=1e6)return(n/1e6).toFixed(2)+'M';if(n>=1e3)return(n/1e3).toFixed(2)+'K';return n.toFixed(0)}
+function time(){return new Date().toLocaleTimeString().slice(0,8)}
+function log(txt,cls='cyan'){const el=document.getElementById('log');el.insertAdjacentHTML('afterbegin',`<p class="${cls}">[${time()}] ${txt}</p>`);if(el.children.length>40)el.removeChild(el.lastChild)}
 
-    function processPairs(pairs){let nn=0,filtered=0;for(const p of pairs){const a=p.baseToken?.address;if(!a){filtered++;continue;}const al=a.toLowerCase(),tx=((p.baseToken?.name||'')+' '+(p.baseToken?.symbol||'')).toLowerCase();const chk=shouldFilter(p,tx,al);if(!chk.pass){filtered++;continue;}if(seenAddresses.has(al))continue;seenAddresses.add(al);const plat=detectPlat(p),st=getStatus(p,plat);allCoins.unshift({address:a,symbol:p.baseToken?.symbol||'?',name:p.baseToken?.name||'?',chainKey:p._ck,platform:plat,liquidity:p.liquidity?.usd||0,mcap:p.fdv?.usd,createdAt:p.createdAt,status:st,gmgnUrl:mkUrl('gmgn',p._ck,a),debotUrl:mkUrl('debot',p._ck,a),platUrl:mkUrl('plat',plat,a),isNew:true});nn++;totalNew++;if(st.text.includes('✅'))totalGrad++;}totalRisk+=filtered;return{newCount:nn,filtered};}
+async function fetchChain(name){
+  const res=await fetch(`https://api.dexscreener.com/latest/dex/search?q=${CONFIG.chains[name].id}&limit=40`);
+  if(!res.ok)return[];
+  const d=await res.json();
+  return(d.pairs||[]).filter(p=>p.chainId===CONFIG.chains[name].id).map(p=>({...p,_chain:name}));
+}
 
-    function renderPlat(pk,cid,lid){const list=allCoins.filter(c=>c.platform===pk&&(activeChain==='all'||c.chainKey===activeChain)).slice(0,8);document.getElementById(cid).textContent=list.length;const con=document.getElementById(lid);con.innerHTML='';list.forEach(c=>{const d=document.createElement('div');d.className=`launch-item ${c.isNew?'new':''}`;d.onclick=()=>selectCoin(c);d.innerHTML=`<div style="display:flex;justify-content:space-between;"><span style="font-weight:600;">${c.symbol}</span><span style="font-size:9px;color:var(--text-weak);">${fmtTime(c.createdAt)}</span></div><div class="contract">${shortAddr(c.address,8)}</div><div style="display:flex;justify-content:space-between;margin-top:2px;"><span style="font-size:10px;">$${fmtNum(c.liquidity)}</span><span class="tag small ${c.status.cls}">${c.status.text}</span></div><div class="btn-row">${c.platUrl?`<a href="${c.platUrl}" target="_blank" class="btn-link btn-plat">平台</a>`:''}${c.gmgnUrl?`<a href="${c.gmgnUrl}" target="_blank" class="btn-link btn-gmgn">K线</a>`:''}${c.debotUrl?`<a href="${c.debotUrl}" target="_blank" class="btn-link btn-debot">分析</a>`:''}</div>`;con.appendChild(d);c.isNew=false;});}
-    function renderList(){const tb=document.getElementById('allCoinBody'),list=activeChain==='all'?allCoins:allCoins.filter(c=>c.chainKey===activeChain);tb.innerHTML='';if(!list.length){tb.innerHTML=`<tr><td colspan="7" style="text-align:center;color:var(--text-weak);padding:20px;">暂无数据</td></tr>`;return;}const pt={four:'<span class="tag gold small">Four.meme</span>',pump:'<span class="tag purple small">Pump.fun</span>',bonk:'<span class="tag small" style="background:rgba(0,208,182,.15);color:#00d0b6;">LetsBONK</span>',flash:'<span class="tag blue small">FlashPump</span>',pons:'<span class="tag orange small">Pons</span>',ray:'<span class="tag ok small">LaunchLab</span>'};list.forEach(c=>{const tr=document.createElement('tr');tr.style.cursor='pointer';tr.onclick=()=>selectCoin(c);if(selectedCoin?.address===c.address)tr.style.background='rgba(0,229,255,.08)';tr.innerHTML=`<td><div style="font-weight:600;">${c.symbol}</div><div class="contract">${shortAddr(c.address)}</div></td><td>${pt[c.platform]||`<span class="tag small">${c.chainKey.toUpperCase()}</span>`}</td><td>$${fmtNum(c.liquidity)}</td><td>$${fmtNum(c.mcap)}</td><td style="font-size:10px;color:var(--text-sub);">${fmtTime(c.createdAt)}</td><td><span class="tag ${c.status.cls} small">${c.status.text}</span></td><td>${c.gmgnUrl?`<a href="${c.gmgnUrl}" target="_blank" class="btn-link btn-gmgn" onclick="event.stopPropagation()">GMGN</a>`:''}${c.debotUrl?`<a href="${c.debotUrl}" target="_blank" class="btn-link btn-debot" onclick="event.stopPropagation()">Debot</a>`:''}</td>`;tb.appendChild(tr);});}
-    function selectCoin(c){selectedCoin=c;document.getElementById('selTitle').textContent=`${c.symbol} · ${c.chainKey.toUpperCase()}`;document.getElementById('selDetail').innerHTML=`<p><b>全称：</b>${c.name}</p><p><b>合约：</b><span style="font-family:monospace;color:var(--cyan);font-size:10px;word-break:break-all;">${c.address}</span></p><p><b>链/来源：</b>${c.chainKey.toUpperCase()} / ${c.platform}</p><p><b>流动性：</b>$${fmtNum(c.liquidity)}</p><p><b>市值：</b>$${fmtNum(c.mcap)}</p><p><b>首次发现：</b>${c.createdAt?new Date(c.createdAt).toLocaleString('zh-CN'):'--'}</p><p><b>状态：</b><span class="tag ${c.status.cls}">${c.status.text}</span></p><div style="margin-top:10px;">${c.platUrl?`<a href="${c.platUrl}" target="_blank" class="btn-link btn-plat" style="padding:5px 10px;font-size:12px;">🚀 打开平台</a>`:''}${c.gmgnUrl?`<a href="${c.gmgnUrl}" target="_blank" class="btn-link btn-gmgn" style="padding:5px 10px;font-size:12px;">📈 GMGN</a>`:''}${c.debotUrl?`<a href="${c.debotUrl}" target="_blank" class="btn-link btn-debot" style="padding:5px 10px;font-size:12px;">🔬 Debot</a>`:''}</div>`;renderList();}
-    // ✅ 新增：关闭详情
-    function closeDetail(){
-      selectedCoin = null;
-      document.getElementById('selTitle').textContent = '点击任意币种查看';
-      document.getElementById('selDetail').innerHTML = '<p style="color:var(--text-weak);">点击左边币种行，这里显示合约、链接、K线入口</p>';
-      renderList(); // 取消行的高亮
-      log('已关闭详情','cyan');
-    }
-    function updStats(nf){document.getElementById('totalCount').textContent=allCoins.length;document.getElementById('riskCount').textContent=totalRisk;document.getElementById('bscCount').textContent=allCoins.filter(c=>c.chainKey==='bsc').length;document.getElementById('solCount').textContent=allCoins.filter(c=>c.chainKey==='sol').length;document.getElementById('ftNew').textContent=nf;document.getElementById('ftGrad').textContent=totalGrad;document.getElementById('ftFilter').textContent=totalRisk;document.getElementById('ftLast').textContent=new Date().toLocaleTimeString('zh-CN');document.getElementById('lastUpdate').textContent='更新：'+new Date().toLocaleTimeString('zh-CN');}
+async function update(){
+  round++;
+  document.getElementById('round').textContent=round;
+  document.getElementById('status').innerHTML='<span class="pulse"></span>刷新中';
+  let pairs=[];
+  for(const k of Object.keys(CONFIG.chains)){
+    log(`巡检 ${k.toUpperCase()}...`,'cyan');
+    pairs=pairs.concat(await fetchChain(k));
+  }
+  let newCount=0,filterCount=0;
+  for(const p of pairs){
+    const addr=p.baseToken?.address;
+    if(!addr){filterCount++;continue}
+    const low=addr.toLowerCase();
+    if(CONFIG.seen.has(low))continue;
+    const name=((p.baseToken?.name||'')+' '+(p.baseToken?.symbol||'')).toLowerCase();
+    if(CONFIG.black.some(w=>name.includes(w))){filterCount++;continue}
+    if(CONFIG.white.length&&!CONFIG.white.some(w=>name.includes(w))){filterCount++;continue}
+    if((p.liquidity?.usd||0)<CONFIG.minLiq){filterCount++;continue}
+    CONFIG.seen.add(low);
+    allCoins.unshift({
+      symbol:p.baseToken?.symbol||'?',name:p.baseToken?.name||'?',chain:p._chain,
+      liq:p.liquidity?.usd||0,mcap:p.fdv?.usd,time:p.createdAt,addr
+    });
+    newCount++;totalNew++;
+    log(`🆕 ${p.baseToken?.symbol} | ${p._chain} | $${fmt(p.liquidity?.usd)}`,'ok');
+  }
+  totalFilter+=filterCount;
+  render();
+  document.getElementById('new').textContent=totalNew;
+  document.getElementById('filtered').textContent=totalFilter;
+  document.getElementById('status').innerHTML='<span class="pulse"></span>正常';
+  log(`第${round}轮完成 · 新币${newCount} · 过滤${filterCount}`,'ok');
+}
 
-    async function doRefresh(){const btn=document.getElementById('refreshBtn');btn.disabled=true;btn.textContent='拉取中...';try{const pairs=await fetchAll();const{newCount,filtered}=processPairs(pairs);newCount?log(`✅ 本轮新币${newCount}个 · 过滤${filtered}条`,'green'):log(`本轮无新币 · 过滤${filtered}条`,'warn');Object.keys(CONFIG.platforms).forEach(p=>renderPlat(p,p+'Count',p+'List'));renderList();updStats(newCount);document.getElementById('connStatus').innerHTML=`<span class="status-dot ok"></span>API连接正常`;}catch(e){log('❌ 失败：'+e.message,'red');document.getElementById('connStatus').innerHTML=`<span class="status-dot err"></span>连接异常`;}btn.disabled=false;btn.textContent='🔄 刷新数据';}
-    function setAuto(on){if(refreshTimer){clearInterval(refreshTimer);refreshTimer=null;}document.getElementById('ftAuto').style.color=on?'var(--green)':'var(--text-weak)';if(on){doRefresh();refreshTimer=setInterval(doRefresh,CONFIG.refreshInterval);log(`自动刷新开启 (${CONFIG.refreshInterval/1000}秒)`,'green');}else log('自动刷新已关闭','warn');}
-    function applyCfg(){const ml=parseInt(document.getElementById('cfg_minLiq').value)||500;const iv=(parseInt(document.getElementById('cfg_interval').value)||8)*1000;const bl=parseListText(document.getElementById('cfg_black').value);const wl=parseListText(document.getElementById('cfg_white').value);const ba=parseAddrSet(document.getElementById('cfg_blockAddr').value);CONFIG.minLiquidityUSD=ml;CONFIG.refreshInterval=iv;CONFIG.blackList=bl;CONFIG.whiteList=wl;CONFIG.blockAddrs=ba;if(refreshTimer&&document.getElementById('autoRefresh').checked){setAuto(false);setAuto(true);}updateStatBar();log('✅ 设置已应用','green');}
-    function resetCfg(){document.getElementById('cfg_minLiq').value=DEFAULT_CFG.minLiq;document.getElementById('cfg_interval').value=DEFAULT_CFG.interval;document.getElementById('cfg_black').value=DEFAULT_CFG.black;document.getElementById('cfg_white').value=DEFAULT_CFG.white;document.getElementById('cfg_blockAddr').value=DEFAULT_CFG.blockAddr;applyCfg();log('已恢复默认设置','warn');}
-    function clearAll(){seenAddresses.clear();allCoins=[];totalNew=0;totalRisk=0;totalGrad=0;closeDetail();renderList();Object.keys(CONFIG.platforms).forEach(p=>{document.getElementById(p+'Count').textContent='0';document.getElementById(p+'List').innerHTML='';});updStats(0);log('历史已清空','warn');}
+function render(){
+  const list=activeChain==='all'?allCoins:allCoins.filter(c=>c.chain===activeChain);
+  const tb=document.getElementById('list');
+  tb.innerHTML='';
+  if(!list.length){tb.innerHTML=`<tr><td colspan="6" style="color:var(--sub)">暂无数据</td></tr>`;return}
+  list.slice(0,15).forEach(c=>{
+    tb.insertAdjacentHTML('beforeend',`<tr class="new-row">
+      <td><b>${c.symbol}</b><br><small style="color:var(--sub)">${c.name.slice(0,12)}</small></td>
+      <td>${c.chain.toUpperCase()}</td>
+      <td>$${fmt(c.liq)}</td>
+      <td>$${fmt(c.mcap)}</td>
+      <td style="font-size:11px;color:var(--sub)">${c.time?new Date(c.time).toLocaleDateString():'--'}</td>
+      <td><a href="https://gmgn.ai/${c.chain}/token/${c.addr}" target="_blank" style="color:var(--cyan)">GMGN</a></td>
+    </tr>`);
+  });
+}
 
-    document.getElementById('refreshBtn').onclick=doRefresh;
-    document.getElementById('autoRefresh').onchange=e=>setAuto(e.target.checked);
-    document.getElementById('applyCfg').onclick=applyCfg;
-    document.getElementById('resetCfg').onclick=resetCfg;
-    document.getElementById('clearHistory').onclick=clearAll;
-    document.getElementById('closeDetail').onclick=closeDetail; // ✅ 绑定关闭按钮
-    document.querySelectorAll('.chain-tab').forEach(tab=>{tab.onclick=()=>{document.querySelectorAll('.chain-tab').forEach(x=>x.classList.remove('active','main'));tab.classList.add('active');if(tab.dataset.chain==='bsc')tab.classList.add('main');activeChain=tab.dataset.chain;renderList();Object.keys(CONFIG.platforms).forEach(p=>renderPlat(p,p+'Count',p+'List'));log('切换到：'+(activeChain==='all'?'全部链':activeChain.toUpperCase()),'cyan');};});
-  </script>
+// 事件
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  activeChain=t.dataset.chain;
+  render();
+});
+document.getElementById('refresh').onclick=update;
+document.getElementById('apply').onclick=()=>{
+  CONFIG.minLiq=parseInt(document.getElementById('minLiq').value)||300;
+  CONFIG.interval=(parseInt(document.getElementById('interval').value)||8)*1000;
+  if(timer){clearInterval(timer);timer=setInterval(update,CONFIG.interval)}
+  log(`设置已应用 · 流动性≥$${CONFIG.minLiq}`,'warn');
+};
+document.getElementById('auto').onchange=()=>{
+  if(document.getElementById('auto').checked)timer=setInterval(update,CONFIG.interval);
+  else{clearInterval(timer);timer=null;log('自动刷新已关闭','warn')}
+};
+// 启动
+timer=setInterval(update,CONFIG.interval);
+</script>
 </body>
 </html>
