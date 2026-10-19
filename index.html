@@ -62,8 +62,10 @@ input:checked + .slider:before { transform: translateX(18px); }
 }
 .banner strong { color: var(--accent-cyan); }
 .update-hint { font-size: 0.75rem; color: var(--text-secondary); }
+.status-ok { color: var(--ok); }
+.status-err { color: var(--danger); }
+.status-warn { color: var(--warn); }
 
-/* 两大区块 明显分开 */
 .section-prime {
   background: var(--bg-section-prime);
   border: 1px solid rgba(255, 215, 0, 0.18);
@@ -109,7 +111,6 @@ input:checked + .slider:before { transform: translateX(18px); }
   100% { box-shadow: none; }
 }
 
-/* 头像呼吸环 */
 .avatar-wrap { position: relative; display: flex; justify-content: center; }
 .avatar {
   width: var(--avatar-size); height: var(--avatar-size); border-radius: 50%;
@@ -201,8 +202,6 @@ input:checked + .slider:before { transform: translateX(18px); }
 .row.expanded .detail-row { display: block; animation: fadeIn 0.25s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
 .empty-tip { padding: 30px; text-align: center; color: var(--text-secondary); font-size: 0.85rem; }
-.status-ok { color: var(--ok); }
-.status-err { color: var(--danger); }
 
 @media (max-width: 1000px) {
   .table-header, .row { grid-template-columns: 56px 120px 1.5fr 100px 110px; }
@@ -233,11 +232,10 @@ input:checked + .slider:before { transform: translateX(18px); }
   </div>
 
   <div class="banner">
-    <div>📡 数据源：<strong id="sourceStatus" class="status-ok">DexScreener 实时连接</strong></div>
+    <div>📡 数据源：<strong id="sourceStatus">连接中...</strong></div>
     <div>盯币：<strong id="watchCount">0</strong> · 精选：<strong id="primeCount">0</strong></div>
   </div>
 
-  <!-- 精选区 -->
   <div class="section-prime">
     <div class="section-header">
       <span class="prime-title">🏆 大金狗精选 · 顶级/优质/共振</span>
@@ -255,7 +253,6 @@ input:checked + .slider:before { transform: translateX(18px); }
     <div id="emptyPrime" class="empty-tip">暂未筛选到符合条件币种</div>
   </div>
 
-  <!-- 全量区 -->
   <div class="section-all">
     <div class="section-header">
       <span class="all-title">🔍 全链扫描区 · 热门/新币</span>
@@ -274,28 +271,20 @@ input:checked + .slider:before { transform: translateX(18px); }
 </div>
 
 <script>
-// ========== 配置 ==========
 const CONFIG = {
-  AUTO_REFRESH_SEC: 30,      // 自动刷新间隔（秒）
-  TOP_TOKENS_LIMIT: 50,      // 最多显示多少个热门币
+  AUTO_REFRESH_SEC: 30,
+  TOP_TOKENS_LIMIT: 50,
   SOUND_ENABLED: true,
-  POOL_OK: 50,               // 流动性门槛(万美元)
-  VOLUME_OK: 10,             // 24h交易量门槛(万美元)
-  RES_OK: 2,                 // 共振信号数
-  COOLDOWN: 3600000,         // 重复提醒冷却
-  HIGHLIGHT: 5000            // 新币高亮时长(毫秒)
+  POOL_OK: 50,
+  VOLUME_OK: 10,
+  RES_OK: 2,
+  COOLDOWN: 3600000,
+  HIGHLIGHT: 5000
 };
 
-// 链映射
 const CHAIN_MAP = {
-  'ethereum': 'ETH',
-  'bsc': 'BSC',
-  'solana': 'SOL',
-  'base': 'BASE',
-  'arbitrum': 'ARB',
-  'polygon': 'POLYGON',
-  'avalanche': 'AVAX',
-  'optimism': 'OP'
+  'ethereum': 'ETH', 'bsc': 'BSC', 'solana': 'SOL', 'base': 'BASE',
+  'arbitrum': 'ARB', 'polygon': 'POLYGON', 'avalanche': 'AVAX', 'optimism': 'OP'
 };
 
 const CHAIN_EXPLORER = {
@@ -315,7 +304,6 @@ const synth = window.speechSynthesis;
 let audioCtx = null;
 let lastTokenIds = new Set();
 
-// ========== 音频提醒 ==========
 function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
 function beep(freq = 880, dur = 0.2) {
   if (!CONFIG.SOUND_ENABLED || !audioCtx) return;
@@ -335,51 +323,52 @@ function say(text) {
   synth.speak(u);
 }
 
-// ========== 数据获取：DexScreener 实时接口 ==========
+// ✅ 用代理接口，直接双击打开也不会跨域
 async function fetchDexScreenerData() {
-  try {
-    // 获取热门/新上币对数据
-    const res = await fetch('https://api.dexscreener.com/latest/dex/search?q=*', {
-      method: 'GET',
-      headers: { 'Accept': 'application/json' },
-      mode: 'cors'
-    });
-    
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const json = await res.json();
-    return json.pairs || [];
-  } catch (err) {
-    console.warn('DexScreener 接口获取失败：', err);
-    document.getElementById('sourceStatus').textContent = '连接失败';
-    document.getElementById('sourceStatus').className = 'status-err';
-    return null;
+  const urls = [
+    'https://api.allorigins.win/raw?url=https://api.dexscreener.com/latest/dex/search?q=*',
+    'https://corsproxy.io/?https://api.dexscreener.com/latest/dex/search?q=*'
+  ];
+  
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' },
+        cache: 'no-store'
+      });
+      if (!res.ok) continue;
+      const json = await res.json();
+      if (json.pairs) {
+        document.getElementById('sourceStatus').textContent = '实时连接正常';
+        document.getElementById('sourceStatus').className = 'status-ok';
+        return json.pairs;
+      }
+    } catch (e) { continue; }
   }
+  
+  document.getElementById('sourceStatus').textContent = '连接失败，请检查网络';
+  document.getElementById('sourceStatus').className = 'status-err';
+  return null;
 }
 
-// 转换为内部格式
 function normalizePairs(pairs) {
   if (!pairs) return [];
-  
   const tokenMap = new Map();
   
   for (const p of pairs) {
     if (!p.baseToken) continue;
-    
     const chainRaw = p.chainId || 'unknown';
     const chain = CHAIN_MAP[chainRaw] || chainRaw.toUpperCase();
     const addr = p.baseToken.address || 'unknown';
     const id = `${chain}_${addr}`;
+    if (tokenMap.has(id)) continue;
     
-    if (tokenMap.has(id)) continue; // 去重
-    
-    const priceUsd = parseFloat(p.priceUsd) || 0;
-    const liquidityUsd = (p.liquidity?.usd || 0) / 10000; // 转万美元
+    const liquidityUsd = (p.liquidity?.usd || 0) / 10000;
     const volume24h = (p.volume?.h24 || 0) / 10000;
-    const marketCap = (p.fdv || 0) / 10000; // FDV作为市值参考
+    const marketCap = (p.fdv || 0) / 10000;
     const priceChange24h = p.priceChange?.h24 || 0;
-    
-    // 大金狗判定
-    const isNew = (p.pairCreatedAt && Date.now() - p.pairCreatedAt < 86400000); // 24小时内新建
+    const isNew = (p.pairCreatedAt && Date.now() - p.pairCreatedAt < 86400000);
     const hasGoodLiq = liquidityUsd >= CONFIG.POOL_OK;
     const hasGoodVol = volume24h >= CONFIG.VOLUME_OK;
     const priceUp = priceChange24h > 0;
@@ -401,30 +390,17 @@ function normalizePairs(pairs) {
     }
     
     tokenMap.set(id, {
-      id,
-      symbol: p.baseToken.symbol || '???',
-      name: p.baseToken.name || '',
-      chain,
-      contractAddress: addr,
-      priceUsd,
-      marketCap,
-      liquidityUsd,
-      volume24h,
-      priceChange24h,
-      isNew,
-      isResonance,
-      grade,
-      label,
+      id, symbol: p.baseToken.symbol || '???', name: p.baseToken.name || '',
+      chain, contractAddress: addr, marketCap, liquidityUsd, volume24h,
+      priceChange24h, isNew, isResonance, grade, label,
       avatar: p.baseToken.thumb || p.baseToken.small || null
     });
   }
-  
   return Array.from(tokenMap.values())
     .sort((a, b) => (b.liquidityUsd + b.volume24h) - (a.liquidityUsd + a.volume24h))
     .slice(0, CONFIG.TOP_TOKENS_LIMIT);
 }
 
-// ========== 渲染 ==========
 function fmtMoney(wan) {
   if (wan >= 10000) return (wan / 10000).toFixed(2) + '亿';
   if (wan >= 1) return wan.toFixed(2) + '万';
@@ -457,9 +433,7 @@ function buildRow(item, isNewToken = false) {
     <div></div>
     <div class="cap ${priceClass}">$${fmtMoney(item.marketCap)}</div>
     <div>
-      <div class="grade-tag ${item.grade}" title="点击展开详情">
-        ${item.label} ▾
-      </div>
+      <div class="grade-tag ${item.grade}" title="点击展开详情">${item.label} ▾</div>
       <div class="detail-row">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
           <div>💰 流动性：${item.liquidityUsd.toFixed(2)}万 ${item.liquidityUsd >= CONFIG.POOL_OK ? '✅' : '❌'}</div>
@@ -467,11 +441,7 @@ function buildRow(item, isNewToken = false) {
           <div>📊 24h涨跌：${item.priceChange24h >= 0 ? '+' : ''}${item.priceChange24h.toFixed(2)}% ${item.priceChange24h > 0 ? '✅' : '❌'}</div>
           <div>🆕 新币(24h内)：${item.isNew ? '✅' : '❌'}</div>
         </div>
-        <div>
-          <strong>链/合约：</strong>${item.chain} / ${item.contractAddress}<br>
-          <strong>价格：</strong>$${item.priceUsd.toFixed(8)}<br>
-          <strong>共振信号：</strong>${item.isResonance ? '✅ 已触发' : '❌ 未达标'}
-        </div>
+        <div><strong>链/合约：</strong>${item.chain} / ${item.contractAddress}<br><strong>共振信号：</strong>${item.isResonance ? '✅ 已触发' : '❌ 未达标'}</div>
       </div>
     </div>
     <div class="action-links">
@@ -486,34 +456,25 @@ function buildRow(item, isNewToken = false) {
   
   setTimeout(() => row.classList.add('visible'), 10);
   
-  if (isNewToken) {
-    setTimeout(() => row.classList.remove('new-in'), CONFIG.HIGHLIGHT);
-    // 新币提醒
-    if (!notified.has(item.id) || Date.now() - notified.get(item.id) > CONFIG.COOLDOWN) {
-      notified.set(item.id, Date.now());
-      if (item.grade === 'top-gold' || item.grade === 'prime') {
-        beep(960); setTimeout(() => beep(1200), 150);
-        setTimeout(() => say(`${item.grade.includes('顶级') ? '顶级金狗' : '优质新币'} ${item.symbol} ${item.chain}`), 400);
-      }
+  if (isNewToken && (!notified.has(item.id) || Date.now() - notified.get(item.id) > CONFIG.COOLDOWN)) {
+    notified.set(item.id, Date.now());
+    if (item.grade === 'top-gold' || item.grade === 'prime') {
+      beep(960); setTimeout(() => beep(1200), 150);
+      setTimeout(() => say(`${item.grade.includes('顶级') ? '顶级金狗' : '优质新币'} ${item.symbol} ${item.chain}`), 400);
     }
   }
-  
   return row;
 }
 
 function getPrimeOnly(list) {
-  return list.filter(i => 
-    ['top-gold', 'prime', 'ok'].includes(i.grade) && i.isResonance
-  );
+  return list.filter(i => ['top-gold', 'prime', 'ok'].includes(i.grade) && i.isResonance);
 }
 
 function renderAll(data, isFresh = false) {
   document.getElementById('allList').innerHTML = '';
   document.getElementById('primeList').innerHTML = '';
-  
   const prime = getPrimeOnly(data);
   
-  // 精选区
   if (prime.length > 0) {
     document.getElementById('emptyPrime').style.display = 'none';
     document.getElementById('primeCount').textContent = prime.length;
@@ -526,32 +487,22 @@ function renderAll(data, isFresh = false) {
     document.getElementById('primeCount').textContent = '0';
   }
   
-  // 全量区
   data.forEach(item => {
     const isNew = isFresh && !lastTokenIds.has(item.id);
     document.getElementById('allList').appendChild(buildRow(item, isNew));
   });
   
-  // 更新已记录ID
   lastTokenIds = new Set(data.map(i => i.id));
-  
   document.getElementById('watchCount').textContent = data.length;
-  document.getElementById('updateHint').textContent = 
-    '上次更新：' + new Date().toLocaleTimeString('zh-CN');
-  document.getElementById('sourceStatus').textContent = 'DexScreener 实时连接';
-  document.getElementById('sourceStatus').className = 'status-ok';
+  document.getElementById('updateHint').textContent = '上次更新：' + new Date().toLocaleTimeString('zh-CN');
 }
 
-// ========== 主流程 ==========
 async function updateLoop() {
   const pairs = await fetchDexScreenerData();
   if (!pairs) return;
-  
-  const data = normalizePairs(pairs);
-  renderAll(data, true);
+  renderAll(normalizePairs(pairs), true);
 }
 
-// 事件
 document.getElementById('clearBtn').addEventListener('click', () => {
   notified.clear();
   alert('提醒记录已清除');
@@ -562,16 +513,11 @@ document.getElementById('soundSwitch').addEventListener('change', e => {
 });
 document.addEventListener('click', initAudio, { once: true });
 
-// 首次加载
 updateLoop();
-
-// 自动刷新
 setInterval(updateLoop, CONFIG.AUTO_REFRESH_SEC * 1000);
 
-console.log('%c===== 全链大金狗 · 实时扫描台 =====', 'color:#00d4ff;font-weight:bold;');
-console.log('数据源：DexScreener API (无密钥 · 免费)');
-console.log('刷新频率：每' + CONFIG.AUTO_REFRESH_SEC + '秒');
-console.log('覆盖链：ETH / BSC / SOL / BASE / ARB / POLYGON / AVAX / OP');
+console.log('%c===== 全链大金狗 · 直接双击即用 =====', 'color:#00d4ff;font-weight:bold;');
+console.log('已启用跨域代理，直接双击打开即可自动刷新数据');
 </script>
 </body>
 </html>
