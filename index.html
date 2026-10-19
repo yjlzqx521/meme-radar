@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>金狗雷达 Pro｜实时监控</title>
+<title>金狗雷达 Pro</title>
 <style>
 :root {
   --gold: #d4af37;
@@ -11,212 +11,237 @@
   --green: #34d399;
   --red: #ef4444;
   --orange: #f59e0b;
-  --purple: #a78bfa;
-  --bg-main: #0a0b0f;
-  --bg-card: #14151f;
-  --bg-card-2: #1a1c2c;
-  --border-gold: linear-gradient(90deg, #d4af37, #f0d775, #d4af37);
-  --border-green: linear-gradient(90deg, #34d399, #6ee7b7, #34d399);
-  --border-red: linear-gradient(90deg, #ef4444, #fca5a5, #ef4444);
-  --border-yellow: linear-gradient(90deg, #f59e0b, #fcd34d, #f59e0b);
+  --gray: #9ca3af;
+  --bg-main: #0c0c10;
+  --bg-card: #14141c;
+  --bg-card-dark: #101018;
   --text-primary: #e5e7eb;
   --text-secondary: #9ca3af;
-  --glow-gold: 0 0 12px rgba(212,175,55,0.4);
-  --glow-green: 0 0 12px rgba(52,211,153,0.35);
-  --glow-red: 0 0 12px rgba(239,68,68,0.35);
+  --border-gold: 1px solid rgba(212,175,55,0.35);
+  --glow-gold: 0 0 10px rgba(212,175,55,0.25);
+  --glow-green: 0 0 10px rgba(52,211,153,0.25);
+  --glow-orange: 0 0 10px rgba(245,158,11,0.25);
+  --glow-red: 0 0 10px rgba(239,68,68,0.25);
 }
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, 'Microsoft YaHei', sans-serif; }
 body {
   background: var(--bg-main); color: var(--text-primary); min-height: 100vh; padding: 20px;
   background-image: 
-    radial-gradient(circle at 20% 20%, rgba(212,175,55,0.03) 0%, transparent 40%),
-    radial-gradient(circle at 80% 80%, rgba(52,211,153,0.03) 0%, transparent 40%);
+    radial-gradient(circle at 25% 25%, rgba(212,175,55,0.02) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(52,211,153,0.02) 0%, transparent 50%);
 }
-.container { max-width: 1700px; margin: 0 auto; }
+.container { max-width: 1280px; margin: 0 auto; }
 
-/* ===== 标题栏 ===== */
+/* ===== 顶部标题 ===== */
 .header {
-  text-align: center; margin-bottom: 24px; position: relative;
+  text-align: center; margin-bottom: 20px; position: relative;
 }
 .title {
-  font-size: 2.2rem; font-weight: 800; letter-spacing: 4px;
+  font-size: 1.8rem; font-weight: 800; letter-spacing: 3px;
   background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 30px rgba(212,175,55,0.3);
-  position: relative; display: inline-block;
+  display: inline-block; position: relative;
 }
 .title::before, .title::after {
-  content: ''; position: absolute; top: 50%; width: 80px; height: 2px;
-  background: var(--gold); transform: translateY(-50%);
+  content: ''; position: absolute; top: 50%; width: 60px; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
 }
-.title::before { left: -100px; }
-.title::after { right: -100px; }
-.top-meta {
-  position: absolute; right: 0; top: 5px; font-size: 0.85rem; color: var(--text-secondary);
+.title::before { left: -80px; }
+.title::after { right: -80px; }
+.top-right {
+  position: absolute; right: 0; top: 5px; font-size: 0.8rem; color: var(--text-secondary);
 }
-.top-meta span { color: var(--green); }
+.top-right span { color: var(--green); }
 
 /* ===== 筛选标签 ===== */
 .tabs {
-  display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;
+  display: flex; gap: 10px; margin-bottom: 20px; justify-content: center;
 }
 .tab {
-  padding: 10px 28px; border-radius: 6px; border: 1px solid rgba(212,175,55,0.2);
-  background: rgba(20,21,31,0.8); color: var(--text-secondary);
-  cursor: pointer; transition: all 0.3s; font-weight: 600;
-  position: relative; overflow: hidden;
+  padding: 8px 24px; border-radius: 6px; border: var(--border-gold);
+  background: rgba(20,20,24,0.8); color: var(--text-secondary);
+  cursor: pointer; transition: all 0.3s; font-weight: 600; font-size: 0.9rem;
 }
-.tab:hover { border-color: rgba(212,175,55,0.5); color: var(--gold-light); }
+.tab:hover { border-color: var(--gold); color: var(--gold-light); }
 .tab.active {
-  background: linear-gradient(135deg, rgba(212,175,55,0.2), rgba(240,215,117,0.1));
+  background: linear-gradient(135deg, rgba(212,175,55,0.2), rgba(240,215,117,0.08));
   border-color: var(--gold); color: var(--gold-light); box-shadow: var(--glow-gold);
 }
-.tab.observe.active { border-color: var(--text-secondary); background: rgba(156,163,175,0.15); color: #fff; }
-.tab.sprout.active { border-color: var(--green); background: rgba(52,211,153,0.15); color: var(--green); box-shadow: var(--glow-green); }
-.tab.launch.active { border-color: var(--orange); background: rgba(245,158,11,0.15); color: var(--orange); box-shadow: 0 0 12px rgba(245,158,11,0.3); }
-.tab.growth.active { border-color: var(--purple); background: rgba(167,139,250,0.15); color: var(--purple); box-shadow: 0 0 12px rgba(167,139,250,0.3); }
+.tab.observe.active { border-color: var(--gray); color: #fff; background: rgba(156,163,175,0.15); }
+.tab.sprout.active { border-color: var(--green); color: var(--green); background: rgba(52,211,153,0.15); box-shadow: var(--glow-green); }
+.tab.launch.active { border-color: var(--red); color: var(--red); background: rgba(239,68,68,0.15); box-shadow: var(--glow-red); }
+.tab.growth.active { border-color: var(--green); color: var(--green); background: rgba(52,211,153,0.15); box-shadow: var(--glow-green); }
 
-/* ===== 四大板块卡片 ===== */
+/* ===== 四大板块卡片 —— 完全复刻原图 ===== */
 .cards-row {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px;
 }
 .card-box {
-  background: var(--bg-card); border-radius: 10px; padding: 20px 18px;
-  position: relative; border: 1px solid rgba(255,255,255,0.08);
-  overflow: hidden;
+  background: var(--bg-card-dark); border-radius: 8px; padding: 18px 16px;
+  border: var(--border-gold); position: relative; overflow: hidden;
 }
 .card-box::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: var(--border-gold); opacity: 0; transition: opacity 0.3s;
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
 }
-.card-box.observe { border-color: rgba(156,163,175,0.2); }
-.card-box.observe::before { background: linear-gradient(90deg, #6b7280, #9ca3af, #6b7280); opacity: 1; }
-.card-box.sprout { border-color: rgba(52,211,153,0.2); }
-.card-box.sprout::before { background: var(--border-green); opacity: 1; }
-.card-box.launch { border-color: rgba(245,158,11,0.2); }
-.card-box.launch::before { background: var(--border-yellow); opacity: 1; }
-.card-box.growth { border-color: rgba(167,139,250,0.2); }
-.card-box.growth::before { background: linear-gradient(90deg, #a78bfa, #c4b5fd, #a78bfa); opacity: 1; }
-.card-icon { font-size: 1.8rem; margin-bottom: 8px; }
-.card-title { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 6px; }
-.card-count { font-size: 2rem; font-weight: 800; }
-.card-desc { font-size: 0.75rem; color: var(--text-secondary); margin-top: 6px; }
+.card-box.observe::before { background: linear-gradient(90deg, transparent, #6b7280, transparent); }
+.card-box.sprout::before { background: linear-gradient(90deg, transparent, var(--green), transparent); }
+.card-box.launch::before { background: linear-gradient(90deg, transparent, var(--red), transparent); }
+.card-box.growth::before { background: linear-gradient(90deg, transparent, var(--green), transparent); }
+.card-inner { display: flex; align-items: center; gap: 12px; }
+.card-icon { font-size: 1.5rem; }
+.card-info { flex: 1; }
+.card-name { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 4px; }
+.card-count { font-size: 1.6rem; font-weight: 800; }
+.card-desc { font-size: 0.7rem; color: var(--text-secondary); margin-top: 6px; }
 
-/* ===== 异动提醒区 ===== */
+/* ===== 异动提醒双栏 —— 完全复刻原图 ===== */
 .alert-section { margin-bottom: 24px; }
-.alert-title {
-  font-size: 1rem; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
-}
-.alert-title span { color: var(--gold); }
-.alert-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.alert-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.alert-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
 .alert-card {
-  background: var(--bg-card); border-radius: 10px; padding: 18px 20px;
+  background: var(--bg-card-dark); border-radius: 8px; padding: 16px 18px;
   border: 1px solid; position: relative; overflow: hidden;
 }
-.alert-card.stage-1 { border-color: rgba(52,211,153,0.3); box-shadow: inset 0 0 0 1px rgba(52,211,153,0.2); }
-.alert-card.stage-2 { border-color: rgba(245,158,11,0.3); box-shadow: inset 0 0 0 1px rgba(245,158,11,0.2); }
+.alert-card.stage-1 { border-color: rgba(52,211,153,0.3); }
 .alert-card.stage-1::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--border-green);
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--green), transparent);
 }
+.alert-card.stage-2 { border-color: rgba(245,158,11,0.3); }
 .alert-card.stage-2::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--border-yellow);
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--orange), transparent);
 }
 .alert-tag {
-  display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px;
-  border-radius: 4px; font-weight: 700; margin-bottom: 10px;
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+  border-radius: 4px; font-weight: 700; margin-bottom: 10px; font-size: 0.85rem;
 }
 .alert-tag.stage-1 { background: rgba(52,211,153,0.15); color: var(--green); }
 .alert-tag.stage-2 { background: rgba(245,158,11,0.15); color: var(--orange); }
-.alert-content { font-size: 0.9rem; line-height: 1.8; }
-.alert-name { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
-.alert-meta { color: var(--text-secondary); font-size: 0.8rem; }
+.alert-content { font-size: 0.85rem; line-height: 1.8; }
+.alert-line { margin-bottom: 4px; }
+.alert-label { color: var(--text-secondary); font-size: 0.75rem; display: inline-block; width: 70px; }
 .flash-anim { animation: flash 2.5s ease; }
 @keyframes flash {
-  0% { box-shadow: 0 0 0 rgba(212,175,55,0); }
-  50% { box-shadow: 0 0 20px rgba(212,175,55,0.3); }
-  100% { box-shadow: 0 0 0 rgba(212,175,55,0); }
+  0% { box-shadow: inset 0 0 0 rgba(212,175,55,0); }
+  50% { box-shadow: inset 0 0 15px rgba(212,175,55,0.2); }
+  100% { box-shadow: inset 0 0 0 rgba(212,175,55,0); }
 }
 
-/* ===== 主表格区 ===== */
+/* ===== 叙事库独立区 ===== */
+.narrative-section {
+  background: var(--bg-card-dark); border-radius: 8px; padding: 16px 20px;
+  border: var(--border-gold); margin-bottom: 24px;
+}
+.narrative-title { font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.narrative-title span { color: var(--gold); }
+.narrative-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+}
+.narrative-card {
+  background: rgba(255,255,255,0.03); border-radius: 6px; padding: 12px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.nar-name { font-weight: 600; font-size: 0.8rem; margin-bottom: 6px; }
+.nar-meta { font-size: 0.7rem; color: var(--text-secondary); }
+.nar-hot { color: var(--orange); }
+.nar-strong { color: var(--green); }
+.nar-weak { color: var(--red); }
+
+/* ===== 买前必看 —— 完全复刻原图右侧悬浮框 ===== */
+.note-wrapper { display: flex; gap: 20px; margin-bottom: 24px; }
+.note-box {
+  width: 260px; background: var(--bg-card-dark); border-radius: 8px; padding: 16px;
+  border: var(--border-gold); box-shadow: var(--glow-gold); flex-shrink: 0;
+}
+.note-title { font-weight: 700; color: var(--gold-light); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.note-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; font-size: 0.78rem; line-height: 1.6; }
+.note-item .ok { color: var(--green); }
+.note-item .no { color: var(--red); }
+.status-side { flex: 1; }
+.status-bar {
+  background: var(--bg-card-dark); border-radius: 8px; padding: 14px 18px;
+  border: var(--border-gold); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; font-size: 0.8rem;
+}
+.status-ok { color: var(--green); }
+.status-err { color: var(--red); }
+
+/* ===== 主表格 ===== */
 .table-section {
-  background: var(--bg-card); border-radius: 10px; border: 1px solid rgba(212,175,55,0.15);
-  overflow: hidden;
+  background: var(--bg-card-dark); border-radius: 8px; border: var(--border-gold); overflow: hidden;
 }
 .table-header-bar {
-  padding: 14px 20px; border-bottom: 1px solid rgba(212,175,55,0.15);
+  padding: 12px 20px; border-bottom: var(--border-gold);
   display: flex; justify-content: space-between; align-items: center;
   background: rgba(212,175,55,0.03);
 }
 .table-title { font-weight: 700; color: var(--gold-light); }
-.table-controls { display: flex; gap: 10px; }
+.table-controls { display: flex; gap: 10px; align-items: center; font-size: 0.78rem; }
+.switch-label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
 .btn-sm {
-  padding: 6px 14px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1);
+  padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1);
   background: rgba(255,255,255,0.05); color: var(--text-secondary);
-  cursor: pointer; font-size: 0.78rem; transition: 0.2s;
+  cursor: pointer; font-size: 0.75rem; transition: 0.2s;
 }
 .btn-sm:hover { border-color: var(--gold); color: var(--gold-light); }
 
-/* 表格布局 */
 .table-grid {
   display: grid;
-  grid-template-columns: 80px 120px 1fr 100px 100px 100px 100px 100px 180px;
-  gap: 10px; padding: 12px 20px; align-items: center; font-size: 0.8rem;
+  grid-template-columns: 50px 100px 1fr 90px 90px 90px 90px 80px 80px 160px;
+  gap: 8px; padding: 10px 20px; align-items: center; font-size: 0.78rem;
 }
 .table-head { color: var(--text-secondary); font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.06); padding: 10px 20px; }
-.table-row { border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.25s; }
-.table-row:hover { background: rgba(212,175,55,0.04); }
+.table-row {
+  border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.25s;
+  opacity: 0; transform: translateY(5px);
+}
 .table-row.visible { opacity: 1; transform: translateY(0); }
-.table-row { opacity: 0; transform: translateY(6px); }
+.table-row:hover { background: rgba(212,175,55,0.04); }
 
 /* 风险标签 */
 .risk-tag {
-  display: inline-block; padding: 4px 10px; border-radius: 4px; font-weight: 700; font-size: 0.75rem;
+  display: inline-block; padding: 3px 8px; border-radius: 4px; font-weight: 700; font-size: 0.7rem;
 }
 .risk-high { background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.25); }
 .risk-mid { background: rgba(245,158,11,0.15); color: #fcd34d; border: 1px solid rgba(245,158,11,0.25); }
 .risk-low { background: rgba(52,211,153,0.15); color: #6ee7b7; border: 1px solid rgba(52,211,153,0.25); }
 
 /* 检测链接 */
-.detect-links { display: flex; gap: 6px; flex-wrap: wrap; }
+.detect-links { display: flex; gap: 5px; flex-wrap: wrap; }
 .d-link {
-  padding: 4px 10px; border-radius: 4px; background: rgba(255,255,255,0.06);
-  color: var(--text-secondary); text-decoration: none; font-size: 0.75rem;
+  padding: 3px 8px; border-radius: 4px; background: rgba(255,255,255,0.06);
+  color: var(--text-secondary); text-decoration: none; font-size: 0.7rem;
   transition: 0.2s;
 }
 .d-link:hover { background: rgba(212,175,55,0.2); color: var(--gold-light); }
 .d-link.hp:hover { background: rgba(239,68,68,0.2); color: #fca5a5; }
 .d-link.ts:hover { background: rgba(52,211,153,0.2); color: #6ee7b7; }
 
-/* 买前必看侧边提示 */
-.note-box {
-  position: absolute; right: 20px; margin-top: -60px; width: 260px;
-  background: rgba(20,21,31,0.95); border: 1px solid rgba(212,175,55,0.3);
-  border-radius: 10px; padding: 16px; box-shadow: var(--glow-gold);
+/* 叙事标签 */
+.nar-tag {
+  display: inline-block; padding: 2px 6px; border-radius: 3px; font-size: 0.65rem; margin-left: 4px;
 }
-.note-title { font-weight: 700; color: var(--gold-light); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-.note-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; font-size: 0.78rem; line-height: 1.6; }
-.note-item .ok { color: var(--green); }
-.note-item .no { color: var(--red); }
+.nar-tag.strong { background: rgba(52,211,153,0.15); color: #6ee7b7; }
+.nar-tag.mid { background: rgba(245,158,11,0.15); color: #fcd34d; }
+.nar-tag.weak { background: rgba(239,68,68,0.15); color: #fca5a5; }
 
-/* 状态提示 */
-.status-bar {
-  padding: 12px 20px; background: rgba(212,175,55,0.03); border-radius: 8px; margin-bottom: 16px;
-  display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem;
-}
-.status-ok { color: var(--green); }
-.status-err { color: var(--red); }
-.empty { text-align: center; padding: 40px; color: var(--text-secondary); }
+.empty { text-align: center; padding: 40px; color: var(--text-secondary); font-size: 0.85rem; }
+.footer-note { text-align: right; margin-top: 16px; font-size: 0.7rem; color: var(--text-secondary); }
 
 /* 响应适配 */
-@media (max-width: 1400px) {
-  .cards-row { grid-template-columns: repeat(2, 1fr); }
-  .alert-row { grid-template-columns: 1fr; }
-  .note-box { position: static; margin: 16px 0 0 0; width: 100%; }
+@media (max-width: 1200px) {
+  .note-wrapper { flex-direction: column; }
+  .note-box { width: 100%; }
+  .narrative-grid { grid-template-columns: repeat(2, 1fr); }
+  .table-grid { grid-template-columns: 50px 100px 1fr 90px 90px 90px 90px 80px; }
+  .table-grid span:nth-child(9), .table-grid span:nth-child(10),
+  .table-row > div:nth-child(9), .table-row > div:nth-child(10) { display: none; }
 }
 @media (max-width: 900px) {
-  .cards-row { grid-template-columns: 1fr; }
-  .table-grid { grid-template-columns: 80px 120px 1fr 100px 100px 100px; }
-  .table-grid span:nth-child(7), .table-grid span:nth-child(8), .table-grid > div:last-child { display: none; }
+  .cards-row { grid-template-columns: repeat(2, 1fr); }
+  .alert-row { grid-template-columns: 1fr; }
+  .narrative-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -225,27 +250,7 @@ body {
   <!-- 标题 -->
   <div class="header">
     <h1 class="title">金狗雷达 Pro</h1>
-    <div class="top-meta">实时监控｜<span id="refreshInfo">90秒刷新</span></div>
-  </div>
-
-  <!-- 状态条 -->
-  <div class="status-bar">
-    <div>
-      📡 数据源：<strong id="sourceStatus">连接中...</strong>
-      <span style="margin:0 12px;">|</span>
-      范围：观察$0~10万｜萌芽$10~50万｜启动$50~200万｜成长$200~800万
-    </div>
-    <div>
-      <span id="updateTime">更新：--</span>
-      <span style="margin:0 12px;">|</span>
-      <span id="countInfo">币种：0</span>
-      <span style="margin:0 12px;">|</span>
-      <label style="display:inline-flex;align-items:center;gap:6px;">
-        🔊 提醒
-        <input type="checkbox" id="soundSwitch" checked style="width:16px;height:16px;">
-      </label>
-      <button class="btn-sm" id="clearBtn" style="margin-left:8px;">清提醒</button>
-    </div>
+    <div class="top-right">实时监控｜<span id="refreshInfo">90秒刷新</span></div>
   </div>
 
   <!-- 筛选标签 -->
@@ -253,83 +258,162 @@ body {
     <div class="tab active" data-filter="all">全部</div>
     <div class="tab observe" data-filter="observe">观察区</div>
     <div class="tab sprout" data-filter="sprout">萌芽期</div>
-    <div class="tab.launch" data-filter="launch">启动期</div>
-    <div class="tab.growth" data-filter="growth">成长期</div>
+    <div class="tab launch" data-filter="launch">启动期</div>
+    <div class="tab growth" data-filter="growth">成长期</div>
   </div>
 
-  <!-- 四大板块卡片 -->
+  <!-- 四大板块卡片 —— 完全复刻原图布局 -->
   <div class="cards-row">
-    <div class="card-box observe" id="cardObserve">
-      <div class="card-icon">⚙️</div>
-      <div class="card-title">观察区 · 0~10万</div>
-      <div class="card-count" id="cntObserve">0</div>
-      <div class="card-desc">量能≥8%｜风险极高</div>
+    <div class="card-box observe">
+      <div class="card-inner">
+        <div class="card-icon">⚙️</div>
+        <div class="card-info">
+          <div class="card-name">观察区</div>
+          <div class="card-count" id="cntObserve">0</div>
+        </div>
+      </div>
+      <div class="card-desc">$0~10万 · 量能≥5%</div>
     </div>
-    <div class="card-box sprout" id="cardSprout">
-      <div class="card-icon">🌱</div>
-      <div class="card-title">萌芽期 · 10~50万</div>
-      <div class="card-count" id="cntSprout">0</div>
-      <div class="card-desc">量能≥5%｜10~100倍潜力</div>
+    <div class="card-box sprout">
+      <div class="card-inner">
+        <div class="card-icon">✅</div>
+        <div class="card-info">
+          <div class="card-name">萌芽期</div>
+          <div class="card-count" id="cntSprout">0</div>
+        </div>
+      </div>
+      <div class="card-desc">$10万~50万 · 量能≥3%</div>
     </div>
-    <div class="card-box launch" id="cardLaunch">
-      <div class="card-icon">🚀</div>
-      <div class="card-title">启动期 · 50~200万</div>
-      <div class="card-count" id="cntLaunch">0</div>
-      <div class="card-desc">量能≥5%｜5~30倍潜力</div>
+    <div class="card-box launch">
+      <div class="card-inner">
+        <div class="card-icon">❌</div>
+        <div class="card-info">
+          <div class="card-name">启动期</div>
+          <div class="card-count" id="cntLaunch">0</div>
+        </div>
+      </div>
+      <div class="card-desc">$50万~200万 · 量能≥3%</div>
     </div>
-    <div class="card-box growth" id="cardGrowth">
-      <div class="card-icon">📈</div>
-      <div class="card-title">成长期 · 200~800万</div>
-      <div class="card-count" id="cntGrowth">0</div>
-      <div class="card-desc">量能≥5%｜2~10倍潜力</div>
+    <div class="card-box growth">
+      <div class="card-inner">
+        <div class="card-icon">✅</div>
+        <div class="card-info">
+          <div class="card-name">成长期</div>
+          <div class="card-count" id="cntGrowth">0</div>
+        </div>
+      </div>
+      <div class="card-desc">$200万~800万 · 量能≥3%</div>
     </div>
   </div>
 
-  <!-- 异动提醒区 -->
+  <!-- 异动提醒双栏 —— 完全复刻原图 -->
   <div class="alert-section">
-    <div class="alert-title"><span>⚡</span> 异动提醒</div>
+    <div class="alert-title">异动提醒</div>
     <div class="alert-row">
       <div class="alert-card stage-1" id="alertStage1">
-        <div class="alert-tag stage-1">✅ 一段提醒 · 新币首发</div>
-        <div class="alert-content" id="alertStage1Content">暂无新币信号</div>
+        <div class="alert-tag stage-1">✅ 一段提醒 新币首发</div>
+        <div class="alert-content" id="alertStage1Content">
+          <div class="alert-line"><span class="alert-label">币种</span><span id="s1Name">暂无信号</span></div>
+          <div class="alert-line"><span class="alert-label">市值</span><span id="s1Mcap">--</span></div>
+          <div class="alert-line"><span class="alert-label">涨幅</span><span id="s1Change">--</span></div>
+          <div class="alert-line"><span class="alert-label">量价比</span><span id="s1Ratio">--</span></div>
+          <div class="alert-line"><span class="alert-label">叙事</span><span id="s1Narrative">--</span></div>
+        </div>
       </div>
       <div class="alert-card stage-2" id="alertStage2">
-        <div class="alert-tag stage-2">⚡ 二段提醒 · 老币异动</div>
-        <div class="alert-content" id="alertStage2Content">暂无异动信号</div>
+        <div class="alert-tag stage-2">⚡ 二段提醒 老币异动</div>
+        <div class="alert-content" id="alertStage2Content">
+          <div class="alert-line"><span class="alert-label">币种</span><span id="s2Name">暂无信号</span></div>
+          <div class="alert-line"><span class="alert-label">市值</span><span id="s2Mcap">--</span></div>
+          <div class="alert-line"><span class="alert-label">涨幅</span><span id="s2Change">--</span></div>
+          <div class="alert-line"><span class="alert-label">量价比</span><span id="s2Ratio">--</span></div>
+          <div class="alert-line"><span class="alert-label">叙事</span><span id="s2Narrative">--</span></div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- 买前必看 -->
-  <div class="note-box">
-    <div class="note-title">🛡️ 买前必看</div>
-    <div class="note-item"><span class="no">✗</span> 未锁仓 / 未验证 → 不买</div>
-    <div class="note-item"><span class="no">✗</span> 卖税＞10% → 不买</div>
-    <div class="note-item"><span class="no">✗</span> 深度＜$5000 → 不买</div>
-    <div class="note-item"><span class="ok">✓</span> 买入后先试卖10% → 能出才重仓</div>
-    <div class="note-item"><span class="ok">✓</span> 只投能接受全亏的钱</div>
+  <!-- 叙事库独立区 -->
+  <div class="narrative-section">
+    <div class="narrative-title">🔥 叙事库 · 热点追踪</div>
+    <div class="narrative-grid" id="narrativeList">
+      <div class="narrative-card">
+        <div class="nar-name">AI/DePIN</div>
+        <div class="nar-meta nar-hot">热度: ↑ 高</div>
+        <div class="nar-meta nar-strong">叙事强度: 强</div>
+      </div>
+      <div class="narrative-card">
+        <div class="nar-name">MEME龙头</div>
+        <div class="nar-meta nar-hot">热度: ↑ 中</div>
+        <div class="nar-meta nar-strong">叙事强度: 强</div>
+      </div>
+      <div class="narrative-card">
+        <div class="nar-name">RWA/链上资产</div>
+        <div class="nar-meta nar-hot">热度: → 稳</div>
+        <div class="nar-meta nar-mid">叙事强度: 中</div>
+      </div>
+      <div class="narrative-card">
+        <div class="nar-name">旧热点退潮</div>
+        <div class="nar-meta">热度: ↓ 降</div>
+        <div class="nar-meta nar-weak">叙事强度: 弱</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 买前必看 + 状态条 —— 复刻原图右侧布局 -->
+  <div class="note-wrapper">
+    <div class="note-box">
+      <div class="note-title">🛡️ 买前必看</div>
+      <div class="note-item"><span class="no">✗</span> 未锁仓/未验证 → 不买</div>
+      <div class="note-item"><span class="no">✗</span> 卖税＞10% → 不买</div>
+      <div class="note-item"><span class="no">✗</span> 深度＜$5000 → 不买</div>
+      <div class="note-item"><span class="ok">✓</span> 买入先试卖10% → 能出才重仓</div>
+      <div class="note-item"><span class="ok">✓</span> 只投能接受全亏的钱</div>
+    </div>
+    <div class="status-side">
+      <div class="status-bar">
+        <div>
+          📡 数据源：<strong id="sourceStatus">连接中...</strong>
+          <span style="margin:0 10px;">|</span>
+          放宽版：观察≥5%｜其他≥3%
+        </div>
+        <div>
+          <span id="updateTime">更新：--</span>
+          <span style="margin:0 10px;">|</span>
+          <span id="countInfo">币种：0</span>
+          <span style="margin:0 10px;">|</span>
+          <label style="display:inline-flex;align-items:center;gap:6px;" class="switch-label">
+            🔊 提醒
+            <input type="checkbox" id="soundSwitch" checked style="width:16px;height:16px;margin:0;">
+          </label>
+          <button class="btn-sm" id="clearBtn">清提醒</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- 主表格 -->
-  <div class="table-section" style="margin-top: 40px;">
+  <div class="table-section">
     <div class="table-header-bar">
       <div class="table-title">📊 币种监控列表</div>
       <div class="table-controls">
-        <span style="color:var(--text-secondary);font-size:0.78rem;">数据来源：CoinGecko API</span>
+        <span style="color:var(--text-secondary);">数据来源：CoinGecko API</span>
       </div>
     </div>
     <div class="table-grid table-head">
-      <span>#</span><span>币种</span><span>合约地址</span><span>市值</span><span>涨幅</span><span>量价比</span><span>深度</span><span>风险</span><span>一键检测</span>
+      <span>#</span><span>币种</span><span>合约地址</span><span>市值</span><span>涨幅</span><span>量价比</span><span>深度</span><span>风险</span><span>叙事</span><span>一键检测</span>
     </div>
     <div id="tableBody">
       <div class="empty">加载中...</div>
     </div>
   </div>
+
+  <div class="footer-note">Dola AI</div>
 </div>
 
 <script>
 // ==========================================
-// ⚙️ 核心配置 —— 完全按定好的策略
+// ⚙️ 核心配置 —— 放宽版 + 完整策略
 // ==========================================
 const CONFIG = {
   AUTO_REFRESH_SEC: 90,
@@ -341,9 +425,9 @@ const CONFIG = {
   LAUNCH_MAX: 2_000_000,
   GROWTH_MAX: 8_000_000,
 
-  // 筛选门槛
-  OBSERVE_RATIO: 0.08,
-  NORMAL_RATIO: 0.05,
+  // 放宽后的量能门槛
+  OBSERVE_RATIO: 0.05,   // 观察区 ≥5%
+  NORMAL_RATIO: 0.03,    // 萌芽/启动/成长 ≥3%
   CHANGE_UP: 0,
 
   // 提醒判定
@@ -355,6 +439,7 @@ const CONFIG = {
   DEPTH_WARN: 5000
 };
 
+// 主流币黑名单
 const BLACKLIST = new Set([
   'bitcoin','ethereum','binancecoin','solana','usd-coin','tether',
   'staked-ether','ripple','cardano','dogecoin','tron','polkadot',
@@ -363,6 +448,7 @@ const BLACKLIST = new Set([
   'binance-usd','dai','trueusd','usdd','frax','wrapped-bitcoin'
 ]);
 
+// 链浏览器与检测链接
 const EXPLORER = {
   'ethereum':'https://etherscan.io/token/',
   'binance-smart-chain':'https://bscscan.com/token/',
@@ -373,16 +459,12 @@ const EXPLORER = {
   'avalanche':'https://snowtrace.io/address/',
   'optimism':'https://optimistic.etherscan.io/token/'
 };
-
 const DETECT = {
   honeypot: 'https://honeypot.is/',
-  tokensniffer: 'https://tokensniffer.com/token/',
-  goplus: 'https://gopluslabs.io/token-security/'
+  tokensniffer: 'https://tokensniffer.com/token/'
 };
 
-const DEFAULT_AVATAR = 'https://cdn-icons-png.flaticon.com/512/1046/1046754.png';
-
-// 状态
+// 状态变量
 const notified = new Set();
 const firstSeen = new Map();
 const prevChange = new Map();
@@ -441,20 +523,33 @@ function meetsThreshold(tier, ratio) {
   return ratio >= min;
 }
 
+// 模拟叙事强度评分（实际可接入关键词/热度接口增强）
+function getNarrativeScore(item) {
+  const strongKeywords = ['ai','depin','agent','memecoin','meme','rwa','defi','l2','layer2','gamefi','metaverse','btc','eth','sol','base'];
+  const text = (item.name + ' ' + item.symbol).toLowerCase();
+  let score = 0;
+  strongKeywords.forEach(k => { if (text.includes(k)) score++; });
+  
+  if (score >= 2) return { text:'强', cls:'nar-tag strong' };
+  if (score >= 1) return { text:'中', cls:'nar-tag mid' };
+  return { text:'弱', cls:'nar-tag weak' };
+}
+
+// 风险标签
 function getRiskTag(item) {
   const risks = [];
   if (item.vol < CONFIG.DEPTH_WARN) risks.push('深度不足');
   if (item.change24h > 30) risks.push('追高风险');
   if (item.tier === 'observe') risks.push('极高风险');
 
-  if (risks.length === 0) return { text: '正常', cls: 'risk-low' };
-  if (risks.includes('极高风险')) return { text: risks.join('·'), cls: 'risk-high' };
-  if (risks.includes('追高风险')) return { text: risks.join('·'), cls: 'risk-mid' };
-  return { text: risks.join('·'), cls: 'risk-mid' };
+  if (risks.length === 0) return { text:'正常', cls:'risk-low' };
+  if (risks.includes('极高风险')) return { text:risks.join('·'), cls:'risk-high' };
+  if (risks.includes('追高风险')) return { text:risks.join('·'), cls:'risk-mid' };
+  return { text:risks.join('·'), cls:'risk-mid' };
 }
 
 // ==========================================
-// 🔌 拉取真实数据
+// 🔌 拉取 CoinGecko 真实数据
 // ==========================================
 async function fetchData() {
   try {
@@ -473,7 +568,7 @@ async function fetchData() {
 }
 
 // ==========================================
-// 🧠 处理与筛选
+// 🧠 处理筛选
 // ==========================================
 function processCoins(raw) {
   if (!raw) return { observe:[], sprout:[], launch:[], growth:[] };
@@ -481,6 +576,9 @@ function processCoins(raw) {
   const observe = [], sprout = [], launch = [], growth = [];
   const now = Date.now();
   let total = 0, kept = 0;
+
+  stage1Item = null;
+  stage2Item = null;
 
   for (const c of raw) {
     total++;
@@ -500,18 +598,20 @@ function processCoins(raw) {
 
     kept++;
 
+    // 新币/异动判定
     if (!firstSeen.has(c.id)) firstSeen.set(c.id, now);
     const seenMs = now - firstSeen.get(c.id);
     const isNew = seenMs < CONFIG.NEW_HOURS * 3600_000 && !lastIds.has(c.id);
-
     const prev = prevChange.get(c.id);
     const isSurge = prev !== undefined && change24h > prev + CONFIG.SURGE_RISE;
 
+    // 链/合约信息
     const platformKey = c.platforms ? Object.keys(c.platforms)[0] : null;
     const chain = platformKey || 'ethereum';
     const contract = c.contract_address || (c.platforms?.[platformKey] || '');
 
     const risk = getRiskTag({ vol, change24h, tier });
+    const narrative = getNarrativeScore({ name:c.name, symbol:c.symbol });
 
     const item = {
       id: c.id,
@@ -520,10 +620,11 @@ function processCoins(raw) {
       mcap, vol, change24h, volRatio,
       tier, isNew, isSurge,
       chain, contract,
-      image: c.image || DEFAULT_AVATAR,
-      risk
+      image: c.image || '',
+      risk, narrative
     };
 
+    // 分区归类
     if (tier === 'observe') observe.push(item);
     else if (tier === 'sprout') sprout.push(item);
     else if (tier === 'launch') launch.push(item);
@@ -531,12 +632,12 @@ function processCoins(raw) {
 
     prevChange.set(c.id, change24h);
 
-    // 更新一二段提醒
+    // 一二段提醒（取最新/优先级高的）
     if (isNew && meetsThreshold(tier, volRatio)) stage1Item = item;
     if (isSurge && meetsThreshold(tier, volRatio)) stage2Item = item;
   }
 
-  // 排序
+  // 按量价比排序
   const sortFn = (a,b) => b.volRatio - a.volRatio;
   const result = {
     observe: observe.sort(sortFn),
@@ -545,7 +646,7 @@ function processCoins(raw) {
     growth: growth.sort(sortFn)
   };
 
-  // 更新顶部计数
+  // 更新顶部数量
   document.getElementById('cntObserve').textContent = result.observe.length;
   document.getElementById('cntSprout').textContent = result.sprout.length;
   document.getElementById('cntLaunch').textContent = result.launch.length;
@@ -556,24 +657,27 @@ function processCoins(raw) {
 }
 
 // ==========================================
-// 🎨 渲染
+// 🎨 渲染 —— 完全对齐原图样式
 // ==========================================
-function renderAlertStage1() {
+function renderStage1() {
   const el = document.getElementById('alertStage1Content');
   const card = document.getElementById('alertStage1');
   if (!stage1Item) {
-    el.innerHTML = '<div style="color:#6ee7b780;">暂无新币首发信号</div>';
+    document.getElementById('s1Name').textContent = '暂无新币信号';
+    document.getElementById('s1Mcap').textContent = '--';
+    document.getElementById('s1Change').textContent = '--';
+    document.getElementById('s1Ratio').textContent = '--';
+    document.getElementById('s1Narrative').textContent = '--';
     card.classList.remove('flash-anim');
     return;
   }
 
   const item = stage1Item;
-  el.innerHTML = `
-    <div class="alert-name">${item.symbol} · ${getTierName(item.tier)}区</div>
-    <div class="alert-meta">
-      市值 ${fmtMoney(item.mcap)} · 涨幅 +${item.change24h.toFixed(2)}% · 量价比 ${(item.volRatio*100).toFixed(1)}% · 深度 ${fmtMoney(item.vol)}
-    </div>
-  `;
+  document.getElementById('s1Name').textContent = `${item.symbol} · ${getTierName(item.tier)}区`;
+  document.getElementById('s1Mcap').textContent = fmtMoney(item.mcap);
+  document.getElementById('s1Change').textContent = `+${item.change24h.toFixed(2)}%`;
+  document.getElementById('s1Ratio').textContent = `${(item.volRatio*100).toFixed(1)}%`;
+  document.getElementById('s1Narrative').textContent = item.narrative.text;
 
   const shouldNotify = !notified.has('s1-' + item.id);
   if (shouldNotify) {
@@ -583,22 +687,25 @@ function renderAlertStage1() {
   }
 }
 
-function renderAlertStage2() {
+function renderStage2() {
   const el = document.getElementById('alertStage2Content');
   const card = document.getElementById('alertStage2');
   if (!stage2Item) {
-    el.innerHTML = '<div style="color:#fcd34d80;">暂无老币异动信号</div>';
+    document.getElementById('s2Name').textContent = '暂无异动信号';
+    document.getElementById('s2Mcap').textContent = '--';
+    document.getElementById('s2Change').textContent = '--';
+    document.getElementById('s2Ratio').textContent = '--';
+    document.getElementById('s2Narrative').textContent = '--';
     card.classList.remove('flash-anim');
     return;
   }
 
   const item = stage2Item;
-  el.innerHTML = `
-    <div class="alert-name">${item.symbol} · ${getTierName(item.tier)}区</div>
-    <div class="alert-meta">
-      市值 ${fmtMoney(item.mcap)} · 涨幅 +${item.change24h.toFixed(2)}% · 量价比 ${(item.volRatio*100).toFixed(1)}% · 深度 ${fmtMoney(item.vol)}
-    </div>
-  `;
+  document.getElementById('s2Name').textContent = `${item.symbol} · ${getTierName(item.tier)}区`;
+  document.getElementById('s2Mcap').textContent = fmtMoney(item.mcap);
+  document.getElementById('s2Change').textContent = `+${item.change24h.toFixed(2)}%`;
+  document.getElementById('s2Ratio').textContent = `${(item.volRatio*100).toFixed(1)}%`;
+  document.getElementById('s2Narrative').textContent = item.narrative.text;
 
   const shouldNotify = !notified.has('s2-' + item.id);
   if (shouldNotify) {
@@ -613,17 +720,19 @@ function renderRow(item, idx) {
   const tokenLink = item.contract ? `${explorerBase}${item.contract}` : `https://www.coingecko.com/en/coins/${item.id}`;
   const snifferLink = item.contract ? `${DETECT.tokensniffer}${item.contract}` : tokenLink;
   const hpLink = item.contract ? `${DETECT.honeypot}${item.contract}` : tokenLink;
+  const shortAddr = item.contract ? item.contract.slice(0,14) + '...' : '原生';
 
   return `
     <div class="table-row table-grid" data-tier="${item.tier}">
       <span>${idx + 1}</span>
       <span style="font-weight:700;">${item.symbol}</span>
-      <span style="font-size:0.7rem;color:#6b7294;">${item.contract ? item.contract.slice(0,14)+'...' : '原生'}</span>
+      <span style="font-size:0.7rem;color:#6b7294;">${shortAddr}</span>
       <span style="font-family:monospace;">${fmtMoney(item.mcap)}</span>
       <span style="color:#34d399;font-weight:600;">+${item.change24h.toFixed(2)}%</span>
       <span style="${item.volRatio>=0.1?'color:#34d399;':''}">${(item.volRatio*100).toFixed(1)}%</span>
       <span>${fmtMoney(item.vol)}</span>
       <span><span class="risk-tag ${item.risk.cls}">${item.risk.text}</span></span>
+      <span><span class="${item.narrative.cls}">${item.narrative.text}</span></span>
       <span class="detect-links">
         <a href="${tokenLink}" target="_blank" class="d-link">链上</a>
         <a href="${hpLink}" target="_blank" class="d-link hp">蜜罐</a>
@@ -633,14 +742,16 @@ function renderRow(item, idx) {
   `;
 }
 
-function renderAll(list) {
-  const all = [...list.observe, ...list.sprout, ...list.launch, ...list.growth];
-  
-  // 筛选过滤
-  const filtered = currentFilter === 'all' ? all : list[currentFilter];
-  
+function renderAll(lists) {
+  let filtered;
+  if (currentFilter === 'all') {
+    filtered = [...lists.observe, ...lists.sprout, ...lists.launch, ...lists.growth];
+  } else {
+    filtered = lists[currentFilter];
+  }
+
   if (!filtered.length) {
-    document.getElementById('tableBody').innerHTML = '<div class="empty">暂无符合条件币种 · 耐心等新信号</div>';
+    document.getElementById('tableBody').innerHTML = '<div class="empty">暂无符合条件币种 · 耐心等待新信号</div>';
     return;
   }
 
@@ -653,33 +764,29 @@ function renderAll(list) {
 }
 
 // ==========================================
-// 🔄 主刷新
+// 🔄 主刷新循环
 // ==========================================
 async function update() {
-  stage1Item = null;
-  stage2Item = null;
-
   const raw = await fetchData();
   const lists = processCoins(raw);
 
-  renderAlertStage1();
-  renderAlertStage2();
+  renderStage1();
+  renderStage2();
   renderAll(lists);
 
   lastIds = new Set([...lists.observe, ...lists.sprout, ...lists.launch, ...lists.growth].map(i => i.id));
-
   document.getElementById('updateTime').textContent = '更新：' + new Date().toLocaleTimeString('zh-CN');
 }
 
 // ==========================================
-// 🎛️ 筛选切换
+// 🎛️ 筛选交互
 // ==========================================
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
     currentFilter = tab.dataset.filter;
-    update(); // 重渲染
+    update();
   });
 });
 
@@ -688,16 +795,17 @@ document.getElementById('clearBtn').addEventListener('click', () => {
   alert('提醒已重置 ✅');
 });
 
+// 初始化音频
 document.addEventListener('click', initAudio, { once: true });
 
 // 启动
 update();
 setInterval(update, CONFIG.AUTO_REFRESH_SEC * 1000);
 
-console.log('%c===== 金狗雷达 Pro 已启动 =====', 'color:#d4af37;font-weight:bold;font-size:14px;');
-console.log('风格：黑金赛博 · 按图还原');
-console.log('数据：CoinGecko 实时直连');
-console.log('策略：二段提醒 · 四大分区 · 貔貅防线');
+console.log('%c===== 金狗雷达 Pro 最终版 已启动 =====', 'color:#d4af37;font-weight:bold;font-size:14px;');
+console.log('样式：完全复刻原图 · 黑金终端风');
+console.log('数据：CoinGecko API 直连 · 实时刷新');
+console.log('策略：二段提醒 · 叙事库 · 风控标签 · 放宽门槛');
 </script>
 </body>
 </html>
