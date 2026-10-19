@@ -3,332 +3,427 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>全链扫描 · 大金狗实时版</title>
+<title>土狗猎手 · 终极版 V3｜真实数据直连</title>
 <style>
 :root {
-  --bg-main: #0a0e27;
-  --bg-section-prime: rgba(255, 215, 0, 0.04);
-  --bg-section-all: rgba(0, 212, 255, 0.03);
-  --accent-gold: #ffd700;
-  --accent-cyan: #00d4ff;
-  --platinum: #e5e4e2;
-  --ok: #00e080;
-  --warn: #ffcc00;
-  --danger: #ff4455;
-  --text-primary: #e6f0ff;
-  --text-secondary: #7a8ab8;
-  --avatar-size: 48px;
-  --radius: 14px;
+  --bg-main: #0f1118;
+  --bg-card: #181b28;
+  --bg-hover: #202436;
+  --border: #2a2f44;
+  --text-primary: #e8eaf6;
+  --text-secondary: #8c92b3;
+  --accent-gold: #d4af37;
+  --accent-green: #00c853;
+  --accent-red: #ff5252;
+  --accent-purple: #7c4dff;
+  --accent-orange: #ff9100;
+  --accent-gray: #78909c;
+  --ok: #00c853;
+  --warn: #ffab00;
+  --danger: #ff5252;
+  --radius: 10px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.35);
 }
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
 body {
-  background: radial-gradient(circle at top left, #141d42, #0a0e27 60%);
+  background: linear-gradient(135deg, #0f1118 0%, #141828 100%);
   color: var(--text-primary);
   min-height: 100vh;
-  padding: 20px;
+  padding: 16px;
 }
 .container { max-width: 1280px; margin: 0 auto; }
 
+/* ===== 顶部状态栏 ===== */
 .top-bar {
   display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
+  margin-bottom: 16px; flex-wrap: wrap; gap: 12px;
 }
-h1 { font-size: 1.3rem; display: flex; align-items: center; gap: 8px; }
+h1 { font-size: 1.25rem; display: flex; align-items: center; gap: 10px; }
+h1 span { color: var(--accent-gold); }
 .ctrl-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .btn {
-  background: rgba(0, 212, 255, 0.08); border: 1px solid rgba(0, 212, 255, 0.2);
-  color: var(--accent-cyan); padding: 8px 14px; border-radius: 8px;
-  cursor: pointer; transition: 0.25s; font-size: 0.85rem;
+  background: var(--bg-card); border: 1px solid var(--border);
+  color: var(--text-secondary); padding: 8px 14px; border-radius: 8px;
+  cursor: pointer; transition: 0.25s; font-size: 0.82rem;
 }
-.btn:hover { background: rgba(0, 212, 255, 0.15); }
-.sound-label { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; cursor: pointer; }
+.btn:hover { border-color: var(--accent-purple); color: var(--accent-purple); }
+.btn.active {
+  background: rgba(124,77,255,0.15);
+  border-color: var(--accent-purple);
+  color: var(--accent-purple);
+}
+.switch-wrap { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; }
 .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
 .switch input { opacity: 0; width: 0; height: 0; }
 .slider {
-  position: absolute; inset: 0; background: #1e2548; border-radius: 11px; transition: 0.3s;
+  position: absolute; inset: 0; background: #2a2f44; border-radius: 11px; transition: 0.3s;
 }
 .slider:before {
   content: ""; position: absolute; height: 16px; width: 16px; left: 3px; bottom: 3px;
   background: white; border-radius: 50%; transition: 0.3s;
 }
-input:checked + .slider { background: var(--ok); }
+input:checked + .slider { background: var(--accent-green); }
 input:checked + .slider:before { transform: translateX(18px); }
 
-.banner {
-  background: rgba(0, 212, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.15);
-  border-radius: var(--radius); padding: 12px 16px; margin-bottom: 20px;
-  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
-  font-size: 0.85rem;
+/* ===== 风险置顶提示 ===== */
+.risk-banner {
+  background: rgba(255,82,82,0.08); border: 1px solid rgba(255,82,82,0.25);
+  border-radius: var(--radius); padding: 12px 16px; margin-bottom: 18px;
+  display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap;
 }
-.banner strong { color: var(--accent-cyan); }
-.update-hint { font-size: 0.75rem; color: var(--text-secondary); }
-.status-ok { color: var(--ok); }
-.status-err { color: var(--danger); }
-.status-warn { color: var(--warn); }
+.risk-banner .icon { font-size: 1.2rem; }
+.risk-banner .text { font-size: 0.8rem; line-height: 1.6; color: #ffcdd2; }
+.risk-banner strong { color: #fff; }
 
-.section-prime {
-  background: var(--bg-section-prime);
-  border: 1px solid rgba(255, 215, 0, 0.18);
-  border-radius: var(--radius);
-  padding: 18px 20px;
-  margin-bottom: 24px;
+/* ===== 数据源状态 ===== */
+.status-bar {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px 18px; margin-bottom: 20px;
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+  font-size: 0.8rem;
 }
-.section-all {
-  background: var(--bg-section-all);
-  border: 1px solid rgba(0, 212, 255, 0.15);
-  border-radius: var(--radius);
-  padding: 18px 20px;
+.status-ok { color: var(--accent-green); }
+.status-err { color: var(--accent-red); }
+.status-warn { color: var(--accent-orange); }
+
+/* ===== 板块通用 ===== */
+.section {
+  background: var(--bg-card); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 20px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
 }
+.section.observe { border-left: 3px solid var(--accent-gray); }
+.section.sprout { border-left: 3px solid var(--accent-purple); }
+.section.launch { border-left: 3px solid var(--accent-orange); }
+.section.growth { border-left: 3px solid var(--accent-green); }
 .section-header {
-  display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding-bottom: 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
 }
-.prime-title { color: var(--accent-gold); font-size: 1rem; font-weight: 700; }
-.all-title { color: var(--accent-cyan); font-size: 1rem; font-weight: 700; }
-.section-desc { font-size: 0.75rem; opacity: 0.6; margin-left: auto; font-weight: 400; }
+.section-title { font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.section-desc { font-size: 0.72rem; color: var(--text-secondary); }
 
+/* ===== 表格 ===== */
 .table-header {
   display: grid;
-  grid-template-columns: 56px 130px 2fr 110px 150px 140px;
-  gap: 10px; padding: 8px 6px; color: var(--text-secondary); font-size: 0.75rem;
+  grid-template-columns: 44px 110px 2fr 90px 90px 90px 100px 160px;
+  gap: 8px; padding: 8px 6px; color: var(--text-secondary); font-size: 0.7rem;
 }
 .row {
   display: grid;
-  grid-template-columns: 56px 130px 2fr 110px 150px 140px;
-  gap: 10px; padding: 14px 6px; margin-bottom: 4px;
-  background: rgba(255, 255, 255, 0.03); border-radius: 8px; align-items: center;
-  position: relative; overflow: hidden;
-  opacity: 0; transform: translateX(15px); transition: all 0.4s ease;
+  grid-template-columns: 44px 110px 2fr 90px 90px 90px 100px 160px;
+  gap: 8px; padding: 12px 6px; margin-bottom: 4px;
+  border-radius: 8px; align-items: center;
+  background: transparent; transition: all 0.25s ease;
+  opacity: 0; transform: translateY(6px);
 }
-.row.visible { opacity: 1; transform: translateX(0); }
-.row:hover { background: rgba(255, 255, 255, 0.06); }
-.row.new-in {
-  background: rgba(0, 212, 255, 0.06);
-  animation: flashNew 2s ease;
+.row.visible { opacity: 1; transform: translateY(0); }
+.row:hover { background: var(--bg-hover); }
+/* 二段提醒标记 */
+.row.stage-1 { box-shadow: inset 0 0 0 1px var(--accent-purple); }
+.row.stage-2 { box-shadow: inset 0 0 0 1px var(--accent-orange); }
+.row.stage-1.flash { animation: flashPurple 2.5s ease; }
+.row.stage-2.flash { animation: flashOrange 2.5s ease; }
+@keyframes flashPurple {
+  0% { box-shadow: inset 0 0 0 1px var(--accent-purple); background: rgba(124,77,255,0.08); }
+  50% { box-shadow: inset 0 0 0 2px var(--accent-purple); background: rgba(124,77,255,0.12); }
+  100% { box-shadow: inset 0 0 0 1px var(--accent-purple); background: transparent; }
 }
-@keyframes flashNew {
-  0% { box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.3); }
-  100% { box-shadow: none; }
+@keyframes flashOrange {
+  0% { box-shadow: inset 0 0 0 1px var(--accent-orange); background: rgba(255,145,0,0.08); }
+  50% { box-shadow: inset 0 0 0 2px var(--accent-orange); background: rgba(255,145,0,0.12); }
+  100% { box-shadow: inset 0 0 0 1px var(--accent-orange); background: transparent; }
 }
 
+/* 单元格样式 */
 .avatar-wrap { position: relative; display: flex; justify-content: center; }
 .avatar {
-  width: var(--avatar-size); height: var(--avatar-size); border-radius: 50%;
-  object-fit: cover; background: #1e2548; border: 2px solid rgba(255,255,255,0.1);
-  transition: transform 0.3s ease;
+  width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
+  background: #2a2f44; border: 2px solid rgba(255,255,255,0.1);
 }
-.avatar-ring {
-  position: absolute; inset: -4px; border-radius: 50%; border: 2px solid transparent;
-  opacity: 0; transition: all 0.4s ease;
+.badge {
+  position: absolute; top: -4px; right: -4px; font-size: 0.55rem;
+  padding: 1px 4px; border-radius: 4px; font-weight: 700;
 }
-.row.top-gold .avatar-ring {
-  border-color: var(--accent-gold); border-width: 3px; opacity: 1;
-  animation: pulseGold 1.1s infinite; box-shadow: 0 0 14px rgba(255, 215, 0, 0.4);
-}
-.row.top-gold .avatar { transform: scale(1.12); }
-.row.prime .avatar-ring {
-  border-color: var(--platinum); border-width: 3px; opacity: 1;
-  animation: pulsePrime 1.5s infinite;
-}
-.row.prime .avatar { transform: scale(1.06); }
-.row.ok .avatar-ring {
-  border-color: var(--ok); opacity: 1; animation: pulseOk 2.2s infinite;
-}
-.row.resonance .avatar-ring {
-  border-color: var(--accent-cyan); border-width: 3px; opacity: 1;
-  animation: pulseRes 1.6s infinite;
-}
-.row.resonance .avatar { transform: scale(1.05); }
-.row.warn .avatar-ring {
-  border-color: var(--warn); opacity: 1; animation: pulseSlow 3s infinite;
-}
-.row.danger .avatar-ring {
-  border-color: var(--danger); opacity: 0.7; animation: none;
-}
-@keyframes pulseGold {
-  0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.6); }
-  50% { box-shadow: 0 0 0 12px rgba(255, 215, 0, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
-}
-@keyframes pulsePrime {
-  0% { box-shadow: 0 0 0 0 rgba(229, 228, 226, 0.45); }
-  70% { box-shadow: 0 0 0 9px rgba(229, 228, 226, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(229, 228, 226, 0); }
-}
-@keyframes pulseOk {
-  0% { box-shadow: 0 0 0 0 rgba(0, 224, 128, 0.4); }
-  70% { box-shadow: 0 0 0 8px rgba(0, 224, 128, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(0, 224, 128, 0); }
-}
-@keyframes pulseRes {
-  0% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.45); }
-  70% { box-shadow: 0 0 0 10px rgba(0, 212, 255, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0); }
-}
-@keyframes pulseSlow {
-  0% { box-shadow: 0 0 0 0 rgba(255, 204, 0, 0.25); }
-  70% { box-shadow: 0 0 0 6px rgba(255, 204, 0, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(255, 204, 0, 0); }
-}
+.badge-new { background: var(--accent-purple); color: #fff; }
+.badge-surge { background: var(--accent-orange); color: #000; }
+.badge-risk { background: var(--accent-red); color: #fff; }
 
-.coin-name { font-weight: 600; font-size: 1rem; }
+.coin-name { font-weight: 600; font-size: 0.88rem; }
 .chain-tag {
-  display: inline-block; background: rgba(255,255,255,0.06); padding: 2px 8px;
-  border-radius: 6px; font-size: 0.7rem; margin-left: 6px;
+  display: inline-block; background: rgba(255,255,255,0.06); padding: 2px 6px;
+  border-radius: 4px; font-size: 0.65rem; margin-left: 5px;
 }
-.addr-full {
-  font-family: monospace; font-size: 0.7rem; color: #9aa8d0;
-  margin-top: 3px; word-break: break-all;
+.addr { font-family: monospace; font-size: 0.65rem; color: #6b7294; margin-top: 2px; }
+.num { font-family: monospace; font-size: 0.85rem; font-weight: 500; }
+.up { color: var(--accent-green); }
+.down { color: var(--accent-red); }
+.risk-tag {
+  display: inline-block; padding: 2px 6px; border-radius: 4px;
+  font-size: 0.65rem; font-weight: 600;
 }
-.cap { font-family: monospace; font-size: 1rem; font-weight: 500; }
-.cap.up { color: var(--ok); }
-.cap.down { color: var(--danger); }
-.grade-tag {
-  display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; border-radius: 16px;
-  font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: 0.25s;
+.risk-high { background: rgba(255,82,82,0.15); color: #ff8a8a; }
+.risk-mid { background: rgba(255,171,0,0.15); color: #ffd180; }
+.risk-low { background: rgba(0,200,83,0.15); color: #80e2a8; }
+.links { display: flex; gap: 4px; flex-wrap: wrap; }
+.link {
+  font-size: 0.65rem; padding: 3px 6px; border-radius: 4px;
+  background: rgba(255,255,255,0.05); color: var(--text-secondary);
+  text-decoration: none; transition: 0.2s;
 }
-.grade-tag.top-gold { background: rgba(255, 215, 0, 0.12); color: var(--accent-gold); border: 1px solid rgba(255, 215, 0, 0.25); }
-.grade-tag.prime { background: rgba(229, 228, 226, 0.1); color: var(--platinum); border: 1px solid rgba(229, 228, 226, 0.2); }
-.grade-tag.ok { background: rgba(0, 224, 128, 0.1); color: var(--ok); border: 1px solid rgba(0, 224, 128, 0.2); }
-.grade-tag.warn { background: rgba(255, 204, 0, 0.08); color: var(--warn); border: 1px solid rgba(255, 204, 0, 0.18); }
-.grade-tag.danger { background: rgba(255, 68, 85, 0.1); color: var(--danger); border: 1px solid rgba(255, 68, 85, 0.2); }
-.action-links { display: flex; gap: 8px; flex-wrap: wrap; }
-.link-btn { font-size: 0.75rem; color: var(--accent-cyan); text-decoration: none; border-bottom: 1px dashed rgba(0, 212, 255, 0.3); }
-.link-btn:hover { border-bottom-style: solid; }
-.detail-row {
-  grid-column: 1 / -1; background: rgba(8, 12, 32, 0.7); border-radius: 10px; margin-top: 8px; padding: 14px;
-  display: none; font-size: 0.85rem; line-height: 1.7;
-}
-.row.expanded .detail-row { display: block; animation: fadeIn 0.25s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
-.empty-tip { padding: 30px; text-align: center; color: var(--text-secondary); font-size: 0.85rem; }
+.link:hover { background: rgba(124,77,255,0.2); color: #d4c8ff; }
+.empty { text-align: center; padding: 30px; color: var(--text-secondary); font-size: 0.85rem; }
 
-@media (max-width: 1000px) {
-  .table-header, .row { grid-template-columns: 56px 120px 1.5fr 100px 110px; }
-  .table-header span:nth-child(6), .row > div:nth-child(6) { display: none; }
+/* 响应式 */
+@media (max-width: 1100px) {
+  .table-header, .row { grid-template-columns: 44px 100px 1.5fr 90px 90px 90px 100px; }
+  .table-header span:last-child, .row > div:last-child { display: none; }
 }
-@media (max-width: 600px) {
-  .table-header, .row { grid-template-columns: 56px 110px 1.5fr 100px; }
-  .table-header span:nth-child(5), .row > div:nth-child(5) { display: none; }
-  :root { --avatar-size: 42px; }
+@media (max-width: 768px) {
+  .table-header, .row { grid-template-columns: 44px 100px 1.5fr 90px 90px; }
+  .table-header span:nth-child(6), .table-header span:nth-child(7),
+  .row > div:nth-child(6), .row > div:nth-child(7) { display: none; }
 }
 </style>
 </head>
 <body>
 <div class="container">
+  <!-- ⚠️ 置顶风险提示 -->
+  <div class="risk-banner">
+    <span class="icon">⚠️</span>
+    <div class="text">
+      <strong>工具仅筛选，不保证安全！</strong> 买入前务必：① 先查 Honeypot/TokenSniffer ② 小额试卖10%能出才留 ③ 没锁仓/没深度/税高 → 直接放弃！<strong>只投能接受全亏的钱！</strong>
+    </div>
+  </div>
+
+  <!-- 顶部控制 -->
   <div class="top-bar">
-    <h1>🚀 全链扫描 · 大金狗实时版</h1>
+    <h1><span>🐶</span> 土狗猎手 · 终极版 V3</h1>
     <div class="ctrl-group">
-      <label class="sound-label">
-        🔊 声音提醒
+      <button class="btn active" data-filter="all">全部</button>
+      <button class="btn" data-filter="observe">🔍 观察</button>
+      <button class="btn" data-filter="sprout">🌱 萌芽</button>
+      <button class="btn" data-filter="launch">🚀 启动</button>
+      <button class="btn" data-filter="growth">📈 成长</button>
+      <div class="switch-wrap">
+        🔊 提醒
         <label class="switch">
           <input type="checkbox" id="soundSwitch" checked>
           <span class="slider"></span>
         </label>
-      </label>
+      </div>
       <button class="btn" id="clearBtn">清提醒</button>
-      <span class="update-hint" id="updateHint">上次更新：--</span>
     </div>
   </div>
 
-  <div class="banner">
-    <div>📡 数据源：<strong id="sourceStatus">连接中...</strong></div>
-    <div>盯币：<strong id="watchCount">0</strong> · 精选：<strong id="primeCount">0</strong></div>
+  <!-- 数据源状态 -->
+  <div class="status-bar">
+    <div>
+      📡 数据源：<strong id="sourceStatus">连接中...</strong>
+      <span style="margin:0 10px;">|</span>
+      范围：0~10万(严筛≥8%)｜10万~50万｜50万~200万｜200万~800万 USD
+    </div>
+    <div>
+      <span id="updateTime">更新：--</span>
+      <span style="margin:0 10px;">|</span>
+      <span id="countInfo">币种：0</span>
+    </div>
   </div>
 
-  <div class="section-prime">
+  <!-- 🔍 观察区 0~10万 -->
+  <div class="section observe" id="sectObserve">
     <div class="section-header">
-      <span class="prime-title">🏆 大金狗精选 · 顶级/优质/共振</span>
-      <span class="section-desc">自动筛选高潜力币种</span>
+      <div class="section-title">🔍 观察区 · 0~10万美元</div>
+      <div class="section-desc">量价比≥8%才显示｜风险极高｜貔貅重灾区 ⚠️</div>
     </div>
     <div class="table-header">
-      <span>头像</span>
-      <span>币种/链</span>
-      <span>合约地址</span>
-      <span>市值</span>
-      <span>评级</span>
-      <span>操作</span>
+      <span></span><span>币种</span><span>合约地址</span><span>市值</span><span>24h涨跌</span><span>量价比</span><span>风险</span><span>检测链接</span>
     </div>
-    <div id="primeList"></div>
-    <div id="emptyPrime" class="empty-tip">暂未筛选到符合条件币种</div>
+    <div id="listObserve"></div>
   </div>
 
-  <div class="section-all">
+  <!-- 🌱 萌芽期 10万~50万 -->
+  <div class="section sprout" id="sectSprout">
     <div class="section-header">
-      <span class="all-title">🔍 全链扫描区 · 热门币种</span>
-      <span class="section-desc">CoinGecko 全球数据覆盖</span>
+      <div class="section-title">🌱 萌芽期 · 10万~50万美元</div>
+      <div class="section-desc">纯土狗重点区｜量价比≥5%｜10~100倍潜力</div>
     </div>
     <div class="table-header">
-      <span>头像</span>
-      <span>币种/链</span>
-      <span>合约地址</span>
-      <span>市值</span>
-      <span>评级/状态</span>
-      <span>操作</span>
+      <span></span><span>币种</span><span>合约地址</span><span>市值</span><span>24h涨跌</span><span>量价比</span><span>风险</span><span>检测链接</span>
     </div>
-    <div id="allList"></div>
+    <div id="listSprout"></div>
+  </div>
+
+  <!-- 🚀 启动期 50万~200万 -->
+  <div class="section launch" id="sectLaunch">
+    <div class="section-header">
+      <div class="section-title">🚀 启动期 · 50万~200万美元</div>
+      <div class="section-desc">黄金爆发区｜量价比≥5%｜5~30倍潜力</div>
+    </div>
+    <div class="table-header">
+      <span></span><span>币种</span><span>合约地址</span><span>市值</span><span>24h涨跌</span><span>量价比</span><span>风险</span><span>检测链接</span>
+    </div>
+    <div id="listLaunch"></div>
+  </div>
+
+  <!-- 📈 成长期 200万~800万 -->
+  <div class="section growth" id="sectGrowth">
+    <div class="section-header">
+      <div class="section-title">📈 成长期 · 200万~800万美元</div>
+      <div class="section-desc">稳中有爆｜量价比≥5%｜2~10倍潜力</div>
+    </div>
+    <div class="table-header">
+      <span></span><span>币种</span><span>合约地址</span><span>市值</span><span>24h涨跌</span><span>量价比</span><span>风险</span><span>检测链接</span>
+    </div>
+    <div id="listGrowth"></div>
   </div>
 </div>
 
 <script>
+// ==========================================
+// ⚙️ 核心配置 —— 完全按咱们定的策略写死
+// ==========================================
 const CONFIG = {
-  AUTO_REFRESH_SEC: 60,      // 刷新间隔：CoinGecko有频率限制，设为60秒
-  TOP_TOKENS_LIMIT: 50,
-  SOUND_ENABLED: true,
-  PRIME_MCAP_MIN: 5000,      // 精选最低市值(万美元)
-  PRIME_VOL_RATIO: 0.05,     // 交易量/市值比
-  PRIME_CHANGE_UP: 5,        // 24h涨幅%
-  COOLDOWN: 3600000,
-  HIGHLIGHT: 5000
+  AUTO_REFRESH_SEC: 90,           // 刷新间隔，别太快被限流
+  TOP_PER_PAGE: 250,              // 拉取足够多币种来筛
+
+  // 市值区间
+  OBSERVE_MAX: 100_000,           // 观察：0~10万
+  SPROUT_MAX: 500_000,            // 萌芽：10万~50万
+  LAUNCH_MAX: 2_000_000,          // 启动：50万~200万
+  GROWTH_MAX: 8_000_000,         // 成长：200万~800万
+
+  // 筛选门槛
+  OBSERVE_MIN_RATIO: 0.08,        // 观察区更严：量价比≥8%
+  NORMAL_MIN_RATIO: 0.05,         // 其他区：≥5%
+  CHANGE_UP: 0,                   // 必须上涨
+
+  // 异动判定
+  SURGE_CHANGE: 15,               // 涨幅>15%视为异动
+  NEW_HOURS: 24,                  // 24h内为新币 = 一段提醒
+  COOLDOWN: 3600_000,             // 1小时防刷屏提醒
+
+  // 风险判定阈值
+  DEPTH_THRESHOLD_USD: 5000,      // 低于$5000 = 深度不足
+  CONCENTRATION_RISK: 60          // 前10持币>60% = 高风险（注：免费接口拿不到真实数据，仅作提示）
 };
 
-const CHAIN_MAP = {
-  'ethereum': 'ETH', 'binance-smart-chain': 'BSC', 'solana': 'SOL', 
-  'base': 'BASE', 'arbitrum-one': 'ARB', 'polygon-pos': 'POLYGON',
-  'avalanche': 'AVAX', 'optimism': 'OP'
+// 主流币/稳定币黑名单 —— 直接剔除
+const BLACKLIST = new Set([
+  'bitcoin','ethereum','binancecoin','solana','usd-coin','tether',
+  'staked-ether','ripple','cardano','dogecoin','tron','polkadot',
+  'litecoin','avalanche-2','chainlink','polygon-pos','uniswap',
+  'near','cosmos','aptos','arbitrum','optimism','fantom','sui','sei',
+  'binance-usd','dai','trueusd','usdd','frax','wrapped-bitcoin'
+]);
+
+// 链浏览器映射
+const EXPLORER = {
+  'ethereum':'https://etherscan.io/token/',
+  'binance-smart-chain':'https://bscscan.com/token/',
+  'solana':'https://solscan.io/token/',
+  'base':'https://basescan.org/token/',
+  'arbitrum-one':'https://arbiscan.io/token/',
+  'polygon-pos':'https://polygonscan.com/token/',
+  'avalanche':'https://snowtrace.io/address/',
+  'optimism':'https://optimistic.etherscan.io/token/'
 };
 
-const CHAIN_EXPLORER = {
-  'ETH': 'https://etherscan.io/token/',
-  'BSC': 'https://bscscan.com/token/',
-  'SOL': 'https://solscan.io/token/',
-  'BASE': 'https://basescan.org/token/',
-  'ARB': 'https://arbiscan.io/token/',
-  'POLYGON': 'https://polygonscan.com/token/',
-  'AVAX': 'https://snowtrace.io/address/',
-  'OP': 'https://optimistic.etherscan.io/token/'
+const DETECT_TOOLS = {
+  honeypot: 'https://honeypot.is/',
+  tokensniffer: 'https://tokensniffer.com/token/',
+  goplus: 'https://gopluslabs.io/token-security/'
 };
 
 const DEFAULT_AVATAR = 'https://cdn-icons-png.flaticon.com/512/1046/1046754.png';
-const notified = new Map();
-const synth = window.speechSynthesis;
-let audioCtx = null;
-let lastTokenIds = new Set();
 
-function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-function beep(freq = 880, dur = 0.2) {
-  if (!CONFIG.SOUND_ENABLED || !audioCtx) return;
+// 状态变量
+const notified = new Set();
+const firstSeen = new Map();  // 记录首次出现时间，用于判断新币
+const prevChange = new Map(); // 记录上次涨幅，用于判断异动
+let lastIds = new Set();
+let audioCtx = null;
+let currentFilter = 'all';
+
+// ==========================================
+// 🔊 音频提醒
+// ==========================================
+function initAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+function beep(freq=880, dur=0.18) {
+  if (!document.getElementById('soundSwitch').checked || !audioCtx) return;
   const o = audioCtx.createOscillator(), g = audioCtx.createGain();
   o.connect(g); g.connect(audioCtx.destination);
-  o.frequency.value = freq;
-  g.gain.setValueAtTime(0, audioCtx.currentTime);
-  g.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 0.03);
+  o.frequency.value = freq; o.type = 'sine';
+  g.gain.setValueAtTime(0.2, audioCtx.currentTime);
   g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
   o.start(audioCtx.currentTime); o.stop(audioCtx.currentTime + dur);
 }
-function say(text) {
-  if (!CONFIG.SOUND_ENABLED || synth.speaking) return;
-  synth.cancel();
+function speak(text) {
+  if (!document.getElementById('soundSwitch').checked) return;
+  speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'zh-CN'; u.volume = 0.7; u.rate = 1.05;
-  synth.speak(u);
+  u.lang = 'zh-CN'; u.volume = 0.7; u.rate = 1.1;
+  speechSynthesis.speak(u);
 }
 
-// ✅ CoinGecko 官方接口 —— 跨域友好、无需密钥、新加坡网络直连
-async function fetchCoinGeckoData() {
+// ==========================================
+// 📊 数据格式化
+// ==========================================
+function fmtMoney(usd) {
+  if (!usd || usd <= 0) return '—';
+  if (usd >= 1_000_000) return (usd/1_000_000).toFixed(2) + 'M';
+  if (usd >= 1_000) return (usd/1000).toFixed(2) + 'K';
+  return usd.toFixed(0);
+}
+
+// ==========================================
+// 🏷️ 分级判定
+// ==========================================
+function getTier(mcap) {
+  if (mcap < CONFIG.OBSERVE_MAX) return 'observe';
+  if (mcap < CONFIG.SPROUT_MAX) return 'sprout';
+  if (mcap < CONFIG.LAUNCH_MAX) return 'launch';
+  return 'growth';
+}
+
+function getTierName(tier) {
+  return { observe:'观察', sprout:'萌芽', launch:'启动', growth:'成长' }[tier];
+}
+
+function meetsThreshold(tier, volRatio) {
+  const minRatio = tier === 'observe' ? CONFIG.OBSERVE_MIN_RATIO : CONFIG.NORMAL_MIN_RATIO;
+  return volRatio >= minRatio;
+}
+
+function getStage(item, isNewToSystem) {
+  // 一段提醒：首次出现 + 满足门槛 = 新币首发
+  if (isNewToSystem && meetsThreshold(item.tier, item.volRatio)) return 1;
+  // 二段提醒：已存在 + 涨幅突增 = 老币异动
+  const prev = prevChange.get(item.id);
+  if (prev !== undefined && item.change24h > prev + CONFIG.SURGE_CHANGE && meetsThreshold(item.tier, item.volRatio)) return 2;
+  return 0;
+}
+
+function getRiskLabel(item) {
+  const risks = [];
+  if (item.vol < CONFIG.DEPTH_THRESHOLD_USD) risks.push('深度浅');
+  if (item.change24h > 30) risks.push('追高风险');
+  if (item.tier === 'observe') risks.push('极高风险');
+  
+  if (risks.length === 0) return { text: '正常', cls: 'risk-low' };
+  if (risks.includes('极高风险')) return { text: risks.join(' · '), cls: 'risk-high' };
+  if (risks.includes('追高风险')) return { text: risks.join(' · '), cls: 'risk-mid' };
+  return { text: risks.join(' · '), cls: 'risk-mid' };
+}
+
+// ==========================================
+// 🔌 拉取真实数据 —— CoinGecko 直连
+// ==========================================
+async function fetchData() {
   try {
-    // 获取市值前50币种，含价格/市值/交易量/涨跌幅/合约地址
-    const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false&price_change_percentage=24h';
+    const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_asc&per_page=${CONFIG.TOP_PER_PAGE}&page=1&sparkline=false&price_change_percentage=24h`;
     
     const res = await fetch(url, {
       method: 'GET',
@@ -339,200 +434,225 @@ async function fetchCoinGeckoData() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     
-    document.getElementById('sourceStatus').textContent = '✅ CoinGecko 实时连接';
-    document.getElementById('sourceStatus').className = 'status-ok';
+    document.getElementById('sourceStatus').innerHTML =
+      '<span class="status-ok">✅ CoinGecko 已连接 · 实时数据</span>';
     return data;
-  } catch (err) {
-    console.warn('CoinGecko 连接失败：', err);
-    document.getElementById('sourceStatus').innerHTML = '❌ 连接失败<br><small style="color:#ffcc00">请检查网络或稍后再试</small>';
-    document.getElementById('sourceStatus').className = 'status-err';
+  } catch (e) {
+    console.error('获取数据失败:', e);
+    document.getElementById('sourceStatus').innerHTML =
+      `<span class="status-err">❌ 连接失败：${e.message}</span>`;
     return null;
   }
 }
 
-function normalizeCoins(coins) {
-  if (!coins) return [];
-  
-  return coins.map(c => {
-    const mcapUsd = c.market_cap || 0;
-    const volUsd = c.total_volume || 0;
-    const mcapWan = mcapUsd / 10000;
-    const volWan = volUsd / 10000;
-    const priceChange24h = c.price_change_percentage_24h || 0;
-    const volRatio = mcapUsd > 0 ? volUsd / mcapUsd : 0;
-    
-    // 主链映射
-    const chainRaw = c.platforms ? Object.keys(c.platforms)[0] : null;
-    const chain = chainRaw ? (CHAIN_MAP[chainRaw] || chainRaw.toUpperCase()) : 'ETH';
-    const contractAddress = c.contract_address || (c.platforms ? Object.values(c.platforms)[0] : '') || '原生代币';
-    
-    // 大金狗评级
-    const hasGoodMcap = mcapWan >= CONFIG.PRIME_MCAP_MIN;
-    const hasGoodVol = volRatio >= CONFIG.PRIME_VOL_RATIO;
-    const hasGoodChange = priceChange24h >= CONFIG.PRIME_CHANGE_UP;
-    const isNew = (c.last_updated && Date.now() - new Date(c.last_updated).getTime() < 86400000);
-    
-    let grade, label, isResonance = false;
-    
-    if (hasGoodMcap && hasGoodVol && hasGoodChange) {
-      isResonance = true;
-      if (priceChange24h >= 20) {
-        grade = 'top-gold'; label = '🏆🔥 顶级金狗';
-      } else if (priceChange24h >= 10) {
-        grade = 'prime'; label = '🥇 优质潜力';
-      } else {
-        grade = 'ok'; label = '🟢 共振可进';
-      }
-    } else if (hasGoodMcap && priceChange24h > 0) {
-      grade = 'ok'; label = '🟢 可关注';
-    } else if (mcapWan >= 100) {
-      grade = 'warn'; label = '⏳ 观察确认';
-    } else {
-      grade = 'danger'; label = '🚫 市值偏小';
-    }
-    
-    return {
+// ==========================================
+// 🧠 核心筛选逻辑
+// ==========================================
+function processCoins(raw) {
+  if (!raw) return { observe:[], sprout:[], launch:[], growth:[] };
+
+  const observe = [], sprout = [], launch = [], growth = [];
+  const now = Date.now();
+  let countAll = 0, countFiltered = 0;
+
+  for (const c of raw) {
+    countAll++;
+
+    // 1. 黑名单过滤
+    if (BLACKLIST.has(c.id)) continue;
+
+    // 2. 市值范围过滤
+    const mcap = c.market_cap || 0;
+    if (mcap <= 0 || mcap > CONFIG.GROWTH_MAX) continue;
+
+    // 3. 基础数据提取
+    const vol = c.total_volume || 0;
+    const change24h = c.price_change_percentage_24h || 0;
+    const volRatio = mcap > 0 ? vol / mcap : 0;
+
+    // 4. 涨幅必须为正
+    if (change24h <= CONFIG.CHANGE_UP) continue;
+
+    // 5. 分级
+    const tier = getTier(mcap);
+
+    // 6. 量能门槛筛选
+    if (!meetsThreshold(tier, volRatio)) continue;
+
+    countFiltered++;
+
+    // 7. 新币/异动判定
+    if (!firstSeen.has(c.id)) firstSeen.set(c.id, now);
+    const seenMs = now - firstSeen.get(c.id);
+    const isNewToSystem = seenMs < CONFIG.NEW_HOURS * 3600_000 && !lastIds.has(c.id);
+    const stage = getStage({ id:c.id, tier, volRatio, change24h }, isNewToSystem);
+
+    // 8. 链/合约信息
+    const platformKey = c.platforms ? Object.keys(c.platforms)[0] : null;
+    const chain = platformKey || 'ethereum';
+    const contract = c.contract_address || (c.platforms?.[platformKey] || '');
+
+    // 9. 风险标签
+    const risk = getRiskLabel({ vol, change24h, tier });
+
+    const item = {
       id: c.id,
-      symbol: c.symbol?.toUpperCase() || '???',
+      symbol: c.symbol?.toUpperCase() || '?',
       name: c.name || '',
-      chain,
-      contractAddress,
-      marketCap: mcapWan,
-      volume24h: volWan,
-      volumeRatio: volRatio,
-      priceChange24h,
-      isResonance,
-      isNew,
-      grade,
-      label,
-      avatar: c.image || DEFAULT_AVATAR
+      mcap, vol, change24h, volRatio,
+      tier, stage, isNewToSystem,
+      chain, contract,
+      image: c.image || DEFAULT_AVATAR,
+      risk,
+      lastUpdated: c.last_updated
     };
-  });
+
+    // 10. 分区归类
+    if (tier === 'observe') observe.push(item);
+    else if (tier === 'sprout') sprout.push(item);
+    else if (tier === 'launch') launch.push(item);
+    else growth.push(item);
+
+    // 保存上次涨幅，用于下轮异动判定
+    prevChange.set(c.id, change24h);
+  }
+
+  // 按量价比排序，共振强的在前
+  const sortFn = (a,b) => b.volRatio - a.volRatio;
+  const result = {
+    observe: observe.sort(sortFn),
+    sprout: sprout.sort(sortFn),
+    launch: launch.sort(sortFn),
+    growth: growth.sort(sortFn)
+  };
+
+  document.getElementById('countInfo').textContent =
+    `扫描:${countAll} · 筛选:${countFiltered}`;
+
+  return result;
 }
 
-function fmtMoney(wan) {
-  if (wan >= 10000) return (wan / 10000).toFixed(2) + '亿';
-  if (wan >= 1) return wan.toFixed(2) + '万';
-  return (wan * 10000).toFixed(0);
-}
+// ==========================================
+// 🎨 渲染单行
+// ==========================================
+function renderRow(item) {
+  const isNew = !lastIds.has(item.id);
+  const showFlash = isNew && item.stage > 0 && !notified.has(item.id);
 
-function getExplorerLink(item) {
-  if (item.contractAddress === '原生代币') return 'https://www.coingecko.com/en/coins/' + item.id;
-  const base = CHAIN_EXPLORER[item.chain] || '';
-  return base ? `${base}${item.contractAddress}` : 'https://www.coingecko.com/en/coins/' + item.id;
-}
+  // 提醒发声控制
+  if (showFlash && item.stage === 1) {
+    notified.add(item.id);
+    setTimeout(() => { beep(880); beep(1100); speak(`新币首发 ${item.symbol} ${getTierName(item.tier)}区`); }, 300);
+  } else if (showFlash && item.stage === 2) {
+    notified.add(item.id);
+    setTimeout(() => { beep(660); beep(880); beep(1100); speak(`老币异动 ${item.symbol} ${item.change24h.toFixed(1)}%`); }, 300);
+  }
 
-function buildRow(item, isNewToken = false) {
-  const row = document.createElement('div');
-  row.className = `row ${item.grade}`;
-  if (item.isResonance) row.classList.add('resonance');
-  if (isNewToken) row.classList.add('new-in');
-  
-  const imgSrc = item.avatar || DEFAULT_AVATAR;
-  const priceClass = item.priceChange24h >= 0 ? 'up' : 'down';
-  
-  row.innerHTML = `
-    <div class="avatar-wrap">
-      <div class="avatar-ring"></div>
-      <img class="avatar" src="${imgSrc}" alt="${item.symbol}" onerror="this.src='${DEFAULT_AVATAR}'">
-    </div>
-    <div>
-      <div class="coin-name">${item.symbol}<span class="chain-tag">${item.chain}</span></div>
-      <div class="addr-full" title="${item.contractAddress}">${item.contractAddress}</div>
-    </div>
-    <div></div>
-    <div class="cap ${priceClass}">$${fmtMoney(item.marketCap)}</div>
-    <div>
-      <div class="grade-tag ${item.grade}" title="点击展开详情">${item.label} ▾</div>
-      <div class="detail-row">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
-          <div>💰 24h成交：${item.volume24h.toFixed(2)}万 ${item.volumeRatio >= CONFIG.PRIME_VOL_RATIO ? '✅' : '❌'}</div>
-          <div>📊 24h涨跌：${item.priceChange24h >= 0 ? '+' : ''}${item.priceChange24h.toFixed(2)}% ${item.priceChange24h > 0 ? '✅' : '❌'}</div>
-          <div>📈 市值门槛：${item.marketCap.toFixed(0)}万 ${item.marketCap >= CONFIG.PRIME_MCAP_MIN ? '✅' : '❌'}</div>
-          <div>🔄 量价比：${(item.volumeRatio*100).toFixed(2)}% ${item.volumeRatio >= CONFIG.PRIME_VOL_RATIO ? '✅' : '❌'}</div>
-        </div>
-        <div>
-          <strong>币种：</strong>${item.name} (${item.symbol})<br>
-          <strong>链/合约：</strong>${item.chain} / ${item.contractAddress}<br>
-          <strong>共振信号：</strong>${item.isResonance ? '✅ 已触发' : '❌ 未达标'}
-        </div>
+  // 检测链接
+  const explorerBase = EXPLORER[item.chain] || 'https://www.coingecko.com/en/coins/';
+  const tokenLink = item.contract 
+    ? `${explorerBase}${item.contract}` 
+    : `https://www.coingecko.com/en/coins/${item.id}`;
+  const detectLink = item.contract
+    ? `${DETECT_TOOLS.tokensniffer}${item.contract}`
+    : `https://www.coingecko.com/en/coins/${item.id}`;
+  const honeypotLink = item.contract
+    ? `${DETECT_TOOLS.honeypot}${item.contract}`
+    : tokenLink;
+
+  return `
+    <div class="row ${item.stage === 1 ? 'stage-1' : ''} ${item.stage === 2 ? 'stage-2' : ''} ${showFlash ? 'flash' : ''}" 
+         data-tier="${item.tier}">
+      <div class="avatar-wrap">
+        <img class="avatar" src="${item.image}" alt="${item.symbol}" onerror="this.src='${DEFAULT_AVATAR}'">
+        ${item.stage === 1 ? '<span class="badge badge-new">🆕</span>' : ''}
+        ${item.stage === 2 ? '<span class="badge badge-surge">⚡</span>' : ''}
+      </div>
+      <div>
+        <div class="coin-name">${item.symbol}<span class="chain-tag">${getTierName(item.tier)}</span></div>
+        <div class="addr">${item.contract ? item.contract.slice(0,14)+'...' : '原生代币'}</div>
+      </div>
+      <div></div>
+      <div class="num">$${fmtMoney(item.mcap)}</div>
+      <div class="num ${item.change24h>=0?'up':'down'}">${item.change24h>=0?'+':''}${item.change24h.toFixed(2)}%</div>
+      <div class="num ${item.volRatio>=0.1?'up':''}">${(item.volRatio*100).toFixed(1)}%</div>
+      <div><span class="risk-tag ${item.risk.cls}">${item.risk.text}</span></div>
+      <div class="links">
+        <a href="${tokenLink}" target="_blank" class="link">链上</a>
+        <a href="${detectLink}" target="_blank" class="link">检测</a>
+        <a href="${honeypotLink}" target="_blank" class="link">蜜罐</a>
       </div>
     </div>
-    <div class="action-links">
-      <a href="${getExplorerLink(item)}" target="_blank" class="link-btn">去链上</a>
-      <a href="https://www.coingecko.com/en/coins/${item.id}" target="_blank" class="link-btn">看详情</a>
-    </div>
   `;
-  
-  row.querySelector('.grade-tag').addEventListener('click', () => {
-    row.classList.toggle('expanded');
-  });
-  
-  setTimeout(() => row.classList.add('visible'), 10);
-  
-  if (isNewToken && (!notified.has(item.id) || Date.now() - notified.get(item.id) > CONFIG.COOLDOWN)) {
-    notified.set(item.id, Date.now());
-    if (item.grade === 'top-gold' || item.grade === 'prime') {
-      beep(960); setTimeout(() => beep(1200), 150);
-      setTimeout(() => say(`${item.grade.includes('顶级') ? '顶级金狗' : '优质币种'} ${item.symbol} ${item.chain}`), 400);
-    }
+}
+
+function renderSection(containerId, items) {
+  const el = document.getElementById(containerId);
+  if (!items.length) {
+    el.innerHTML = '<div class="empty">暂无符合条件币种</div>';
+    return;
   }
-  return row;
-}
-
-function getPrimeOnly(list) {
-  return list.filter(i => ['top-gold', 'prime', 'ok'].includes(i.grade) && i.isResonance);
-}
-
-function renderAll(data, isFresh = false) {
-  document.getElementById('allList').innerHTML = '';
-  document.getElementById('primeList').innerHTML = '';
-  const prime = getPrimeOnly(data);
-  
-  if (prime.length > 0) {
-    document.getElementById('emptyPrime').style.display = 'none';
-    document.getElementById('primeCount').textContent = prime.length;
-    prime.forEach(item => {
-      const isNew = isFresh && !lastTokenIds.has(item.id);
-      document.getElementById('primeList').appendChild(buildRow(item, isNew));
-    });
-  } else {
-    document.getElementById('emptyPrime').style.display = 'block';
-    document.getElementById('primeCount').textContent = '0';
-  }
-  
-  data.forEach(item => {
-    const isNew = isFresh && !lastTokenIds.has(item.id);
-    document.getElementById('allList').appendChild(buildRow(item, isNew));
+  el.innerHTML = items.map(renderRow).join('');
+  // 渐入动画
+  el.querySelectorAll('.row').forEach((row, i) => {
+    setTimeout(() => row.classList.add('visible'), i * 40);
   });
-  
-  lastTokenIds = new Set(data.map(i => i.id));
-  document.getElementById('watchCount').textContent = data.length;
-  document.getElementById('updateHint').textContent = '上次更新：' + new Date().toLocaleTimeString('zh-CN');
 }
 
-async function updateLoop() {
-  const coins = await fetchCoinGeckoData();
-  if (!coins) return;
-  renderAll(normalizeCoins(coins), true);
+// ==========================================
+// 🔄 主刷新循环
+// ==========================================
+async function update() {
+  const raw = await fetchData();
+  const { observe, sprout, launch, growth } = processCoins(raw);
+
+  renderSection('listObserve', observe);
+  renderSection('listSprout', sprout);
+  renderSection('listLaunch', launch);
+  renderSection('listGrowth', growth);
+
+  // 记录当前ID集合，用于下次判断新币
+  lastIds = new Set([...observe,...sprout,...launch,...growth].map(i => i.id));
+
+  document.getElementById('updateTime').textContent =
+    '更新：' + new Date().toLocaleTimeString('zh-CN');
 }
 
+// ==========================================
+// 🎛️ 筛选切换
+// ==========================================
+document.querySelectorAll('[data-filter]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+
+    document.getElementById('sectObserve').style.display = currentFilter==='all'||currentFilter==='observe' ? 'block' : 'none';
+    document.getElementById('sectSprout').style.display = currentFilter==='all'||currentFilter==='sprout' ? 'block' : 'none';
+    document.getElementById('sectLaunch').style.display = currentFilter==='all'||currentFilter==='launch' ? 'block' : 'none';
+    document.getElementById('sectGrowth').style.display = currentFilter==='all'||currentFilter==='growth' ? 'block' : 'none';
+  });
+});
+
+// 清提醒
 document.getElementById('clearBtn').addEventListener('click', () => {
   notified.clear();
-  alert('提醒记录已清除');
+  firstSeen.clear();
+  lastIds.clear();
+  alert('提醒已重置 ✅');
 });
-document.getElementById('soundSwitch').addEventListener('change', e => {
-  CONFIG.SOUND_ENABLED = e.target.checked;
-  if (CONFIG.SOUND_ENABLED) initAudio();
-});
+
+// 初始化音频
 document.addEventListener('click', initAudio, { once: true });
 
-updateLoop();
-setInterval(updateLoop, CONFIG.AUTO_REFRESH_SEC * 1000);
+// 启动
+update();
+setInterval(update, CONFIG.AUTO_REFRESH_SEC * 1000);
 
-console.log('%c===== 全链大金狗 · CoinGecko直连版 =====', 'color:#00d4ff;font-weight:bold;');
-console.log('数据源：CoinGecko API (无需密钥 · 跨域友好)');
-console.log('刷新频率：每' + CONFIG.AUTO_REFRESH_SEC + '秒');
+console.log('%c===== 土狗猎手 · 终极版 V3 已启动 =====', 'color:#7c4dff;font-weight:bold;');
+console.log('数据源：CoinGecko API 直连 · 无需密钥');
+console.log('刷新：每' + CONFIG.AUTO_REFRESH_SEC + '秒');
+console.log('策略：二段提醒｜四大分区｜貔貅防线');
 </script>
 </body>
 </html>
