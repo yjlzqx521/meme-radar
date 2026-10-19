@@ -3,130 +3,429 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title> 猎人金狗监控 · 终极完整版｜自动刷新</title>
+  <title> 猎人金狗监控 · 星球雷达扫描版</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-    body { background: #0b0e14; color: #e6e6e6; min-height: 100vh; padding: 16px; line-height: 1.5; }
+    body { background: #05070f; color: #e6e6e6; min-height: 100vh; padding: 16px; line-height: 1.5; }
     .container { max-width: 1400px; margin: 0 auto; }
-    
-    header { text-align: center; padding: 24px 0; border-bottom: 1px solid #1f2937; margin-bottom: 20px; }
-    h1 { font-size: 24px; background: linear-gradient(135deg, #f7931a, #ffd166); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; }
-    .subtitle { color: #888; margin-top: 6px; font-size: 13px; }
-    .version { font-size: 11px; color: #555; margin-top: 4px; }
-    
-    .warning-box { background: linear-gradient(135deg, rgba(247,147,26,0.08), rgba(255,179,71,0.05)); border: 1px solid #f7931a33; padding: 14px 18px; border-radius: 10px; margin-bottom: 20px; color: #ffd166; font-size: 13px; line-height: 1.7; }
-    
-    .chain-bar { background: #141820; padding: 14px 18px; border-radius: 10px; border: 1px solid #1f2937; margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 8px; }
-    .chain-btn { padding: 6px 12px; border-radius: 6px; font-size: 12px; background: #1f2937; color: #9ca3af; border: none; cursor: pointer; transition: all 0.2s; }
-    .chain-btn.active { background: #f7931a; color: #000; font-weight: 600; }
-    .chain-btn.priority { border-left: 2px solid #00d284; }
-    
+
+    header { text-align: center; padding: 20px 0; border-bottom: 1px solid #1a1f35; margin-bottom: 20px; }
+    h1 { font-size: 26px; background: linear-gradient(135deg, #00f0a0, #00b8ff, #c084ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px; }
+    .subtitle { color: #6b7280; margin-top: 6px; font-size: 13px; }
+    .version { font-size: 11px; color: #4b5563; margin-top: 4px; }
+
+    .warning-box { background: linear-gradient(135deg, rgba(247,147,26,0.08), rgba(255,179,71,0.05)); border: 1px solid #f7931a33; padding: 14px 18px; border-radius: 10px; margin-bottom: 25px; color: #ffd166; font-size: 13px; line-height: 1.7; }
+
+    /* ===================================================== */
+    /*  星球雷达扫描区 — 核心效果 */
+    /* ===================================================== */
+    .radar-section {
+      background: radial-gradient(circle at center, #0c1a2f 0%, #05070f 70%);
+      border: 1px solid #00d4ff22;
+      border-radius: 16px;
+      padding: 30px 20px;
+      margin-bottom: 25px;
+      position: relative;
+      overflow: hidden;
+    }
+    .radar-section::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: 
+        radial-gradient(1px 1px at 20px 30px, #fff, transparent),
+        radial-gradient(1px 1px at 60px 80px, #ffffff88, transparent),
+        radial-gradient(1px 1px at 100px 40px, #fff, transparent),
+        radial-gradient(2px 2px at 150px 100px, #00d4ff44, transparent),
+        radial-gradient(1px 1px at 200px 60px, #fff, transparent),
+        radial-gradient(1px 1px at 280px 130px, #ffffff66, transparent),
+        radial-gradient(1px 1px at 340px 50px, #fff, transparent),
+        radial-gradient(2px 2px at 400px 110px, #00f0a044, transparent);
+      background-repeat: repeat;
+      background-size: 450px 180px;
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .radar-title {
+      text-align: center;
+      color: #00d4ff;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 25px;
+      letter-spacing: 4px;
+      text-shadow: 0 0 20px #00d4ff66;
+    }
+
+    .radar-wrapper {
+      display: flex; justify-content: center; align-items: center;
+      position: relative;
+      min-height: 340px;
+    }
+
+    /*  中心雷达 */
+    .radar-core {
+      position: relative;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,212,255,0.08) 0%, rgba(0,240,160,0.03) 50%, transparent 70%);
+      border: 1px solid rgba(0,212,255,0.25);
+      box-shadow: 
+        inset 0 0 40px rgba(0,212,255,0.08),
+        0 0 30px rgba(0,212,255,0.08);
+    }
+
+    /* 呼吸光环 */
+    .breath-ring {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      border: 1px solid rgba(0,240,160,0.2);
+      animation: breathPulse 4s ease-in-out infinite;
+    }
+    .breath-ring.r1 { width: 40%; height: 40%; animation-delay: 0s; }
+    .breath-ring.r2 { width: 65%; height: 65%; animation-delay: 0.8s; }
+    .breath-ring.r3 { width: 85%; height: 85%; animation-delay: 1.6s; }
+
+    /* 中心核心 */
+    .center-core {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #00f0a0, #00b8ff);
+      box-shadow: 
+        0 0 20px #00f0a0,
+        0 0 40px #00b8ff66;
+      z-index: 10;
+    }
+    .center-label {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, 35px);
+      font-size: 11px;
+      color: #00d4ff;
+      letter-spacing: 2px;
+      opacity: 0.8;
+    }
+
+    /* 扫描光束 */
+    .scan-beam {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 150px; height: 150px;
+      transform-origin: center center;
+      margin-top: -75px; margin-left: -75px;
+      border-radius: 50%;
+      background: conic-gradient(
+        from 0deg,
+        rgba(0,240,160,0.35) 0deg,
+        rgba(0,184,255,0.15) 25deg,
+        transparent 45deg
+      );
+      animation: scanRotate 5s linear infinite;
+      pointer-events: none;
+    }
+
+    /* 🪐 轨道星球容器 */
+    .planets-orbit {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 480px; height: 480px;
+      margin-top: -240px; margin-left: -240px;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    /* 星球本体 */
+    .planet {
+      position: absolute;
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: #0f1424;
+      border: 2px solid #2a3a5a;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px;
+      color: #8898aa;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      pointer-events: auto;
+    }
+    .planet:hover {
+      transform: scale(1.15);
+      z-index: 5;
+    }
+    .planet.active {
+      border-color: #00d4ff;
+      background: linear-gradient(135deg, #0c2844, #0f1424);
+      color: #00f0a0;
+      box-shadow: 0 0 18px #00d4ff66, inset 0 0 10px #00d4ff22;
+    }
+    .planet.has-new {
+      border-color: #ffd700;
+      background: linear-gradient(135deg, #2a2608, #0f1424);
+      color: #ffd700;
+      box-shadow: 0 0 22px #ffd70055;
+    }
+
+    /* 新币波纹扩散 */
+    .ripple {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      border: 2px solid #ffd700;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .planet.has-new .ripple {
+      animation: rippleExpand 2s ease-out infinite;
+    }
+    .planet.has-new .ripple:nth-child(2) { animation-delay: 0.5s; }
+    .planet.has-new .ripple:nth-child(3) { animation-delay: 1s; }
+
+    /* 新币提示 */
+    .new-badge {
+      position: absolute;
+      top: -6px; right: -6px;
+      background: #ffd700;
+      color: #000;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 1px 4px;
+      border-radius: 8px;
+      animation: badgePulse 1s ease-in-out infinite;
+    }
+
+    /* 星球位置分布 */
+    .planet.solana    { top: 0; left: 50%; transform: translateX(-50%); }
+    .planet.base     { top: 15%; right: 12%; }
+    .planet.ton      { bottom: 15%; right: 12%; }
+    .planet.bsc      { bottom: 0; left: 50%; transform: translateX(-50%); }
+    .planet.ethereum { bottom: 15%; left: 12%; }
+    .planet.arbitrum { top: 15%; left: 12%; }
+    .planet.polygon  { top: 38%; right: 4%; }
+    .planet.avalanche{ bottom: 38%; right: 4%; }
+    .planet.sui      { bottom: 38%; left: 4%; }
+    .planet.rbn      { top: 38%; left: 4%; }
+
+    .planet.solana:hover,    .planet.solana.active    { transform: translateX(-50%) scale(1.15); }
+    .planet.bsc:hover,       .planet.bsc.active      { transform: translateX(-50%) scale(1.15); }
+    .planet.solana.has-new   { transform: translateX(-50%); }
+    .planet.bsc.has-new      { transform: translateX(-50%); }
+
+    /* 动画定义 */
+    @keyframes scanRotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes breathPulse {
+      0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.6; }
+      50% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.25; }
+      100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.6; }
+    }
+    @keyframes rippleExpand {
+      0% { width: 56px; height: 56px; opacity: 0.7; }
+      100% { width: 100px; height: 100px; opacity: 0; }
+    }
+    @keyframes badgePulse {
+      0%,100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+    @keyframes newRowFlash {
+      0%,100% { background: transparent; }
+      50% { background: rgba(255,215,0,0.08); }
+    }
+
+    /* 其他原有样式保持精简 */
+    .chain-bar { background: #0f1424; padding: 14px 18px; border-radius: 10px; border: 1px solid #1a1f35; margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 8px; }
+    .chain-btn { padding: 6px 12px; border-radius: 6px; font-size: 12px; background: #1a1f35; color: #8898aa; border: none; cursor: pointer; transition: all 0.2s; }
+    .chain-btn.active { background: #00d4ff; color: #000; font-weight: 600; }
+
     .narrative-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
-    .narrative-tag { padding: 5px 12px; border-radius: 15px; font-size: 12px; background: #1f2937; color: #9ca3af; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; }
-    .narrative-tag.active { background: #00d28418; color: #00d284; border-color: #00d28444; }
-    
-    .auto-refresh-bar { background: #141820; padding: 12px 18px; border-radius: 10px; border: 1px solid #1f2937; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .narrative-tag { padding: 5px 12px; border-radius: 15px; font-size: 12px; background: #0f1424; color: #8898aa; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; }
+    .narrative-tag.active { background: #00f0a015; color: #00f0a0; border-color: #00f0a033; }
+
+    .auto-refresh-bar { background: #0f1424; padding: 12px 18px; border-radius: 10px; border: 1px solid #1a1f35; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
     .auto-refresh-btn { background: #22c55e; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: background 0.2s; }
-    .auto-refresh-btn.on { background: #f7931a; }
-    .refresh-interval { background: #1f2937; color: white; border: none; padding: 5px 10px; border-radius: 6px; font-size: 13px; outline: none; }
-    .countdown-text { color: #f7931a; font-size: 13px; margin-left: auto; }
-    
-    .filter-bar { background: #141820; padding: 14px 18px; border-radius: 10px; border: 1px solid #1f2937; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+    .auto-refresh-btn.on { background: #ffd700; color: #000; }
+    .refresh-interval { background: #1a1f35; color: white; border: none; padding: 5px 10px; border-radius: 6px; font-size: 13px; outline: none; }
+    .countdown-text { color: #00d4ff; font-size: 13px; margin-left: auto; }
+
+    .filter-bar { background: #0f1424; padding: 14px 18px; border-radius: 10px; border: 1px solid #1a1f35; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
     .filter-group { display: flex; flex-wrap: wrap; gap: 12px; }
-    .filter-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #9ca3af; }
-    .filter-item input { accent-color: #f7931a; width: 14px; height: 14px; cursor: pointer; }
-    .refresh-btn { background: linear-gradient(135deg, #f7931a, #ffb347); border: none; padding: 8px 20px; border-radius: 6px; color: #000; font-weight: 600; cursor: pointer; margin-left: auto; transition: transform 0.2s; }
+    .filter-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #8898aa; }
+    .filter-item input { accent-color: #00d4ff; width: 14px; height: 14px; cursor: pointer; }
+    .refresh-btn { background: linear-gradient(135deg, #00f0a0, #00d4ff); border: none; padding: 8px 20px; border-radius: 6px; color: #000; font-weight: 600; cursor: pointer; margin-left: auto; transition: transform 0.2s; }
     .refresh-btn:hover { transform: scale(1.02); }
     .refresh-btn:disabled { opacity: 0.6; cursor: wait; }
-    
+
     .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
-    .stat-card { background: #141820; padding: 16px; border-radius: 10px; border: 1px solid #1f2937; }
+    .stat-card { background: #0f1424; padding: 16px; border-radius: 10px; border: 1px solid #1a1f35; }
     .stat-label { font-size: 12px; color: #6b7280; }
     .stat-value { font-size: 22px; font-weight: 700; margin-top: 4px; }
-    .green { color: #00d284; }
-    .yellow { color: #ffc107; }
-    .orange { color: #f7931a; }
-    .blue { color: #4da6ff; }
-    .purple { color: #b388ff; }
-    .red { color: #ff6b6b; }
-    
-    .table-container { background: #141820; border-radius: 10px; border: 1px solid #1f2937; overflow: hidden; }
+    .green { color: #00f0a0; }
+    .cyan { color: #00d4ff; }
+    .gold { color: #ffd700; }
+    .purple { color: #c084ff; }
+    .gray { color: #8898aa; }
+
+    .table-container { background: #0f1424; border-radius: 10px; border: 1px solid #1a1f35; overflow: hidden; }
     table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 12px 10px; text-align: left; border-bottom: 1px solid #1f2937; font-size: 12.5px; vertical-align: middle; }
-    th { background: #1f293766; color: #6b7280; font-weight: 600; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.3px; position: sticky; top: 0; }
-    tr:hover { background: #1a1f2e; }
-    
-    .chain-tag { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 10px; background: #2a2440; color: #ccb3ff; font-weight: 500; }
-    .theme-tag { display: inline-block; padding: 1px 5px; border-radius: 3px; font-size: 10px; margin-left: 3px; background: #1a365d; color: #73d2ff; }
-    .hot-tag { display: inline-block; padding: 1px 5px; border-radius: 3px; font-size: 10px; background: #ff444422; color: #ff8888; margin-left: 4px; }
-    .new-tag { display: inline-block; padding: 1px 4px; border-radius: 3px; font-size: 9px; background: #00d28422; color: #00d284; margin-left: 4px; }
-    
+    th, td { padding: 12px 10px; text-align: left; border-bottom: 1px solid #1a1f35; font-size: 12.5px; vertical-align: middle; }
+    th { background: #0c1020; color: #6b7280; font-weight: 600; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.3px; position: sticky; top: 0; }
+    tr:hover { background: #0f182f; }
+    tr.new-row { animation: newRowFlash 2s ease-in-out; }
+
+    .chain-tag { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 10px; background: #1a1f35; color: #00d4ff; font-weight: 500; }
+    .theme-tag { display: inline-block; padding: 1px 5px; border-radius: 3px; font-size: 10px; margin-left: 3px; background: #0c2844; color: #73d2ff; }
+    .hot-tag { display: inline-block; padding: 1px 5px; border-radius: 3px; font-size: 10px; background: #ffd70018; color: #ffd700; margin-left: 4px; }
+    .new-tag { display: inline-block; padding: 1px 4px; border-radius: 3px; font-size: 9px; background: #00f0a018; color: #00f0a0; margin-left: 4px; }
+
     .score-wrap { display: flex; align-items: center; gap: 4px; }
-    .score-bar { width: 40px; height: 6px; background: #1f2937; border-radius: 3px; overflow: hidden; }
+    .score-bar { width: 40px; height: 6px; background: #1a1f35; border-radius: 3px; overflow: hidden; }
     .score-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
     .score-text { font-size: 12px; font-weight: 700; min-width: 28px; text-align: right; }
-    
+
     .risk-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; }
-    .risk-safe { background: #00d28418; color: #00d284; border: 1px solid #00d28433; }
-    .risk-warn { background: #ffc10718; color: #ffc107; border: 1px solid #ffc10733; }
-    .risk-danger { background: #ff6b6b18; color: #ff6b6b; border: 1px solid #ff6b6b33; }
-    
-    .price-up { color: #00d284; }
+    .risk-safe { background: #00f0a015; color: #00f0a0; border: 1px solid #00f0a033; }
+    .risk-warn { background: #ffd70015; color: #ffd700; border: 1px solid #ffd70033; }
+    .risk-danger { background: #ff6b6b15; color: #ff6b6b; border: 1px solid #ff6b6b33; }
+
+    .price-up { color: #00f0a0; }
     .price-down { color: #ff6b6b; }
-    
+
     .loading { text-align: center; padding: 60px 40px; color: #6b7280; font-size: 14px; }
-    .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid #1f2937; border-top-color: #f7931a; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 10px; vertical-align: middle; }
+    .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid #1a1f35; border-top-color: #00d4ff; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 10px; vertical-align: middle; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    
-    a { color: #4da6ff; text-decoration: none; }
+
+    a { color: #00d4ff; text-decoration: none; }
     a:hover { text-decoration: underline; }
-    
+
     .mobile-hide { display: table-cell; }
     @media (max-width: 1000px) {
       .mobile-hide { display: none; }
+      .radar-wrapper { transform: scale(0.8); }
     }
+    @media (max-width: 640px) {
+      .radar-wrapper { transform: scale(0.6); }
+    }
+
+    .jump-hl { box-shadow: 0 0 0 2px #ffd700; transition: box-shadow 0.4s; }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1> 猎人金狗监控 · 终极完整版</h1>
-      <p class="subtitle">10链全网覆盖 · 四维智能评分 · 风控防火墙 · 叙事热度 · 自动刷新</p>
-      <p class="version" id="lastUpdateTime">系统就绪</p>
+      <h1> 猎人金狗监控 · 星球雷达扫描版</h1>
+      <p class="subtitle">深空探测 · 10链星球覆盖 · 实时信号追踪 · 新币即时预警</p>
+      <p class="version" id="lastUpdateTime">系统就绪 · 点击星球快速跳转到对应链</p>
     </header>
 
     <div class="warning-box">
-      ⚠️ <strong>极高风险声明：</strong>Meme币/新合约跑路风险极高！本工具仅作数据筛选参考，不构成任何投资建议！DYOR！只投入你能承受全部损失的资金！入场前先想清楚：亏20%你能接受吗？归零影响生活吗？<br>
-       <strong>核心理念：</strong>筛选提高概率 ≠ 保证盈利；错过不亏，做错才亏；先保本，再赚钱，永远不接最后一棒。
+      ⚠️ <strong>极高风险声明：</strong>Meme币/新合约跑路风险极高！本工具仅作数据扫描参考，不构成任何投资建议！DYOR！只投入你能承受全部损失的资金！<br>
+       <strong>核心理念：</strong>先保本，再赚钱；错过不亏，做错才亏；永远不接最后一棒。
+    </div>
+
+    <!-- ===================================================== -->
+    <!--  星球雷达区 -->
+    <!-- ===================================================== -->
+    <div class="radar-section">
+      <div class="radar-title"> 深空扫描系统 · DEEP SPACE SCAN</div>
+      <div class="radar-wrapper">
+        <div class="radar-core">
+          <div class="breath-ring r1"></div>
+          <div class="breath-ring r2"></div>
+          <div class="breath-ring r3"></div>
+          <div class="scan-beam"></div>
+          <div class="center-core"></div>
+          <span class="center-label">猎人基地</span>
+        </div>
+        <div class="planets-orbit">
+          <!-- 🪐 SOL -->
+          <div class="planet solana" data-chain="solana" onclick="jumpToChain('solana')">
+            SOL
+            <div class="ripple"></div><div class="ripple"></div><div class="ripple"></div>
+          </div>
+          <!-- 🪐 BASE -->
+          <div class="planet base" data-chain="base" onclick="jumpToChain('base')">
+            BASE
+            <div class="ripple"></div><div class="ripple"></div><div class="ripple"></div>
+          </div>
+          <!-- 🪐 TON -->
+          <div class="planet ton" data-chain="ton" onclick="jumpToChain('ton')">
+            TON
+            <div class="ripple"></div><div class="ripple"></div><div class="ripple"></div>
+          </div>
+          <!-- 🪐 BSC -->
+          <div class="planet bsc" data-chain="bsc" onclick="jumpToChain('bsc')">
+            BSC
+            <div class="ripple"></div><div class="ripple"></div><div class="ripple"></div>
+          </div>
+          <!-- 🪐 ETH -->
+          <div class="planet ethereum" data-chain="ethereum" onclick="jumpToChain('ethereum')">
+            ETH
+            <div class="ripple"></div><div class="ripple"></div><div class="ripple"></div>
+          </div>
+          <!-- 🪐 ARB -->
+          <div class="planet arbitrum" data-chain="arbitrum" onclick="jumpToChain('arbitrum')">
+            ARB
+            <div class="ripple"></div><div class="ripple"></div><div class="ripple"></div>
+          </div>
+          <!-- 🪐 POLY -->
+          <div class="planet polygon" data-chain="polygon" onclick="jumpToChain('polygon')">
+            POLY
+            <div class="ripple"></div><div class="ripple"></div><div class="ripple"></div>
+          </div>
+          <!-- 🪐 AVAX -->
+          <div class="planet avalanche" data-chain="avalanche" onclick="jumpToChain('avalanche')">
+            AVAX
+            <div class="ripple"></div><div class="ripple"></div><div class="ripple"></div>
+          </div>
+          <!-- 🪐 SUI -->
+          <div class="planet sui" data-chain="sui" onclick="jumpToChain('sui')">
+            SUI
+            <div class="ripple"></div><div class="ripple"></div><div class="ripple"></div>
+          </div>
+          <!-- 🪐 RBN -->
+          <div class="planet rbn" data-chain="robinhood" onclick="jumpToChain('robinhood')">
+            RBN
+            <div class="ripple"></div><div class="ripple"></div><div class="ripple"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="chain-bar" id="chainBar">
-      <button class="chain-btn active" data-chain="all"> 全部链</button>
-      <button class="chain-btn priority" data-chain="solana">☀️ SOL</button>
-      <button class="chain-btn priority" data-chain="base"> BASE</button>
-      <button class="chain-btn priority" data-chain="ton"> TON</button>
-      <button class="chain-btn" data-chain="bsc">🟡 BSC</button>
-      <button class="chain-btn" data-chain="ethereum"> ETH</button>
-      <button class="chain-btn" data-chain="arbitrum">⚡ ARB</button>
-      <button class="chain-btn" data-chain="robinhood"> RBN</button>
-      <button class="chain-btn" data-chain="polygon"> POLY</button>
-      <button class="chain-btn" data-chain="avalanche">❄️ AVAX</button>
-      <button class="chain-btn" data-chain="sui"> SUI</button>
+      <button class="chain-btn active" data-chain="all" onclick="switchChain('all')"> 全部链</button>
+      <button class="chain-btn" data-chain="solana" onclick="switchChain('solana')">☀️ SOL</button>
+      <button class="chain-btn" data-chain="base" onclick="switchChain('base')"> BASE</button>
+      <button class="chain-btn" data-chain="ton" onclick="switchChain('ton')"> TON</button>
+      <button class="chain-btn" data-chain="bsc" onclick="switchChain('bsc')">🟡 BSC</button>
+      <button class="chain-btn" data-chain="ethereum" onclick="switchChain('ethereum')"> ETH</button>
+      <button class="chain-btn" data-chain="arbitrum" onclick="switchChain('arbitrum')">⚡ ARB</button>
+      <button class="chain-btn" data-chain="robinhood" onclick="switchChain('robinhood')"> RBN</button>
+      <button class="chain-btn" data-chain="polygon" onclick="switchChain('polygon')"> POLY</button>
+      <button class="chain-btn" data-chain="avalanche" onclick="switchChain('avalanche')">❄️ AVAX</button>
+      <button class="chain-btn" data-chain="sui" onclick="switchChain('sui')"> SUI</button>
     </div>
 
     <div class="narrative-tags" id="narrativeTags">
-      <span class="narrative-tag active" data-theme="all"> 全部叙事</span>
-      <span class="narrative-tag" data-theme="ai">🤖 AI</span>
-      <span class="narrative-tag" data-theme="gamefi"> GameFi</span>
-      <span class="narrative-tag" data-theme="depin"> DePIN</span>
-      <span class="narrative-tag" data-theme="rwa"> RWA</span>
-      <span class="narrative-tag" data-theme="social"> Social</span>
-      <span class="narrative-tag" data-theme="meme"> 纯Meme</span>
-      <span class="narrative-tag" data-theme="nft">️ NFT/IP</span>
+      <span class="narrative-tag active" data-theme="all" onclick="switchTheme('all')"> 全部叙事</span>
+      <span class="narrative-tag" data-theme="ai" onclick="switchTheme('ai')">🤖 AI</span>
+      <span class="narrative-tag" data-theme="gamefi" onclick="switchTheme('gamefi')"> GameFi</span>
+      <span class="narrative-tag" data-theme="depin" onclick="switchTheme('depin')"> DePIN</span>
+      <span class="narrative-tag" data-theme="rwa" onclick="switchTheme('rwa')"> RWA</span>
+      <span class="narrative-tag" data-theme="social" onclick="switchTheme('social')"> Social</span>
+      <span class="narrative-tag" data-theme="meme" onclick="switchTheme('meme')"> 纯Meme</span>
+      <span class="narrative-tag" data-theme="nft" onclick="switchTheme('nft')">️ NFT/IP</span>
     </div>
 
     <div class="auto-refresh-bar">
-      <span style="color:#9ca3af; font-size:13px;">⏱️ 自动刷新：</span>
+      <span style="color:#8898aa; font-size:13px;">⏱️ 自动刷新：</span>
       <button id="autoRefreshToggle" class="auto-refresh-btn" onclick="toggleAutoRefresh()">已关闭</button>
       <select id="refreshIntervalSelect" class="refresh-interval">
         <option value="30000">30秒</option>
@@ -166,28 +465,28 @@
     <div class="stats">
       <div class="stat-card">
         <div class="stat-label">扫描总数</div>
-        <div class="stat-value blue" id="totalScan">--</div>
+        <div class="stat-value cyan" id="totalScan">--</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">✅ 安全池</div>
         <div class="stat-value green" id="totalSafe">--</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value purple" style="font-size:18px" id="highScoreCount">--</div>
+        <div class="stat-value gold" style="font-size:18px" id="highScoreCount">--</div>
         <div class="stat-label"> 高分(≥80)</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value orange" style="font-size:18px" id="showCount">--</div>
+        <div class="stat-value purple" style="font-size:18px" id="showCount">--</div>
         <div class="stat-label">显示币种</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value yellow" style="font-size:18px" id="filteredCount">--</div>
+        <div class="stat-value gray" style="font-size:18px" id="filteredCount">--</div>
         <div class="stat-label">🛡️ 已过滤</div>
       </div>
     </div>
 
     <div class="table-container">
-      <table>
+      <table id="coinTable">
         <thead>
           <tr>
             <th>币种</th>
@@ -204,7 +503,7 @@
           </tr>
         </thead>
         <tbody id="coinTableBody">
-          <tr><td colspan="11" class="loading"><span class="loading-spinner"></span>点击「刷新数据」开始扫描 · 10链全网覆盖</td></tr>
+          <tr><td colspan="11" class="loading"><span class="loading-spinner"></span>点击「刷新数据」启动深空扫描 · 10链星球覆盖</td></tr>
         </tbody>
       </table>
     </div>
@@ -236,11 +535,53 @@
     };
 
     let allData = [];
+    let previousDataKeys = new Set();
     let activeChain = 'all';
     let activeTheme = 'all';
     let autoRefreshTimer = null;
     let countdownTimer = null;
     let countdownSeconds = 0;
+
+    // 🪐 点击星球跳转
+    function jumpToChain(chainId) {
+      activeChain = chainId;
+      
+      // 更新星球高亮
+      document.querySelectorAll('.planet').forEach(p => p.classList.remove('active'));
+      const planet = document.querySelector(`.planet[data-chain="${chainId}"]`);
+      if (planet) planet.classList.add('active');
+      
+      // 更新筛选按钮
+      document.querySelectorAll('.chain-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector(`.chain-btn[data-chain="${chainId}"]`)?.classList.add('active');
+      
+      // 渲染并滚动到表格
+      renderTable();
+      document.getElementById('coinTable').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      
+      // 高亮提示
+      const table = document.getElementById('coinTable');
+      table.classList.add('jump-hl');
+      setTimeout(() => table.classList.remove('jump-hl'), 1500);
+    }
+
+    function switchChain(chainId) {
+      activeChain = chainId;
+      document.querySelectorAll('.chain-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector(`.chain-btn[data-chain="${chainId}"]`)?.classList.add('active');
+      document.querySelectorAll('.planet').forEach(p => p.classList.remove('active'));
+      if (chainId !== 'all') {
+        document.querySelector(`.planet[data-chain="${chainId}"]`)?.classList.add('active');
+      }
+      renderTable();
+    }
+
+    function switchTheme(theme) {
+      activeTheme = theme;
+      document.querySelectorAll('.narrative-tag').forEach(t => t.classList.remove('active'));
+      document.querySelector(`.narrative-tag[data-theme="${theme}"]`)?.classList.add('active');
+      renderTable();
+    }
 
     function detectThemes(name, symbol) {
       const text = `${name} ${symbol}`.toLowerCase();
@@ -372,13 +713,38 @@
       return `${Math.floor(mins/1440)}天`;
     }
 
+    function getPairKey(p) {
+      return `${p.baseToken?.address || ''}|${p.chainId || ''}`;
+    }
+
+    function updatePlanetSignals(newChainSet) {
+      document.querySelectorAll('.planet').forEach(planet => {
+        const chainKey = planet.dataset.chain;
+        if (newChainSet.has(chainKey)) {
+          planet.classList.add('has-new');
+          if (!planet.querySelector('.new-badge')) {
+            const badge = document.createElement('span');
+            badge.className = 'new-badge';
+            badge.textContent = '新';
+            planet.appendChild(badge);
+          }
+        } else {
+          planet.classList.remove('has-new');
+          const badge = planet.querySelector('.new-badge');
+          if (badge) badge.remove();
+        }
+      });
+    }
+
     function renderTable() {
       let processed = allData.map(pair => {
         const filterReason = runFilter(pair);
         const analysis = !filterReason ? calculateScore(pair) : null;
         const risk = analysis ? assessRisk(pair, analysis.score) : { level: 'danger', text: '已过滤' };
         const mcap = estimateMarketCap(pair);
-        return { pair, filterReason, analysis, risk, mcap };
+        const key = getPairKey(pair);
+        const isNew = !previousDataKeys.has(key);
+        return { pair, filterReason, analysis, risk, mcap, isNew };
       });
 
       if (activeTheme !== 'all') {
@@ -395,6 +761,14 @@
         showList.sort((a, b) => (b.pair.priceChange?.h1 || 0) - (a.pair.priceChange?.h1 || 0));
       }
 
+      // 更新星球信号
+      const newChains = new Set();
+      showList.filter(i => i.isNew).forEach(item => {
+        const cid = item.pair.chainId?.toLowerCase();
+        if (cid) newChains.add(cid);
+      });
+      updatePlanetSignals(newChains);
+
       document.getElementById('totalScan').textContent = totalScan;
       document.getElementById('totalSafe').textContent = totalScan - hidden;
       document.getElementById('filteredCount').textContent = hidden;
@@ -404,7 +778,7 @@
 
       const tbody = document.getElementById('coinTableBody');
       if (showList.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="11" class="loading">暂无符合条件的币种<br> 尝试放宽筛选条件或换条链看看</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="11" class="loading">暂无符合条件的币种<br> 放宽筛选条件或点击上方星球切换链看看</td></tr>';
         return;
       }
 
@@ -423,154 +797,6 @@
           : '--';
         const age = formatAge(p.pairCreatedAt);
         const themes = a.themes.slice(0, 2).map(t => `<span class="theme-tag">${t}</span>`).join('');
-        const hotTag = a.score >= 80 ? '<span class="hot-tag">金狗候选</span>' : a.score >= 70 ? '<span class="new-tag">⭐潜力</span>' : '';
-        const scoreColor = a.score >= 80 ? '#00d284' : a.score >= 70 ? '#ffc107' : '#6b7280';
-        const riskClass = item.risk.level === 'safe' ? 'risk-safe' : item.risk.level === 'warn' ? 'risk-warn' : 'risk-danger';
-        const riskText = item.risk.level === 'safe' ? '安全' : item.risk.level === 'warn' ? '注意' : '谨慎';
-        const mcapText = item.mcap ? formatMoney(item.mcap) : '--';
-        const chainLabel = CONFIG.chains[p.chainId] || p.chainId?.substring(0,6) || '?';
+        const hotTag = a.score >= 80 ? '<span class="hot-tag">金狗
 
-        return `
-          <tr>
-            <td><strong>${p.baseToken.symbol}</strong> ${hotTag}<br><small style="color:#6b7280;font-size:11px">${(p.baseToken.name || 'Unknown').substring(0,16)}</small></td>
-            <td><span class="chain-tag">${chainLabel}</span>${themes}</td>
-            <td>${price}</td>
-            <td class="${isUp5m ? 'price-up' : 'price-down'}">${isUp5m ? '+' : ''}${change5m.toFixed(2)}%</td>
-            <td class="${isUp1h ? 'price-up' : 'price-down'}">${isUp1h ? '+' : ''}${change1h.toFixed(2)}%</td>
-            <td>${liq}</td>
-            <td class="mobile-hide">${mcapText}</td>
-            <td><div class="score-wrap"><span class="score-text" style="color:${scoreColor}">${a.score}</span><div class="score-bar"><div class="score-fill" style="width:${a.score}%;background:${scoreColor}"></div></div></div></td>
-            <td>${age}</td>
-            <td><span class="risk-badge ${riskClass}">${riskText}</span></td>
-            <td><a href="${p.url}" target="_blank" rel="noopener">查看 ↗</a></td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    async function loadData() {
-      const btn = document.getElementById('manualRefreshBtn');
-      btn.disabled = true;
-      btn.textContent = '⏳ 扫描中...';
-      document.getElementById('coinTableBody').innerHTML = '<tr><td colspan="11" class="loading"><span class="loading-spinner"></span>正在拉取链上数据 · 请稍候...</td></tr>';
-      
-      try {
-        const endpoints = [
-          'https://api.dexscreener.com/latest/dex/search?q=meme&limit=40',
-          'https://api.dexscreener.com/latest/dex/search?q=ai&limit=30',
-          'https://api.dexscreener.com/latest/dex/search?q=coin&limit=30',
-          'https://api.dexscreener.com/latest/dex/pairs/solana?limit=30',
-          'https://api.dexscreener.com/latest/dex/pairs/base?limit=25',
-          'https://api.dexscreener.com/latest/dex/pairs/ton?limit=25'
-        ];
-
-        const results = await Promise.allSettled(
-          endpoints.map(url => fetch(url).then(r => r.json()))
-        );
-
-        const seen = new Set();
-        allData = [];
-        for (const res of results) {
-          if (res.status !== 'fulfilled' || !res.value?.pairs) continue;
-          for (const p of res.value.pairs) {
-            if (!p.baseToken?.address) continue;
-            const key = `${p.baseToken.address}|${p.chainId}`;
-            if (seen.has(key)) continue;
-            seen.add(key);
-            allData.push(p);
-          }
-        }
-
-        if (allData.length === 0) {
-          document.getElementById('coinTableBody').innerHTML = '<tr><td colspan="11" class="loading">暂无数据，请稍后重试<br>或访问 <a href="https://dexscreener.com" target="_blank" rel="noopener">DexScreener.com</a> 查看</td></tr>';
-        } else {
-          renderTable();
-        }
-      } catch (err) {
-        console.error('加载失败:', err);
-        document.getElementById('coinTableBody').innerHTML = `<tr><td colspan="11" class="loading">请求失败：${err.message}<br>网络受限或API限流，请稍后重试</td></tr>`;
-      }
-      
-      btn.disabled = false;
-      btn.textContent = ' 刷新数据';
-    }
-
-    function toggleAutoRefresh() {
-      const btn = document.getElementById('autoRefreshToggle');
-      const select = document.getElementById('refreshIntervalSelect');
-      
-      if (autoRefreshTimer) {
-        clearInterval(autoRefreshTimer);
-        clearInterval(countdownTimer);
-        autoRefreshTimer = null;
-        btn.textContent = '已关闭';
-        btn.classList.remove('on');
-        document.getElementById('countdownDisplay').textContent = '';
-      } else {
-        const ms = parseInt(select.value);
-        const text = select.options[select.selectedIndex].text;
-        btn.textContent = `每${text}刷新`;
-        btn.classList.add('on');
-        loadData();
-        autoRefreshTimer = setInterval(() => {
-          loadData();
-          startCountdown(Math.floor(ms / 1000));
-        }, ms);
-        startCountdown(Math.floor(ms / 1000));
-      }
-    }
-
-    function startCountdown(seconds) {
-      clearInterval(countdownTimer);
-      countdownSeconds = seconds;
-      updateCountdownDisplay();
-      countdownTimer = setInterval(() => {
-        countdownSeconds--;
-        if (countdownSeconds <= 0) countdownSeconds = Math.floor(parseInt(document.getElementById('refreshIntervalSelect').value) / 1000);
-        updateCountdownDisplay();
-      }, 1000);
-    }
-
-    function updateCountdownDisplay() {
-      const el = document.getElementById('countdownDisplay');
-      if (el && autoRefreshTimer) el.textContent = `下次刷新：${countdownSeconds}秒`;
-      else if (el) el.textContent = '';
-    }
-
-    document.getElementById('chainBar').addEventListener('click', e => {
-      if (e.target.classList.contains('chain-btn')) {
-        document.querySelectorAll('.chain-btn').forEach(b => b.classList.remove('active'));
-        e.target.classList.add('active');
-        activeChain = e.target.dataset.chain;
-        if (allData.length > 0) renderTable();
-      }
-    });
-
-    document.getElementById('narrativeTags').addEventListener('click', e => {
-      if (e.target.classList.contains('narrative-tag')) {
-        document.querySelectorAll('.narrative-tag').forEach(t => t.classList.remove('active'));
-        e.target.classList.add('active');
-        activeTheme = e.target.dataset.theme;
-        if (allData.length > 0) renderTable();
-      }
-    });
-
-    ['filterLowLiq', 'filterNew', 'filterExtreme', 'filterScam', 'sortByScore'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) {
-        el.addEventListener('change', () => {
-          if (allData.length > 0) renderTable();
-        });
-      }
-    });
-
-    document.getElementById('refreshIntervalSelect').addEventListener('change', () => {
-      if (autoRefreshTimer) {
-        toggleAutoRefresh();
-        toggleAutoRefresh();
-      }
-    });
-  </script>
-</body>
-</html>
 
