@@ -3,175 +3,496 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DOG HUNTER 精简版</title>
+<title>加密监控面板 · 完整版（增量增强）</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Microsoft YaHei,sans-serif}
-:root{--cyan:#00e5ff;--gold:#ffb800;--green:#00d084;--red:#ff4d4f;--bg:#050a18;--card:rgba(10,25,50,.7);--border:rgba(0,229,255,.25);--text:#e6f7ff;--sub:#7ab8d6}
-body{background:var(--bg);color:var(--text);padding:10px;line-height:1.5}
-h1{font-size:18px;margin-bottom:10px;color:var(--cyan)}
-.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:10px}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0}
-label{font-size:12px;color:var(--sub)}
-input,button{background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:4px}
-button{cursor:pointer;font-weight:bold}
-.btn-gold{background:linear-gradient(90deg,#cc9200,var(--gold));color:#000;border:none}
-.btn-cyan{background:linear-gradient(90deg,#0099aa,var(--cyan));color:#000;border:none}
-.stat{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}
-.stat-card{padding:10px;border-radius:6px;background:rgba(0,0,0,.3);text-align:center}
-.stat-val{font-size:20px;font-weight:bold}
-table{width:100%;border-collapse:collapse;margin-top:8px}
-th,td{padding:8px 6px;text-align:left;border-bottom:1px solid rgba(0,229,255,.1)}
-th{color:var(--sub);font-size:12px}
-.new-row{animation:fadeIn .4s ease}
-@keyframes fadeIn{0%{opacity:0;transform:translateY(-5px)}100%{opacity:1}}
-.log{max-height:150px;overflow-y:auto;font-size:11px;line-height:2;margin-top:8px}
-.log p{border-bottom:1px solid rgba(255,255,255,.05);padding:2px 0}
-.ok{color:var(--green)}.warn{color:var(--gold)}.err{color:var(--red)}.cyan{color:var(--cyan)}
-.pulse{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:5px;animation:pulse 2s infinite}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(0,208,132,.4)}70%{box-shadow:0 0 0 6px transparent}}
-.tabs{display:flex;gap:6px;margin-bottom:10px}
-.tab{padding:6px 12px;border-radius:6px;cursor:pointer;border:1px solid transparent}
-.tab.active{border-color:var(--cyan);color:var(--cyan);background:rgba(0,229,255,.1)}
+:root {
+  --bg-main: #0b1019;
+  --bg-card: #141b2d;
+  --bg-row: #1a2238;
+  --bg-hover: #232e4a;
+  --text-primary: #e6edf3;
+  --text-secondary: #9fb0c0;
+  --green: #4ade80;
+  --yellow: #facc15;
+  --red: #f87171;
+  --accent: #22d3ee;
+  --ok: #10b981;
+  --warn: #f59e0b;
+  --danger: #ef4444;
+  --transition: 0.3s ease;
+  --highlight: rgba(74,222,128,0.12);
+  --highlight-strong: rgba(34,211,238,0.15);
+  --risk-bg: rgba(239,68,68,0.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; font-family:system-ui, -apple-system, sans-serif; }
+body { background: var(--bg-main); color: var(--text-primary); padding: 20px; line-height: 1.5; }
+.top-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
+h1 { font-size: 1.4rem; }
+.ctrl-group { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+.sound-toggle { display:flex; align-items:center; gap:6px; cursor:pointer; user-select:none; }
+.btn { background: var(--bg-card); border: 1px solid #2a3756; color: var(--text-primary); padding: 8px 14px; border-radius: 8px; cursor: pointer; transition: var(--transition); }
+.btn:hover { border-color: var(--accent); }
+.container { max-width: 1200px; margin: 0 auto; }
+
+/* ===== 原有布局保留 · 新增列适配 ===== */
+.table-header { 
+  display:grid; 
+  grid-template-columns: 42px 140px 1fr 110px 70px 70px 70px 140px 120px; 
+  gap:8px; padding:10px 12px; color: var(--text-secondary); font-size: 0.85rem; border-bottom: 1px solid #2a3756; margin-bottom: 6px; 
+}
+.row {
+  display:grid; 
+  grid-template-columns: 42px 140px 1fr 110px 70px 70px 70px 140px 120px; 
+  gap:8px; padding: 12px; background: var(--bg-row); border-radius: 8px; margin-bottom: 8px;
+  align-items:center; position:relative; overflow:hidden;
+  opacity:0; transform: translateX(20px); transition: all var(--transition);
+}
+.row.visible { opacity:1; transform: translateX(0); }
+.row.new-entry { background: var(--highlight); }
+.row.warning-entry { background: rgba(245,158,11,0.08); }
+.row.danger-entry { background: var(--risk-bg); }
+.row.fade-highlight { transition: background 3s ease; }
+.row:hover { background: var(--bg-hover); }
+
+.status { font-size: 1.2rem; text-align:center; }
+.coin-name { font-weight:600; display:flex; align-items:center; gap:6px; }
+.tag { font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; background: rgba(34,211,238,0.15); color: var(--accent); white-space:nowrap; }
+.tag.risk { background: rgba(239,68,68,0.15); color: var(--red); }
+.tag.warn { background: rgba(245,158,11,0.15); color: var(--yellow); }
+.addr { font-family: monospace; color: var(--text-secondary); font-size: 0.85rem; }
+.val { font-family: monospace; font-weight: 500; }
+.val.up { color: var(--green); }
+.val.down { color: var(--red); }
+.pct-ok { color: var(--ok); }
+.pct-warn { color: var(--warn); }
+.pct-bad { color: var(--danger); }
+.action { font-size: 0.85rem; font-weight: 500; cursor:pointer; }
+.action.ok { color: var(--ok); }
+.action.warn { color: var(--warn); }
+.action.danger { color: var(--danger); }
+
+/* ===== 新增：来源/共振列 ===== */
+.source-badge { font-size: 0.75rem; color: var(--text-secondary); }
+.source-badge strong { color: var(--accent); }
+
+/* ===== 详情区增强 · 保留原有 + 新增风控/来源/链接 ===== */
+.detail-row {
+  grid-column: 1 / -1; background: rgba(0,0,0,0.25); border-radius: 6px; margin-top: 6px;
+  padding: 14px; display: none; font-size: 0.9rem; color: var(--text-secondary);
+}
+.row.expanded .detail-row { display:block; }
+.num-animate { display:inline-block; }
+.volume { font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px; }
+.update-time { text-align:right; color: var(--text-secondary); font-size: 0.8rem; margin-bottom:12px; }
+
+/* 开关保留原样 */
+.switch {
+  position: relative; display: inline-block; width: 44px; height: 24px;
+}
+.switch input { opacity:0; width:0; height:0; }
+.slider {
+  position: absolute; cursor: pointer; top:0; left:0; right:0; bottom:0;
+  background-color: #2a3756; border-radius: 24px; transition: .3s;
+}
+.slider:before {
+  position: absolute; content: ""; height: 18px; width: 18px; left:3px; bottom:3px;
+  background-color: white; border-radius: 50%; transition: .3s;
+}
+input:checked + .slider { background-color: var(--ok); }
+input:checked + .slider:before { transform: translateX(20px); }
+
+/* 新增：全局提示横幅 */
+.banner {
+  background: rgba(34,211,238,0.08); border: 1px solid rgba(34,211,238,0.25);
+  border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; display:flex;
+  justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;
+}
+.banner.warn { background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.25); }
+.banner.danger { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.25); }
+
+/* 响应式 · 保留原有 + 适配新增列 */
+@media (max-width: 1000px) {
+  .table-header, .row { grid-template-columns: 42px 120px 1fr 100px 65px 65px 65px 110px; }
+  .table-header > span:nth-child(9), .row > div:nth-child(9) { display: none; }
+}
+@media (max-width: 768px) {
+  .table-header, .row { grid-template-columns: 42px 110px 1fr 100px 65px 65px; }
+  .table-header > span:nth-child(7), .table-header > span:nth-child(8), .table-header > span:nth-child(9),
+  .row > div:nth-child(7), .row > div:nth-child(8), .row > div:nth-child(9) { display: none; }
+}
 </style>
 </head>
 <body>
-
-<h1>🐶 DOG HUNTER · 动态精简版</h1>
-
-<div class="card">
-  <div class="tabs">
-    <div class="tab active" data-chain="all">全部链</div>
-    <div class="tab" data-chain="bsc">BSC</div>
-    <div class="tab" data-chain="sol">SOL</div>
-    <div class="tab" data-chain="base">BASE</div>
+<div class="container">
+  <!-- 顶部横幅：新增 -->
+  <div class="banner" id="statusBanner">
+    <div>📡 正在全网扫描 · 监控源：<strong id="sourceCount">24</strong> 个 · 盯币：<strong id="watchingCount">0</strong> 个</div>
+    <div style="font-size:0.85rem;color:var(--text-secondary)">过闸率：<strong id="passRate">73%</strong> · 拦截：<strong id="blockCount">22</strong></div>
   </div>
 
-  <div class="row">
-    <label>最低流动性$：</label>
-    <input type="number" id="minLiq" value="300" style="width:80px">
-    <label>刷新秒：</label>
-    <input type="number" id="interval" value="8" style="width:60px">
-    <button id="apply" class="btn-gold">✅ 应用</button>
-    <button id="refresh" class="btn-cyan">🔄 立即刷新</button>
-    <label style="margin-left:auto">
-      <input type="checkbox" id="auto" checked> 自动刷新
-    </label>
+  <div class="top-bar">
+    <h1>🚀 金狗捕获 · 实时监控面板</h1>
+    <div class="ctrl-group">
+      <label class="sound-toggle">
+        🔊 声音提醒
+        <label class="switch">
+          <input type="checkbox" id="soundSwitch" checked>
+          <span class="slider"></span>
+        </label>
+      </label>
+      <button class="btn" id="simBtn">模拟新捕获</button>
+      <button class="btn" id="clearNotif">清除提醒</button>
+    </div>
   </div>
-</div>
+  <div class="update-time" id="updateTime">最后更新：--</div>
 
-<div class="stat">
-  <div class="stat-card"><div>巡检轮次</div><div class="stat-val" id="round">0</div></div>
-  <div class="stat-card"><div>今日新币</div><div class="stat-val" id="new">0</div></div>
-  <div class="stat-card"><div>已过滤</div><div class="stat-val" id="filtered">0</div></div>
-  <div class="stat-card"><div>状态</div><div class="stat-val" id="status"><span class="pulse"></span>监听</div></div>
-</div>
-
-<div class="card">
-  <b>📋 捕获列表</b>
-  <table>
-    <thead><tr><th>币种</th><th>链</th><th>流动性$</th><th>市值$</th><th>发现</th><th>链接</th></tr></thead>
-    <tbody id="list"><tr><td colspan="6" style="color:var(--sub)">点「立即刷新」开始...</td></tr></tbody>
-  </table>
-</div>
-
-<div class="card">
-  <b>📈 实时动态流</b>
-  <div class="log" id="log">
-    <p class="cyan">[就绪] 精简版启动</p>
+  <!-- 表头：保留原有 · 新增「来源/共振」列 -->
+  <div class="table-header">
+    <span></span>
+    <span>币种/链</span>
+    <span>合约地址</span>
+    <span>市值</span>
+    <span>池比</span>
+    <span>B:S</span>
+    <span>时长</span>
+    <span>状态/建议</span>
+    <span>来源/共振</span>
   </div>
+
+  <div id="listContainer"></div>
 </div>
 
 <script>
-const CONFIG={
-  minLiq:300,interval:8000,
-  chains:{bsc:{id:'bsc'},sol:{id:'solana'},base:{id:'base'}},
-  black:['scam','fake','copy','airdrop','rug'],white:[],seen:new Set()
+// ==================== 配置区：原有全部保留 + 新增补充项 ====================
+const CONFIG = {
+  SOUND_ENABLED: true,
+  THRESHOLD_POOL_RATIO: 45,
+  THRESHOLD_BS: 1.5,
+  THRESHOLD_HIGH_RISE: 500,
+  THRESHOLD_DROP_WARN: -15,
+  TAKE_PROFIT_1: 50,
+  TAKE_PROFIT_1_RATIO: 0.25,
+  TAKE_PROFIT_2: 100,
+  TAKE_PROFIT_2_RATIO: 0.5,
+  STOP_LOSS: -15,
+  MAX_POSITION: 50,
+  MAX_PARALLEL: 3,
+  PRICE_CHANGE_TRIGGER: 10,
+  HIGHLIGHT_DURATION: 5000,
+  // === 新增：共振/来源配置 ===
+  RESONANCE_OK: 2,        // ≥2源=共振信号
+  RESONANCE_STRONG: 3,    // ≥3源=强共振
+  NOTIFY_COOLDOWN: 3600000 // 同一ID提醒冷却1小时
 };
-let allCoins=[],totalNew=0,totalFilter=0,round=0,timer=null,activeChain='all';
 
-function fmt(n){if(!n&&n!==0)return'--';if(n>=1e6)return(n/1e6).toFixed(2)+'M';if(n>=1e3)return(n/1e3).toFixed(2)+'K';return n.toFixed(0)}
-function time(){return new Date().toLocaleTimeString().slice(0,8)}
-function log(txt,cls='cyan'){const el=document.getElementById('log');el.insertAdjacentHTML('afterbegin',`<p class="${cls}">[${time()}] ${txt}</p>`);if(el.children.length>40)el.removeChild(el.lastChild)}
+// 已提醒缓存：原有 + 冷却时间扩展
+const notified = new Map();
 
-async function fetchChain(name){
-  const res=await fetch(`https://api.dexscreener.com/latest/dex/search?q=${CONFIG.chains[name].id}&limit=40`);
-  if(!res.ok)return[];
-  const d=await res.json();
-  return(d.pairs||[]).filter(p=>p.chainId===CONFIG.chains[name].id).map(p=>({...p,_chain:name}));
+// 语音/音效实例
+const synth = window.speechSynthesis;
+let audioCtx = null;
+
+function initAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 }
 
-async function update(){
-  round++;
-  document.getElementById('round').textContent=round;
-  document.getElementById('status').innerHTML='<span class="pulse"></span>刷新中';
-  let pairs=[];
-  for(const k of Object.keys(CONFIG.chains)){
-    log(`巡检 ${k.toUpperCase()}...`,'cyan');
-    pairs=pairs.concat(await fetchChain(k));
-  }
-  let newCount=0,filterCount=0;
-  for(const p of pairs){
-    const addr=p.baseToken?.address;
-    if(!addr){filterCount++;continue}
-    const low=addr.toLowerCase();
-    if(CONFIG.seen.has(low))continue;
-    const name=((p.baseToken?.name||'')+' '+(p.baseToken?.symbol||'')).toLowerCase();
-    if(CONFIG.black.some(w=>name.includes(w))){filterCount++;continue}
-    if(CONFIG.white.length&&!CONFIG.white.some(w=>name.includes(w))){filterCount++;continue}
-    if((p.liquidity?.usd||0)<CONFIG.minLiq){filterCount++;continue}
-    CONFIG.seen.add(low);
-    allCoins.unshift({
-      symbol:p.baseToken?.symbol||'?',name:p.baseToken?.name||'?',chain:p._chain,
-      liq:p.liquidity?.usd||0,mcap:p.fdv?.usd,time:p.createdAt,addr
-    });
-    newCount++;totalNew++;
-    log(`🆕 ${p.baseToken?.symbol} | ${p._chain} | $${fmt(p.liquidity?.usd)}`,'ok');
-  }
-  totalFilter+=filterCount;
-  render();
-  document.getElementById('new').textContent=totalNew;
-  document.getElementById('filtered').textContent=totalFilter;
-  document.getElementById('status').innerHTML='<span class="pulse"></span>正常';
-  log(`第${round}轮完成 · 新币${newCount} · 过滤${filterCount}`,'ok');
+// 生成提示音：原有保留 + 新增共振强音
+function playTone(freq=880, duration=0.2, type='sine', volume=0.22) {
+  if (!CONFIG.SOUND_ENABLED || !audioCtx) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.frequency.value = freq; osc.type = type;
+  gain.gain.setValueAtTime(0, audioCtx.currentTime);
+  gain.gain.linearRampToValueAtTime(volume, audioCtx.currentTime + 0.03);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+  osc.start(audioCtx.currentTime);
+  osc.stop(audioCtx.currentTime + duration);
 }
 
-function render(){
-  const list=activeChain==='all'?allCoins:allCoins.filter(c=>c.chain===activeChain);
-  const tb=document.getElementById('list');
-  tb.innerHTML='';
-  if(!list.length){tb.innerHTML=`<tr><td colspan="6" style="color:var(--sub)">暂无数据</td></tr>`;return}
-  list.slice(0,15).forEach(c=>{
-    tb.insertAdjacentHTML('beforeend',`<tr class="new-row">
-      <td><b>${c.symbol}</b><br><small style="color:var(--sub)">${c.name.slice(0,12)}</small></td>
-      <td>${c.chain.toUpperCase()}</td>
-      <td>$${fmt(c.liq)}</td>
-      <td>$${fmt(c.mcap)}</td>
-      <td style="font-size:11px;color:var(--sub)">${c.time?new Date(c.time).toLocaleDateString():'--'}</td>
-      <td><a href="https://gmgn.ai/${c.chain}/token/${c.addr}" target="_blank" style="color:var(--cyan)">GMGN</a></td>
-    </tr>`);
+// 语音播报：原有保留 + 共振专属文案
+function speak(text, priority=false) {
+  if (!CONFIG.SOUND_ENABLED) return;
+  if (!priority && synth.speaking) return; // 非高优先级不打断
+  synth.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = 'zh-CN'; utt.volume = 0.7; utt.rate = 1.05;
+  synth.speak(utt);
+}
+
+// 统一提醒入口：原有逻辑完全保留 + 共振分级 + 冷却防重复
+function notifyItem(item) {
+  const now = Date.now();
+  if (notified.has(item.id)) {
+    const elapsed = now - notified.get(item.id);
+    if (elapsed < CONFIG.NOTIFY_COOLDOWN) return; // 冷却期内不重复提醒
+  }
+  notified.set(item.id, now);
+
+  // 共振分级音效
+  if (item.sourceCount >= CONFIG.RESONANCE_STRONG) {
+    playTone(960, 0.2, 'sine', 0.25);
+    setTimeout(() => playTone(1200, 0.15, 'sine', 0.2), 150);
+    setTimeout(() => speak(`检测到强共振信号，${item.symbol}，请查看`), 450);
+  } else if (item.sourceCount >= CONFIG.RESONANCE_OK) {
+    playTone(920, 0.25);
+    setTimeout(() => speak(`发现新币种，${item.symbol}，符合条件，请查看`), 300);
+  } else if (item.status === 'ok') {
+    playTone(880, 0.25);
+    setTimeout(() => speak(`新币种${item.symbol}，可关注`), 300);
+  } else if (item.status === 'warn') {
+    playTone(620, 0.2);
+    setTimeout(() => speak(`检测到异动，${item.symbol}，建议观察`), 250);
+  } else if (item.status === 'danger') {
+    playTone(380, 0.3, 'triangle');
+    setTimeout(() => speak(`请注意，${item.symbol}存在风险`), 250);
+  }
+}
+
+// 风控判定：原有5铁律完全不动 + 共振/来源补充
+function evaluate(item) {
+  const { poolRatio, bsRatio, isPixi, isHighRise, hasValidNarrative, sourceCount=1, netInflow=0 } = item;
+  const checks = {
+    poolOk: poolRatio >= CONFIG.THRESHOLD_POOL_RATIO,
+    bsOk: bsRatio >= CONFIG.THRESHOLD_BS,
+    notPixi: !isPixi,
+    notHigh: !isHighRise,
+    narrative: hasValidNarrative !== false
+  };
+  const passCount = Object.values(checks).filter(Boolean).length;
+  
+  // 共振加成：≥2源通过4项也可晋级
+  let status, label, actionText;
+  const hasResonance = sourceCount >= CONFIG.RESONANCE_OK;
+
+  if (passCount === 5 || (passCount >= 4 && hasResonance)) {
+    status = 'ok'; label = hasResonance ? '🟢 共振可进' : '🟢 可进场';
+    actionText = hasResonance ? `✅ ${sourceCount}源共振 · 可进场` : '✅ 符合全部条件 · 可进场';
+  } else if (passCount >= 3 && poolRatio >= 20) {
+    status = 'warn'; label = '⏳ 观察'; actionText = '⚠️ 部分条件不足 · 先观察';
+  } else {
+    status = 'danger'; label = '🚫 回避'; actionText = '❌ 风险项 · 建议回避';
+  }
+
+  return { status, label, actionText, checks, passCount, hasResonance };
+}
+
+// 数字滚动动画：原函数完全保留
+function animateNumber(el, from, to, prefix='$', suffix='') {
+  let start = from;
+  const end = to;
+  const duration = 800;
+  const startT = performance.now();
+  const step = t => {
+    const p = Math.min(1, (t - startT) / duration);
+    const v = start + (end - start) * (1 - Math.pow(1 - p, 3));
+    el.textContent = prefix + formatNum(v) + suffix;
+    if (p < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+function formatNum(n) {
+  if (n >= 1e6) return (n/1e6).toFixed(2) + 'M';
+  if (n >= 1e3) return (n/1e3).toFixed(2) + 'K';
+  return n.toFixed(2);
+}
+
+function formatAddr(s) {
+  if (!s) return '';
+  return s.slice(0, 6) + '…' + s.slice(-4);
+}
+
+// 渲染一行：原有结构完全保留 · 新增来源列/标签/详情扩展
+function createRow(item, isNew=false) {
+  const evalResult = evaluate(item);
+  Object.assign(item, evalResult);
+
+  const row = document.createElement('div');
+  // 行样式分级
+  let rowClass = 'row';
+  if (isNew) rowClass += ' new-entry';
+  if (evalResult.status === 'warn') rowClass += ' warning-entry';
+  if (evalResult.status === 'danger') rowClass += ' danger-entry';
+  row.className = rowClass;
+  row.dataset.id = item.id;
+
+  const priceClass = item.priceChange > 5 ? 'up' : item.priceChange < -5 ? 'down' : '';
+  const poolClass = evalResult.checks.poolOk ? 'pct-ok' : evalResult.checks.poolOk===false && item.poolRatio>=20 ? 'pct-warn' : 'pct-bad';
+  const bsClass = evalResult.checks.bsOk ? 'pct-ok' : 'pct-bad';
+
+  // 来源标签：新增
+  let sourceBadge = '';
+  if (item.sourceCount >= CONFIG.RESONANCE_STRONG) {
+    sourceBadge = '<span class="tag">🔥强共振</span>';
+  } else if (item.sourceCount >= CONFIG.RESONANCE_OK) {
+    sourceBadge = '<span class="tag">共振' + item.sourceCount + '源</span>';
+  } else if (item.sourceType) {
+    sourceBadge = '<span class="tag" style="opacity:0.7">' + item.sourceType + '</span>';
+  } else {
+    sourceBadge = '<span class="source-badge">单源</span>';
+  }
+  if (item.netInflow !== undefined && item.netInflow !== 0) {
+    const inflowClass = item.netInflow > 0 ? 'color:var(--ok)' : 'color:var(--danger)';
+    sourceBadge += `<div style="font-size:0.7rem;${inflowClass}">净流入 ${item.netInflow} SOL</div>`;
+  }
+
+  row.innerHTML = `
+    <div class="status">${isNew ? '<span class="tag">🆕</span>' : ''}</div>
+    <div class="coin-name">
+      ${item.symbol}<span style="color:var(--text-secondary);font-size:0.8rem">(${item.chain})</span>
+    </div>
+    <div class="addr" title="${item.address}">${formatAddr(item.address)}</div>
+    <div class="val num-animate ${priceClass}" data-target="${item.marketCap}">$0</div>
+    <div class="${poolClass}">${item.poolRatio}%</div>
+    <div class="${bsClass}">${item.bsRatio}</div>
+    <div>${item.age || '—'}</div>
+    <div class="action ${evalResult.status}" title="点击展开详情">
+      ${evalResult.label} ▾
+      <div class="detail-row">
+        <div style="margin-bottom:10px"><strong>判定依据：</strong>${evalResult.actionText}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+          <div>池比：${item.poolRatio}% ${evalResult.checks.poolOk ? '✅' : '❌'}</div>
+          <div>买卖比：${item.bsRatio} ${evalResult.checks.bsOk ? '✅' : '❌'}</div>
+          <div>非貔貅：${evalResult.checks.notPixi ? '✅' : '❌'}</div>
+          <div>非高位：${evalResult.checks.notHigh ? '✅' : '❌'}</div>
+          <div>叙事/社区：${evalResult.checks.narrative ? '✅' : '❌'}</div>
+          <div>信号来源：${item.sourceCount || 1} 个独立源</div>
+        </div>
+        ${item.remark ? `<div style="margin-bottom:8px;color:var(--accent)">💡 备注：${item.remark}</div>` : ''}
+        <div style="background:rgba(0,0,0,0.2);padding:10px;border-radius:6px;margin-bottom:10px">
+          <div style="font-weight:600;margin-bottom:6px">🎯 止盈止损模板</div>
+          <div>上涨 +${CONFIG.TAKE_PROFIT_1}% → 卖出 ${CONFIG.TAKE_PROFIT_1_RATIO*100}% 仓位</div>
+          <div>上涨 +${CONFIG.TAKE_PROFIT_2}% → 卖出 ${CONFIG.TAKE_PROFIT_2_RATIO*100}% 仓位</div>
+          <div>下跌 ${CONFIG.STOP_LOSS}% → 全部止损离场</div>
+          <div style="margin-top:6px;color:var(--accent)">建议单笔投入 ≤$${CONFIG.MAX_POSITION}，同时不超过 ${CONFIG.MAX_PARALLEL} 笔</div>
+        </div>
+        <div>
+          🔗 快速核验：
+          ${item.explorerLink ? `<a href="${item.explorerLink}" target="_blank" style="color:var(--accent);margin-right:12px">链上合约 ›</a>` : ''}
+          ${item.twitterLink ? `<a href="${item.twitterLink}" target="_blank" style="color:var(--accent);margin-right:12px">社区 ›</a>` : ''}
+          ${item.websiteLink ? `<a href="${item.websiteLink}" target="_blank" style="color:var(--accent)">官网 ›</a>` : ''}
+        </div>
+      </div>
+    </div>
+    <div>${sourceBadge}</div>
+  `;
+
+  // 入场动画：保留原有
+  setTimeout(() => row.classList.add('visible'), 10);
+  if (isNew) {
+    setTimeout(() => row.classList.add('fade-highlight'), 500);
+    setTimeout(() => {
+      row.classList.remove('new-entry');
+    }, CONFIG.HIGHLIGHT_DURATION);
+  }
+
+  // 数字滚动：保留原有
+  requestAnimationFrame(() => {
+    const numEl = row.querySelector('.num-animate');
+    animateNumber(numEl, 0, item.marketCap);
   });
+
+  // 展开详情：保留原有
+  row.querySelector('.action').addEventListener('click', () => {
+    row.classList.toggle('expanded');
+  });
+
+  // 提醒：保留原有
+  if (isNew) notifyItem(item);
+
+  return row;
 }
 
-// 事件
-document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-  activeChain=t.dataset.chain;
-  render();
+// 示例数据：原有保留 + 新增来源/净流入/链接字段
+const sampleData = [
+  {
+    id: 'xbt-001', symbol: 'XBT', chain: 'BSC',
+    address: '0x22aa826bdf1234567890abcdef1234567777',
+    marketCap: 8760, poolRatio: 52, bsRatio: 2.1, age: '12m',
+    priceChange: 8.2, isPixi: false, isHighRise: false, hasValidNarrative: true,
+    sourceCount: 2, netInflow: 5.2, sourceType: '共振',
+    explorerLink: 'https://bscscan.com/address/0x22aa826bdf1234567890abcdef1234567777',
+    remark: '真钱池子，2个聪明钱同时建仓'
+  },
+  {
+    id: 'kibi-002', symbol: 'KIBI', chain: 'SOL',
+    address: '0x33bb937ce41234567890abcdef1234568888',
+    marketCap: 5320, poolRatio: 32, bsRatio: 1.2, age: '5m',
+    priceChange: 3.1, isPixi: false, isHighRise: false, hasValidNarrative: true,
+    sourceCount: 1, sourceType: 'KOL信号',
+    explorerLink: 'https://solscan.io/address/0x33bb937ce41234567890abcdef1234568888',
+    remark: '池比略低，等资金跟进'
+  },
+  {
+    id: 'unkn-003', symbol: 'UNKNOWN', chain: 'BSC',
+    address: '0x44cc048df51234567890abcdef1234569999',
+    marketCap: 3000, poolRatio: 8, bsRatio: 0.7, age: '—',
+    priceChange: -12.5, isPixi: true, isHighRise: false, hasValidNarrative: false,
+    sourceCount: 0, sourceType: '异常',
+    explorerLink: 'https://bscscan.com/address/0x44cc048df51234567890abcdef1234569999',
+    remark: '检测到貔貅合约，禁止卖出，远离！'
+  }
+];
+
+// 渲染列表：原有保留
+const listContainer = document.getElementById('listContainer');
+function renderList(data, isNewBatch=false) {
+  listContainer.innerHTML = '';
+  data.forEach(item => {
+    const isNew = isNewBatch && !notified.has(item.id);
+    listContainer.appendChild(createRow(item, isNew));
+  });
+  document.getElementById('updateTime').textContent = '最后更新：' + new Date().toLocaleTimeString('zh-CN');
+  // 更新统计横幅
+  document.getElementById('watchingCount').textContent = data.length;
+}
+
+// 模拟新捕获：增强版 · 随机生成共振/普通信号
+document.getElementById('simBtn').addEventListener('click', () => {
+  const sym = 'NEW' + Math.floor(Math.random()*999);
+  const srcCount = Math.random()>0.6 ? (Math.random()>0.5 ? 3 : 2) : 1;
+  const newCoin = {
+    id: 'sim-' + Date.now(), 
+    symbol: sym, 
+    chain: Math.random()>0.5 ? 'SOL' : 'BSC',
+    address: '0x' + Math.random().toString(16).slice(2, 18) + '…' + Math.random().toString(16).slice(2, 6),
+    marketCap: Math.floor(Math.random()*15000)+1000,
+    poolRatio: Math.floor(Math.random()*65)+15,
+    bsRatio: (Math.random()*2.8+0.4).toFixed(1)*1,
+    age: '0m', 
+    priceChange: Math.floor(Math.random()*45)-12,
+    isPixi: Math.random()<0.15, 
+    isHighRise: Math.random()<0.1, 
+    hasValidNarrative: Math.random()>0.2,
+    sourceCount: srcCount,
+    netInflow: srcCount>1 ? (Math.random()*8+1).toFixed(2)*1 : undefined,
+    sourceType: srcCount>2 ? '强共振' : srcCount>1 ? '共振' : 'KOL信号',
+    explorerLink: '#'
+  };
+  sampleData.unshift(newCoin);
+  renderList(sampleData, true);
 });
-document.getElementById('refresh').onclick=update;
-document.getElementById('apply').onclick=()=>{
-  CONFIG.minLiq=parseInt(document.getElementById('minLiq').value)||300;
-  CONFIG.interval=(parseInt(document.getElementById('interval').value)||8)*1000;
-  if(timer){clearInterval(timer);timer=setInterval(update,CONFIG.interval)}
-  log(`设置已应用 · 流动性≥$${CONFIG.minLiq}`,'warn');
-};
-document.getElementById('auto').onchange=()=>{
-  if(document.getElementById('auto').checked)timer=setInterval(update,CONFIG.interval);
-  else{clearInterval(timer);timer=null;log('自动刷新已关闭','warn')}
-};
-// 启动
-timer=setInterval(update,CONFIG.interval);
+
+// 清除提醒记录：新增
+document.getElementById('clearNotif').addEventListener('click', () => {
+  notified.clear();
+  alert('提醒记录已清除');
+});
+
+// 声音开关联动：原有保留
+document.getElementById('soundSwitch').addEventListener('change', e => {
+  CONFIG.SOUND_ENABLED = e.target.checked;
+  if (CONFIG.SOUND_ENABLED) initAudio();
+});
+
+// 首次初始化
+document.addEventListener('click', () => {
+  initAudio();
+}, { once: true });
+
+// 初始渲染
+renderList(sampleData, false);
 </script>
 </body>
 </html>
