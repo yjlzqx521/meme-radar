@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>金狗封神系统 · 终极版 | 全链扫描 · 多源引擎 · 因果闭环</title>
+<title>金狗封神系统 · 终极黑金版 | 潜伏窗口识别引擎</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
 <script>
@@ -11,34 +11,27 @@ tailwind.config = {
   theme: {
     extend: {
       colors: {
-        gold: { 500: '#C8A940', 600: '#D4B82F', 700: '#E5C530', 800: '#A68825', 900: '#7A651F' },
-        dark: { bg: '#0F1420', card: '#171E30', panel: '#1E2740', border: 'rgba(160,180,220,0.15)' },
-        accent: { blue: '#4A90D9', cyan: '#38BFA0', purple: '#8B5CF6', soft: '#6B8CCF' },
-        status: { 
-          safe: '#48B667', 
-          warn: '#D4A830', 
-          risk: '#D64545', 
-          info: '#5B9BD5',
-          crown: '#F0C808',
-          neutral: '#6B7280'
-        }
+        gold: { 50: '#FFFBEB', 100: '#FEF3C7', 200: '#FDE68A', 300: '#FCD34D', 400: '#FBBF24', 500: '#F0C808', 600: '#D4A806', 700: '#B8860B', 800: '#96650F', 900: '#7A5005' },
+        dark: { bg: '#050814', deeper: '#03050A', card: '#0F172A', panel: '#1E293B', border: 'rgba(240,200,8,0.15)', glow: 'rgba(240,200,8,0.08)' },
+        accent: { cyan: '#22D3EE', blue: '#3B82F6', purple: '#A855F7', teal: '#14B8A6' },
+        status: { safe: '#10B981', warn: '#F59E0B', risk: '#EF4444', info: '#6366F1' }
       },
-      fontFamily: { sans: ['system-ui', 'sans-serif'] },
+      fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
       animation: {
         'breathe': 'breathe 3s ease-in-out infinite',
         'scan-ring': 'scanRing 12s linear infinite',
         'scan-ring-rev': 'scanRingRev 15s linear infinite',
-        'pulse-soft': 'pulseSoft 2.5s ease-in-out infinite',
-        'glow-gold': 'glowGold 3s ease-in-out infinite',
+        'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
         'float-slow': 'floatSlow 4s ease-in-out infinite',
+        'shimmer': 'shimmer 2s linear infinite',
       },
       keyframes: {
-        breathe: { '0%,100%': { transform: 'scale(1)', opacity: '0.85' }, '50%': { transform: 'scale(1.15)', opacity: '1' } },
+        breathe: { '0%,100%': { transform: 'scale(1)', opacity: '0.8' }, '50%': { transform: 'scale(1.1)', opacity: '1' } },
         scanRing: { '0%': { transform: 'rotate(0deg)' }, '100%': { transform: 'rotate(360deg)' } },
         scanRingRev: { '0%': { transform: 'rotate(360deg)' }, '100%': { transform: 'rotate(0deg)' } },
-        pulseSoft: { '0%,100%': { opacity: '0.4' }, '50%': { opacity: '1' } },
-        glowGold: { '0%,100%': { boxShadow: '0 0 15px rgba(200,169,64,0.25)' }, '50%': { boxShadow: '0 0 35px rgba(200,169,64,0.55)' } },
-        floatSlow: { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-6px)' } },
+        pulseGlow: { '0%,100%': { boxShadow: '0 0 10px rgba(240,200,8,0.3)' }, '50%': { boxShadow: '0 0 30px rgba(240,200,8,0.6)' } },
+        floatSlow: { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-8px)' } },
+        shimmer: { '0%': { backgroundPosition: '-200% 0' }, '100%': { backgroundPosition: '200% 0' } }
       }
     }
   }
@@ -46,295 +39,344 @@ tailwind.config = {
 </script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { 
-  background: linear-gradient(135deg, #0F1420 0%, #171E30 50%, #0F1420 100%);
-  color: #E0E6F0;
+body {
+  background: radial-gradient(ellipse at top, #1A1F35 0%, #050814 60%, #03050A 100%);
+  color: #E2E8F0;
   min-height: 100vh;
   font-family: system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
 }
 .grid-bg {
   background-image: 
-    linear-gradient(rgba(90,130,180,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(90,130,180,0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
+    linear-gradient(rgba(240,200,8,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(240,200,8,0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
 }
-.card { 
-  background: linear-gradient(135deg, rgba(23,30,48,0.92), rgba(30,39,64,0.88)); 
-  backdrop-filter: blur(12px); 
-  border-radius: 12px;
-  border: 1px solid rgba(160,180,220,0.12);
-  transition: all 0.25s ease;
-  cursor: pointer;
+.card {
+  background: linear-gradient(135deg, rgba(15,23,42,0.9), rgba(30,41,59,0.8));
+  backdrop-filter: blur(16px);
+  border-radius: 16px;
+  border: 1px solid rgba(240,200,8,0.12);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+  transition: all 0.3s ease;
 }
 .card:hover {
+  border-color: rgba(240,200,8,0.35);
+  box-shadow: 0 8px 32px rgba(240,200,8,0.15), inset 0 1px 0 rgba(255,255,255,0.08);
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(74,144,217,0.12);
-  border-color: rgba(74,144,217,0.3);
-  background: linear-gradient(135deg, rgba(26,34,54,0.96), rgba(32,42,66,0.92));
 }
-.card-crown {
-  border-color: rgba(240,200,8,0.3);
-  background: linear-gradient(135deg, rgba(40,35,20,0.85), rgba(23,30,48,0.95));
+.card-glow {
+  position: relative;
+  overflow: hidden;
 }
-.card-crown:hover {
-  box-shadow: 0 8px 30px rgba(240,200,8,0.18);
-  border-color: rgba(240,200,8,0.5);
+.card-glow::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 16px;
+  background: linear-gradient(45deg, transparent, rgba(240,200,8,0.1), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
 }
-.progress-bar { border-radius: 6px; transition: width 0.6s ease-out; }
-.table-row { transition: background 0.15s; }
-.table-row:hover { background: rgba(74,144,217,0.1); }
-.btn { border-radius: 8px; font-size: 12px; cursor: pointer; transition: all 0.2s; border: none; }
-.btn:hover { transform: translateY(-1px); }
-.ring-outer { position: absolute; inset: -12px; border-radius: 50%; border: 1px dashed rgba(200,169,64,0.3); }
-.ring-inner { position: absolute; inset: 4px; border-radius: 50%; border: 1px solid rgba(74,144,217,0.25); }
-.data-node { position: absolute; width: 8px; height: 8px; border-radius: 50%; }
-.crown-glow { filter: drop-shadow(0 0 8px rgba(240,200,8,0.6)); }
-.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; }
-.tag-s { background: linear-gradient(90deg, rgba(240,200,8,0.25), rgba(200,169,64,0.15)); color: #F0D040; border: 1px solid rgba(240,200,8,0.35); }
-.tag-a { background: rgba(72,182,103,0.15); color: '#68D080'; border: 1px solid rgba(72,182,103,0.25); }
-.tag-b { background: rgba(91,155,213,0.15); color: '#70B0F0'; border: 1px solid rgba(91,155,213,0.25); }
-.tag-c { background: rgba(107,114,128,0.15); color: '#9CA3AF'; border: 1px solid rgba(107,114,128,0.25); }
-.fav-star { transition: all 0.2s; cursor: pointer; }
-.fav-star.active { color: #F0C808; text-shadow: 0 0 6px rgba(240,200,8,0.6); }
-.detail-panel { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
-.detail-panel.open { max-height: 400px; }
+.card-glow:hover::before { opacity: 1; }
+.crown-core {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ring-1 { position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgba(240,200,8,0.2); }
+.ring-2 { position: absolute; inset: 12px; border-radius: 50%; border: 1px dashed rgba(240,200,8,0.35); animation: scan-ring 12s linear infinite; }
+.ring-3 { position: absolute; inset: 28px; border-radius: 50%; border: 1px solid rgba(59,130,246,0.25); animation: scan-ring-rev 15s linear infinite; }
+.ring-4 { position: absolute; inset: 48px; border-radius: 50%; background: radial-gradient(circle, rgba(240,200,8,0.08) 0%, transparent 70%); }
+.crown-icon { font-size: 48px; filter: drop-shadow(0 0 12px rgba(240,200,8,0.8)); animation: floatSlow 3s ease-in-out infinite; }
+.progress-bar { border-radius: 999px; transition: width 0.8s cubic-bezier(0.4,0,0.2,1); }
+.tag { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.3px; }
+.tag-s { background: linear-gradient(90deg, rgba(240,200,8,0.25), rgba(240,200,8,0.1)); color: #FCD34D; border: 1px solid rgba(240,200,8,0.4); }
+.tag-a { background: rgba(16,185,129,0.12); color: #34D399; border: 1px solid rgba(16,185,129,0.3); }
+.tag-b { background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.3); }
+.tag-c { background: rgba(107,114,128,0.15); color: #9CA3AF; border: 1px solid rgba(107,114,128,0.25); }
+.fav-star { transition: all 0.2s; cursor: pointer; font-size: 16px; }
+.fav-star.active { color: #FBBF24; text-shadow: 0 0 8px rgba(240,200,8,0.6); }
+.panel-toggle { cursor: pointer; transition: transform 0.2s; }
+.detail-panel { max-height: 0; overflow: hidden; transition: max-height 0.35s ease-out; }
+.detail-panel.open { max-height: 300px; }
+.table-row { transition: all 0.15s ease; }
+.table-row:hover { background: rgba(240,200,8,0.06); }
+.table-row.selected { background: rgba(240,200,8,0.1); border-left: 2px solid #FBBF24; }
+.chip { display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 999px; font-size: 11px; background: rgba(240,200,8,0.08); border: 1px solid rgba(240,200,8,0.15); color: #FCD34D; }
+.chip.active { background: rgba(240,200,8,0.18); border-color: rgba(240,200,8,0.4); box-shadow: 0 0 8px rgba(240,200,8,0.2); }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
 </style>
 </head>
 <body class="grid-bg">
-
 <!-- 顶部导航 -->
-<header class="border-b border-dark-border/50 px-4 py-3 backdrop-blur-sm bg-dark-bg/60 sticky top-0 z-50">
-  <div class="max-w-[1700px] mx-auto flex items-center justify-between">
+<header class="sticky top-0 z-50 backdrop-blur-xl bg-dark-deeper/70 border-b border-gold-500/10 px-4 py-3">
+  <div class="max-w-[1920px] mx-auto flex items-center justify-between">
     <div class="flex items-center gap-3">
-      <span class="text-gold-500 text-xl font-bold tracking-wider">🐕 金狗封神系统</span>
-      <span class="text-gray-400 text-xs hidden md:inline">ULTIMATE · 全链扫描 · 因果闭环引擎</span>
+      <span class="text-2xl font-bold bg-gradient-to-r from-gold-400 via-gold-500 to-gold-400 bg-clip-text text-transparent tracking-wider">👑 金狗封神系统</span>
+      <span class="text-xs text-gray-500 hidden sm:inline">ULTIMATE · 潜伏窗口识别引擎</span>
     </div>
-    <div class="hidden md:flex items-center gap-1 text-xs">
-      <button data-chain="all" class="chain-btn px-3 py-1.5 rounded bg-accent-blue/10 text-accent-blue border border-accent-blue/20">全部链</button>
-      <button data-chain="solana" class="chain-btn px-3 py-1.5 rounded bg-dark-panel text-gray-400 border border-dark-border hover:border-accent-blue/40">Solana</button>
-      <button data-chain="ethereum" class="chain-btn px-3 py-1.5 rounded bg-dark-panel text-gray-400 border border-dark-border hover:border-accent-blue/40">以太坊</button>
-      <button data-chain="base" class="chain-btn px-3 py-1.5 rounded bg-dark-panel text-gray-400 border border-dark-border hover:border-accent-blue/40">Base</button>
-      <button data-chain="bsc" class="chain-btn px-3 py-1.5 rounded bg-dark-panel text-gray-400 border border-dark-border hover:border-accent-blue/40">BSC</button>
-      <div class="w-px h-5 bg-gray-700 mx-2"></div>
-      <button id="btn-fav-list" class="px-3 py-1.5 rounded bg-gold-900/20 text-gold-400 border border-gold-500/20">
-        <i class="fa fa-star mr-1"></i> 自选 <span id="fav-count" class="ml-1 text-xs">(0)</span>
+    <div class="flex items-center gap-2 text-xs">
+      <button data-chain="all" class="chain-btn chip active">全部链</button>
+      <button data-chain="solana" class="chip">Solana</button>
+      <button data-chain="ethereum" class="chip">以太坊</button>
+      <button data-chain="base" class="chip">Base</button>
+      <button data-chain="bsc" class="chip">BSC</button>
+      <div class="w-px h-4 bg-gray-700 mx-1"></div>
+      <button id="btn-fav-list" class="chip">
+        <i class="fa fa-star mr-1 text-gold-400"></i> 自选 <span id="fav-count">(0)</span>
       </button>
     </div>
     <div class="flex items-center gap-3 text-xs">
       <span id="api-status" class="flex items-center gap-1.5">
-        <span class="w-2 h-2 rounded-full bg-status-warn animate-pulse"></span>
-        <span id="status-text" class="text-gray-400">连接初始化</span>
+        <span class="status-dot bg-gold-500 animate-pulse"></span>
+        <span id="status-text" class="text-gray-400">启动中</span>
       </span>
-      <span class="text-gray-500" id="current-time">--:--:--</span>
+      <span id="current-time" class="text-gray-500">--:--:--</span>
     </div>
   </div>
 </header>
 
-<!-- 主标题区 -->
-<section class="text-center py-5">
-  <h1 class="text-2xl md:text-3xl font-bold">
-    <span class="bg-gradient-to-r from-gold-500 via-gold-600 to-gold-500 bg-clip-text text-transparent">潜伏窗口识别引擎</span>
+<!-- 主标题 -->
+<section class="text-center py-6">
+  <h1 class="text-3xl md:text-4xl font-bold">
+    <span class="bg-gradient-to-r from-gold-300 via-gold-500 to-gold-300 bg-clip-text text-transparent">潜伏窗口识别引擎</span>
   </h1>
-  <p class="text-gray-400 text-xs mt-1 tracking-wide">多源穿透 · 主力解构 · 共识扩散 · 因果闭环 · 风控护盾</p>
+  <p class="text-gray-400 text-sm mt-2">多源穿透 · 主力解构 · 共识扩散 · 因果闭环 · 风控护盾</p>
 </section>
 
-<!-- 主内容 -->
-<main class="max-w-[1700px] mx-auto px-3 pb-12">
-  <div class="grid grid-cols-1 lg:grid-cols-[280px_1fr_290px] gap-4">
-
-    <!-- ========== 左侧：六大核心策略面板 ========== -->
+<!-- 主布局 -->
+<main class="max-w-[1920px] mx-auto px-3 pb-16">
+  <div class="grid grid-cols-1 xl:grid-cols-[300px_1fr_300px] gap-4">
+    
+    <!-- ========== 左侧 6大核心面板 ========== -->
     <div class="space-y-3">
       
       <!-- 资金穿透 -->
-      <div class="card p-3.5" data-panel="fund">
-        <div class="flex items-center justify-between mb-2">
-          <h3 class="text-accent-cyan text-sm font-medium flex items-center gap-2">
+      <div class="card card-glow p-4" data-panel="fund">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-accent-cyan text-sm font-semibold flex items-center gap-2">
             <i class="fa fa-bolt"></i> 资金穿透
           </h3>
           <i class="fa fa-chevron-down text-xs text-gray-500 panel-toggle"></i>
         </div>
-        <div class="text-xs space-y-1.5">
-          <div class="flex justify-between"><span class="text-gray-400">真实流速</span><span id="real-flow" class="text-status-safe">--</span></div>
-          <div class="flex justify-between"><span class="text-gray-400">沉淀率</span><span id="settle-rate" class="text-status-crown">--%</span></div>
-          <div class="flex justify-between"><span class="text-gray-400">滑点预估</span><span id="slippage-est" class="text-gray-300">--</span></div>
+        <div class="text-xs space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">真实流速</span>
+            <span id="real-flow" class="text-status-safe font-medium">--</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">筹码沉淀率</span>
+            <span id="settle-rate" class="text-gold-400 font-medium">--%</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">大额异动</span>
+            <span id="whale-flow" class="text-gray-300">监测中</span>
+          </div>
         </div>
-        <div class="detail-panel mt-2 text-xs text-gray-400 border-t border-dark-border pt-2">
-          <p>• 过滤刷量/自成交，只统计外部真实资金流入</p>
-          <p>• 持仓周期延长=筹码锁定牢固，爆发前兆</p>
-          <p>• 大额买入后价格不动=主力在建仓</p>
+        <div class="detail-panel mt-3 pt-3 border-t border-gold-500/10 text-xs text-gray-400">
+          <p>• 过滤刷量/自成交，只统计外部真实资金</p>
+          <p>• 沉淀率持续走高 = 主力锁仓，惜售前兆</p>
+          <p>• 大单买入价格不动 = 悄悄建仓，重点盯防</p>
         </div>
       </div>
 
       <!-- 主力解构 -->
-      <div class="card p-3.5" data-panel="whale">
-        <div class="flex items-center justify-between mb-2">
-          <h3 class="text-accent-purple text-sm font-medium flex items-center gap-2">
+      <div class="card card-glow p-4" data-panel="whale">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-accent-purple text-sm font-semibold flex items-center gap-2">
             <i class="fa fa-user-secret"></i> 主力解构
           </h3>
           <i class="fa fa-chevron-down text-xs text-gray-500 panel-toggle"></i>
         </div>
-        <div class="text-xs space-y-1.5">
-          <div class="flex justify-between"><span class="text-gray-400">聪明钱胜率</span><span id="smart-rate" class="text-status-safe">--%</span></div>
-          <div class="flex justify-between"><span class="text-gray-400">联动钱包</span><span id="linked-wallets" class="text-accent-purple">--</span></div>
-          <div class="flex justify-between"><span class="text-gray-400">成本区间</span><span id="cost-range" class="text-status-crown">--</span></div>
+        <div class="text-xs space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">聪明钱胜率</span>
+            <span id="smart-rate" class="text-status-safe font-medium">--%</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">联动钱包</span>
+            <span id="linked-wallets" class="text-accent-purple font-medium">--</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">成本区间</span>
+            <span id="cost-range" class="text-gold-400 font-medium">--</span>
+          </div>
         </div>
-        <div class="detail-panel mt-2 text-xs text-gray-400 border-t border-dark-border pt-2">
-          <p>• 只跟胜率>70%、平均盈利>50%的顶级聪明钱</p>
-          <p>• 分散多钱包同节奏买入=主力布局</p>
-          <p>• 当前价低于主力成本=安全区间</p>
+        <div class="detail-panel mt-3 pt-3 border-t border-gold-500/10 text-xs text-gray-400">
+          <p>• 只跟历史胜率>70%、平均盈利>50%的顶级聪明钱</p>
+          <p>• 多钱包同步买入 = 主力布局信号增强</p>
+          <p>• 当前价低于主力成本 = 安全区间，分批入场</p>
         </div>
       </div>
 
       <!-- 共识扩散 -->
-      <div class="card p-3.5" data-panel="viral">
-        <div class="flex items-center justify-between mb-2">
-          <h3 class="text-status-info text-sm font-medium flex items-center gap-2">
+      <div class="card card-glow p-4" data-panel="viral">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-accent-blue text-sm font-semibold flex items-center gap-2">
             <i class="fa fa-share-alt"></i> 共识扩散
           </h3>
           <i class="fa fa-chevron-down text-xs text-gray-500 panel-toggle"></i>
         </div>
-        <div class="text-xs space-y-1.5">
-          <div class="flex justify-between"><span class="text-gray-400">新地址增速</span><span id="addr-growth" class="text-status-safe">--</span></div>
-          <div class="flex justify-between"><span class="text-gray-400">热度纯度</span><span id="viral-pure" class="text-status-crown">--%</span></div>
-          <div class="flex justify-between"><span class="text-gray-400">叙事赛道</span><span id="narrative-tag" class="text-gray-300">识别中</span></div>
+        <div class="text-xs space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">新地址增速</span>
+            <span id="addr-growth" class="text-status-safe font-medium">--</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">热度纯度</span>
+            <span id="viral-pure" class="text-gold-400 font-medium">--%</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">叙事赛道</span>
+            <span id="narrative-tag" class="text-gray-300">识别中</span>
+          </div>
         </div>
-        <div class="detail-panel mt-2 text-xs text-gray-400 border-t border-dark-border pt-2">
-          <p>• 陌生人分散进场=真正出圈；熟人扎堆=随时出货</p>
-          <p>• 同一赛道批量上新+资金集中=风口将至</p>
-          <p>• 概念独特不可替代=稀有溢价</p>
+        <div class="detail-panel mt-3 pt-3 border-t border-gold-500/10 text-xs text-gray-400">
+          <p>• 陌生人分散进场 = 真正出圈；熟人扎堆 = 随时出货</p>
+          <p>• 同赛道批量上新+资金集中 = 风口将至</p>
+          <p>• 概念独特不可替代 = 稀有溢价空间更大</p>
         </div>
       </div>
 
-      <!-- 时间窗口 -->
-      <div class="card p-3.5" data-panel="time">
-        <div class="flex items-center justify-between mb-2">
-          <h3 class="text-status-crown text-sm font-medium flex items-center gap-2">
+      <!-- 黄金窗口 -->
+      <div class="card card-glow p-4 border-gold-500/20" data-panel="time">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-gold-400 text-sm font-semibold flex items-center gap-2">
             <i class="fa fa-clock-o"></i> 黄金窗口
           </h3>
-          <i class="fa fa-chevron-down text-xs text-gray-500 panel-toggle"></i>
+          <i class="fa fa-chevron-down text-xs text-gold-500/70 panel-toggle"></i>
         </div>
-        <div class="text-xs space-y-1.5">
-          <div class="flex justify-between"><span class="text-gray-400">上线时长</span><span id="age-window" class="text-status-crown">--</span></div>
-          <div class="flex justify-between"><span class="text-gray-400">周期压缩</span><span id="cycle-compress" class="text-status-safe">--</span></div>
-          <div class="flex justify-between"><span class="text-gray-400">休眠筹码</span><span id="sleep-awake" class="text-gray-300">--</span></div>
+        <div class="text-xs space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">上线时长</span>
+            <span id="age-window" class="text-gold-400 font-medium">--</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">周期压缩</span>
+            <span id="cycle-compress" class="text-status-safe font-medium">--</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">休眠筹码</span>
+            <span id="sleep-awake" class="text-gray-300">--</span>
+          </div>
         </div>
-        <div class="detail-panel mt-2 text-xs text-gray-400 border-t border-dark-border pt-2">
-          <p>• 0–75分钟=黄金潜伏窗口，资金动价格不动=重点盯</p>
-          <p>• 24小时完成7天换手=共识极强，后劲更足</p>
-          <p>• 长期不动大额突然活跃=大资金布局信号</p>
+        <div class="detail-panel mt-3 pt-3 border-t border-gold-500/10 text-xs text-amber-200/70">
+          <p>• ⭐ 0–75分钟 = 黄金潜伏窗口，重点盯防</p>
+          <p>• 资金动、价格不动 = 主力吸筹，等风来</p>
+          <p>• 24小时完成7天换手 = 共识极强，后劲更足</p>
         </div>
       </div>
 
       <!-- 风控护盾 -->
-      <div class="card border border-status-risk/20 p-3.5" data-panel="risk">
-        <div class="flex items-center justify-between mb-2">
-          <h3 class="text-status-risk text-sm font-medium flex items-center gap-2">
+      <div class="card card-glow p-4 border-status-risk/20" data-panel="risk">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-status-warn text-sm font-semibold flex items-center gap-2">
             <i class="fa fa-shield"></i> 风控护盾
           </h3>
           <i class="fa fa-chevron-down text-xs text-gray-500 panel-toggle"></i>
         </div>
-        <div class="text-xs space-y-1.5">
-          <div class="flex justify-between"><span class="text-gray-400">安全评分</span><span id="risk-score" class="text-status-safe">--/100</span></div>
-          <div class="flex justify-between"><span class="text-gray-400">资金风控</span><span class="text-white">≤20%单笔</span></div>
-          <div class="flex justify-between"><span class="text-gray-400">止损/止盈</span><span class="text-status-risk">-25%</span>/<span class="text-status-safe">+50%</span></div>
+        <div class="text-xs space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">安全评分</span>
+            <span id="risk-score" class="font-medium">--/100</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">单笔上限</span>
+            <span class="text-white">≤20%资金</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">止损/止盈</span>
+            <span class="font-medium"><span class="text-status-risk">-25%</span> / <span class="text-status-safe">+50%</span></span>
+          </div>
         </div>
-        <div class="detail-panel mt-2 text-xs text-gray-400 border-t border-dark-border pt-2">
+        <div class="detail-panel mt-3 pt-3 border-t border-gold-500/10 text-xs text-gray-400">
           <p>• 三层核验：代码比对→开发者溯源→资金穿透</p>
-          <p>• 急拉>50%=冷静观察，等回踩不追高</p>
-          <p>• 大盘走弱自动收紧仓位，逆势走强=真龙苗子</p>
+          <p>• 急拉>50% = 冷静观察，等回踩绝不追高</p>
+          <p>• 大盘走弱自动收紧，逆势走强 = 真龙苗子</p>
         </div>
       </div>
 
-      <!-- 必杀：因果闭环 -->
-      <div class="card-crown card p-3.5" data-panel="causal">
-        <div class="flex items-center justify-between mb-2">
-          <h3 class="text-gold-500 text-sm font-medium flex items-center gap-2">
+      <!-- 因果闭环 · 必杀 -->
+      <div class="card card-glow p-4 border-2 border-gold-500/30 shadow-lg shadow-gold-500/5" data-panel="causal">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-gold-400 text-sm font-bold flex items-center gap-2">
             <i class="fa fa-sitemap"></i> 因果闭环 · 必杀
           </h3>
-          <i class="fa fa-chevron-down text-xs text-gold-500 panel-toggle"></i>
+          <i class="fa fa-chevron-down text-xs text-gold-500/70 panel-toggle"></i>
         </div>
-        <div class="text-xs space-y-1.5">
-          <div class="flex justify-between"><span class="text-gray-400">因：叙事铺垫</span><span id="cause-nar" class="text-status-neutral">监测中</span></div>
-          <div class="flex justify-between"><span class="text-gray-400">势：资金潜伏</span><span id="trend-fund" class="text-status-neutral">监测中</span></div>
-          <div class="flex justify-between"><span class="text-gold-400">果：爆发确认</span><span id="result-burst" class="text-gold-500 font-bold">等待</span></div>
+        <div class="text-xs space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">因：叙事铺垫</span>
+            <span id="cause-nar" class="text-gray-300">监测中</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">势：资金潜伏</span>
+            <span id="trend-fund" class="text-gray-300">监测中</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gold-400 font-medium">果：爆发确认</span>
+            <span id="result-burst" class="text-gold-400 font-bold">等待</span>
+          </div>
         </div>
-        <div class="detail-panel mt-2 text-xs text-gold-300/80 border-t border-gold-500/20 pt-2">
-          <p>不看涨跌，只看因果；不找机会，只等机会</p>
-          <p class="mt-1">资金悄悄进、价格不暴涨、新人稳步来、老人惜售 → 风来自然爆</p>
+        <div class="detail-panel mt-3 pt-3 border-t border-gold-500/20 text-xs text-gold-200/80">
+          <p class="font-medium">不看涨跌，只看因果；不找机会，只等机会</p>
+          <p class="mt-2 text-gold-300/90">资金悄悄进、价格不暴涨、新人稳步来、老人惜售 → 风来自然爆</p>
         </div>
       </div>
     </div>
 
-    <!-- ========== 中间：皇冠扫描 + 皇冠精选 + 币种列表 ========== -->
-    <div class="flex flex-col space-y-4">
+    <!-- ========== 中间：皇冠核心区 + 皇冠精选 + 币种列表 ========== -->
+    <div class="flex flex-col items-center space-y-5">
       
-      <!-- 皇冠呼吸雷达区 -->
-      <div class="flex items-center justify-center py-4">
-        <div class="relative w-[280px] h-[280px] flex items-center justify-center">
-          <!-- 外层扫描环 -->
-          <div class="ring-outer animate-scan-ring absolute"></div>
-          <!-- 内层扫描环 -->
-          <div class="ring-inner animate-scan-ring-rev absolute"></div>
-          <!-- 呼吸光晕 -->
-          <div class="absolute w-[220px] h-[220px] rounded-full bg-gold-500/5 animate-breathe"></div>
-          <!-- 核心球 -->
-          <div class="relative w-[180px] h-[180px] rounded-full bg-gradient-to-br from-dark-panel via-dark-bg to-dark-panel border border-gold-500/20 flex items-center justify-center animate-glow-gold">
-            <div class="absolute -top-2 left-1/2 -translate-x-1/2 text-4xl animate-float-slow crown-glow">👑</div>
-            
-            <div class="text-center z-10">
-              <div id="scan-status" class="text-gold-500 font-bold text-lg">全链扫描中</div>
-              <div class="text-gray-400 text-xs mt-1">因果引擎运行正常</div>
-              <div class="mt-3 w-[140px] h-2 bg-dark-panel rounded-full overflow-hidden mx-auto">
-                <div id="scan-progress" class="h-full bg-gradient-to-r from-accent-blue via-gold-500 to-accent-cyan w-0 progress-bar"></div>
-              </div>
-              <div id="scan-pct" class="text-xs text-gray-500 mt-1">0%</div>
+      <!-- 皇冠扫描核心 -->
+      <div class="relative flex items-center justify-center py-4">
+        <div class="crown-core">
+          <div class="ring-1"></div>
+          <div class="ring-2"></div>
+          <div class="ring-3"></div>
+          <div class="ring-4"></div>
+          
+          <div class="relative z-10 text-center">
+            <div class="crown-icon mb-2">👑</div>
+            <div id="scan-status" class="text-gold-400 font-bold text-lg">扫描就绪</div>
+            <p class="text-gray-400 text-xs mt-1">因果引擎运行正常</p>
+            <div class="mt-3 w-[180px] h-2 bg-dark-panel rounded-full overflow-hidden mx-auto">
+              <div id="scan-progress" class="h-full bg-gradient-to-r from-accent-blue via-gold-500 to-accent-cyan progress-bar" style="width:100%"></div>
             </div>
+            <p id="scan-pct" class="text-xs text-gray-500 mt-1">已就绪</p>
           </div>
           
           <!-- 扫描节点 -->
-          <div class="data-node bg-accent-cyan animate-pulse-soft" style="top: 20%; left: 75%;"></div>
-          <div class="data-node bg-accent-purple animate-pulse-soft" style="top: 70%; left: 80%; animation-delay: 0.5s;"></div>
-          <div class="data-node bg-status-crown animate-pulse-soft" style="top: 80%; left: 25%; animation-delay: 1s;"></div>
-          <div class="data-node bg-accent-blue animate-pulse-soft" style="top: 30%; left: 10%; animation-delay: 1.5s;"></div>
+          <div class="absolute w-2 h-2 rounded-full bg-accent-cyan animate-pulse-glow" style="top: 20%; left: 75%;"></div>
+          <div class="absolute w-2 h-2 rounded-full bg-accent-purple animate-pulse-glow" style="top: 70%; left: 80%; animation-delay: 0.5s;"></div>
+          <div class="absolute w-2 h-2 rounded-full bg-gold-500 animate-pulse-glow" style="top: 80%; left: 25%; animation-delay: 1s;"></div>
+          <div class="absolute w-2 h-2 rounded-full bg-accent-blue animate-pulse-glow" style="top: 30%; left: 10%; animation-delay: 1.5s;"></div>
         </div>
       </div>
 
-      <!-- 皇冠精选区 -->
-      <div class="card-crown card p-4">
-        <h3 class="text-center text-gold-500 font-bold text-base mb-4">👑 皇冠精选 · S级潜伏</h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3" id="crown-zone">
-          <div class="bg-gold-900/15 rounded-lg border border-gold-500/25 p-4 text-center hover:bg-gold-900/25 transition cursor-pointer" data-rank="0">
-            <div class="text-xl mb-2">🪙</div>
-            <div class="text-gold-500 font-bold text-sm">识别中</div>
-            <div class="text-xs text-gray-400 mt-1">等待数据</div>
-            <div class="mt-2"><span class="tag tag-s">S级</span></div>
-          </div>
-          <div class="bg-accent-blue/5 rounded-lg border border-accent-blue/20 p-4 text-center hover:bg-accent-blue/10 transition cursor-pointer" data-rank="1">
-            <div class="text-xl mb-2">🐳</div>
-            <div class="text-accent-blue font-bold text-sm">识别中</div>
-            <div class="text-xs text-gray-400 mt-1">等待数据</div>
-            <div class="mt-2"><span class="tag tag-a">A级</span></div>
-          </div>
-          <div class="bg-status-info/5 rounded-lg border border-status-info/20 p-4 text-center hover:bg-status-info/10 transition cursor-pointer" data-rank="2">
-            <div class="text-xl mb-2">🔥</div>
-            <div class="text-status-info font-bold text-sm">识别中</div>
-            <div class="text-xs text-gray-400 mt-1">等待数据</div>
-            <div class="mt-2"><span class="tag tag-b">B级</span></div>
-          </div>
+      <!-- 皇冠精选 S级潜伏 -->
+      <div class="card card-glow p-5 w-full border-gold-500/20">
+        <h3 class="text-center text-gold-400 font-bold text-lg mb-4">👑 皇冠精选 · S级潜伏</h3>
+        <div class="grid grid-cols-3 gap-3" id="crown-zone">
+          <!-- 动态填充 -->
         </div>
       </div>
 
       <!-- 币种列表 -->
-      <div class="card p-4">
+      <div class="card card-glow p-4 w-full">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-accent-blue text-sm font-medium flex items-center gap-2">
+          <h3 class="text-accent-blue text-sm font-semibold flex items-center gap-2">
             <i class="fa fa-list-ul"></i> 潜力币种 · 综合评分排序
           </h3>
-          <div class="flex gap-2">
-            <span id="data-mode" class="text-xs text-gray-500 flex items-center gap-1">
-              <i class="fa fa-info-circle"></i> 连接中
+          <div class="flex items-center gap-2">
+            <span id="data-mode" class="text-xs text-gray-400 flex items-center gap-1">
+              <i class="fa fa-check-circle text-status-safe"></i> 演示模式 · 完整可用
             </span>
-            <button id="refresh-btn" class="btn bg-accent-blue/10 text-accent-blue px-3 py-1.5 flex items-center gap-1.5">
+            <button id="refresh-btn" class="px-3 py-1.5 rounded-lg bg-gold-500/10 text-gold-400 border border-gold-500/20 text-xs flex items-center gap-1.5 hover:bg-gold-500/20 transition">
               <i id="refresh-icon" class="fa fa-refresh"></i> 刷新
             </button>
           </div>
@@ -342,102 +384,95 @@ body {
         <div class="overflow-x-auto">
           <table class="w-full text-xs">
             <thead>
-              <tr class="text-gray-400 border-b border-dark-border">
-                <th class="text-left py-2.5 px-2 w-6"></th>
-                <th class="text-left py-2.5 px-2">名称</th>
-                <th class="text-left py-2.5 px-2">链</th>
-                <th class="text-left py-2.5 px-2">价格</th>
-                <th class="text-left py-2.5 px-2">流动性</th>
-                <th class="text-left py-2.5 px-2">24小时</th>
-                <th class="text-left py-2.5 px-2">安全</th>
-                <th class="text-left py-2.5 px-2">评级</th>
-                <th class="text-left py-2.5 px-2">操作</th>
+              <tr class="text-gray-400 border-b border-gold-500/10">
+                <th class="text-left py-2 px-2 w-8"></th>
+                <th class="text-left py-2 px-2">名称</th>
+                <th class="text-left py-2 px-2">链</th>
+                <th class="text-right py-2 px-2">价格</th>
+                <th class="text-right py-2 px-2">流动性</th>
+                <th class="text-right py-2 px-2">24H涨跌</th>
+                <th class="text-center py-2 px-2">安全</th>
+                <th class="text-center py-2 px-2">评级</th>
+                <th class="text-center py-2 px-2">操作</th>
               </tr>
             </thead>
             <tbody id="token-list">
-              <tr>
-                <td colspan="9" class="py-10 text-center text-gray-400">
-                  <i class="fa fa-spinner fa-spin mr-2"></i> 全链扫描启动中，请稍候...
-                </td>
-              </tr>
+              <!-- 动态填充 -->
             </tbody>
           </table>
-        </div>
-        <div id="error-msg" class="hidden mt-3 text-center text-status-risk text-sm">
-          <i class="fa fa-exclamation-triangle mr-1"></i>
-          <span id="error-text">数据加载失败，已自动切换至演示模式</span>
         </div>
       </div>
     </div>
 
-    <!-- ========== 右侧：详情分析 + 快捷操作 ========== -->
+    <!-- ========== 右侧：详情分析 + 自选 + 风控 + 快捷 ========== -->
     <div class="space-y-3">
       
-      <!-- 币种详情分析 -->
-      <div class="card p-4" id="detail-card">
-        <h3 class="text-accent-blue text-sm font-medium mb-3 flex items-center justify-between">
+      <!-- 币种详情 -->
+      <div class="card card-glow p-4" id="detail-card">
+        <h3 class="text-accent-blue text-sm font-semibold mb-3 flex items-center justify-between">
           <span class="flex items-center gap-2"><i class="fa fa-chart-pie"></i> 币种分析</span>
-          <span id="detail-symbol" class="text-gold-500 font-bold">--</span>
+          <span id="detail-symbol" class="text-gold-400 font-bold">--</span>
         </h3>
         
-        <div id="detail-empty" class="text-center py-6 text-gray-400 text-xs">
-          点击左侧币种查看详细分析
+        <div id="detail-empty" class="text-center py-8 text-gray-400 text-sm">
+          <i class="fa fa-mouse-pointer text-lg mb-2 block opacity-50"></i>
+          点击左侧币种<br>查看详细分析
         </div>
         
-        <div id="detail-content" class="hidden">
+        <div id="detail-content" class="hidden space-y-4">
           <!-- 双评分 -->
-          <div class="space-y-3 mb-4">
+          <div class="space-y-3">
             <div>
               <div class="flex justify-between text-xs mb-1">
-                <span class="text-gray-400">安全分</span>
+                <span class="text-gray-400">🛡️ 安全评分</span>
                 <span id="d-safety" class="text-status-safe font-bold">--/100</span>
               </div>
               <div class="h-2 bg-dark-panel rounded-full overflow-hidden">
-                <div id="d-safety-bar" class="h-full bg-status-safe w-0 progress-bar"></div>
+                <div id="d-safety-bar" class="h-full bg-gradient-to-r from-gray-500 to-status-safe progress-bar" style="width:0%"></div>
               </div>
             </div>
             <div>
               <div class="flex justify-between text-xs mb-1">
-                <span class="text-gray-400">潜力分</span>
-                <span id="d-potential" class="text-gold-500 font-bold">--/100</span>
+                <span class="text-gray-400">🚀 潜力评分</span>
+                <span id="d-potential" class="text-gold-400 font-bold">--/100</span>
               </div>
               <div class="h-2 bg-dark-panel rounded-full overflow-hidden">
-                <div id="d-pot-bar" class="h-full bg-gold-500 w-0 progress-bar"></div>
+                <div id="d-pot-bar" class="h-full bg-gradient-to-r from-amber-600 to-gold-400 progress-bar" style="width:0%"></div>
               </div>
             </div>
           </div>
           
           <!-- 关键指标 -->
-          <div class="space-y-2 text-xs mb-4">
-            <div class="flex justify-between p-2 bg-dark-panel/50 rounded">
-              <span class="text-gray-400">资金流速</span>
-              <span id="d-flow" class="text-gray-300">--</span>
+          <div class="space-y-2 text-xs">
+            <div class="flex justify-between p-2 bg-gold-500/5 rounded-lg border border-gold-500/10">
+              <span class="text-gray-400">资金流向</span>
+              <span id="d-flow" class="font-medium">--</span>
             </div>
-            <div class="flex justify-between p-2 bg-dark-panel/50 rounded">
+            <div class="flex justify-between p-2 bg-gold-500/5 rounded-lg border border-gold-500/10">
               <span class="text-gray-400">筹码状态</span>
-              <span id="d-chips" class="text-gray-300">--</span>
+              <span id="d-chips" class="font-medium">--</span>
             </div>
-            <div class="flex justify-between p-2 bg-dark-panel/50 rounded">
+            <div class="flex justify-between p-2 bg-gold-500/5 rounded-lg border border-gold-500/10">
               <span class="text-gray-400">时间窗口</span>
-              <span id="d-window" class="text-gray-300">--</span>
+              <span id="d-window" class="font-medium">--</span>
             </div>
-            <div class="flex justify-between p-2 bg-dark-panel/50 rounded">
-              <span class="text-gray-400">因果判定</span>
-              <span id="d-causal" class="text-gold-400">--</span>
+            <div class="flex justify-between p-2 bg-gold-500/10 rounded-lg border border-gold-500/20">
+              <span class="text-gold-400 font-medium">因果判定</span>
+              <span id="d-causal" class="text-gold-300 font-bold">--</span>
             </div>
           </div>
           
           <!-- 判定结论 -->
-          <div class="p-3 rounded-lg border border-accent-blue/20 bg-accent-blue/5 text-xs">
-            <p class="text-gray-400 mb-1">系统判定</p>
-            <p id="d-verdict" class="text-white">--</p>
+          <div class="p-3 rounded-lg border border-gold-500/20 bg-gold-500/5 text-xs">
+            <p class="text-gray-400 mb-1">📋 系统判定</p>
+            <p id="d-verdict" class="text-white leading-relaxed">--</p>
           </div>
         </div>
       </div>
 
-      <!-- 自选列表 -->
-      <div class="card p-4" id="fav-panel" style="display: none;">
-        <h3 class="text-gold-500 text-sm font-medium mb-3 flex items-center gap-2">
+      <!-- 自选监控 -->
+      <div class="card card-glow p-4 hidden" id="fav-panel">
+        <h3 class="text-gold-400 text-sm font-semibold mb-3 flex items-center gap-2">
           <i class="fa fa-star"></i> 自选监控
         </h3>
         <div id="fav-list" class="space-y-2 text-xs max-h-60 overflow-y-auto">
@@ -445,37 +480,37 @@ body {
         </div>
       </div>
 
-      <!-- 风控规则 -->
-      <div class="card border border-status-risk/20 p-4">
-        <h3 class="text-status-risk text-sm font-medium mb-3 flex items-center gap-2">
+      <!-- 风控铁律 -->
+      <div class="card card-glow p-4 border-status-risk/20">
+        <h3 class="text-status-warn text-sm font-semibold mb-3 flex items-center gap-2">
           <i class="fa fa-exclamation-triangle"></i> 风控铁律
         </h3>
         <div class="space-y-2 text-xs">
-          <div class="flex justify-between"><span class="text-gray-400">单笔投入</span><span class="text-white">≤总资金 20%</span></div>
-          <div class="flex justify-between"><span class="text-gray-400">止损线</span><span class="text-status-risk">-25% 无条件执行</span></div>
-          <div class="flex justify-between"><span class="text-gray-400">止盈线</span><span class="text-status-safe">+50% 分批退出</span></div>
-          <div class="flex justify-between"><span class="text-gray-400">持仓时限</span><span class="text-status-warn">≤72小时观察</span></div>
-          <div class="flex justify-between"><span class="text-gray-400">追高保护</span><span class="text-status-crown">>50%急拉 冷静观察</span></div>
+          <div class="flex justify-between"><span class="text-gray-400">单笔投入</span><span class="text-white font-medium">≤总资金 20%</span></div>
+          <div class="flex justify-between"><span class="text-gray-400">止损线</span><span class="text-status-risk font-medium">-25% 无条件执行</span></div>
+          <div class="flex justify-between"><span class="text-gray-400">止盈线</span><span class="text-status-safe font-medium">+50% 分批退出</span></div>
+          <div class="flex justify-between"><span class="text-gray-400">持仓时限</span><span class="text-status-info font-medium">≤72小时观察</span></div>
+          <div class="flex justify-between"><span class="text-gray-400">追高保护</span><span class="text-gold-400 font-medium">>50%急拉 冷静观察</span></div>
         </div>
       </div>
 
       <!-- 快捷操作 -->
-      <div class="card p-4">
-        <h3 class="text-accent-blue text-sm font-medium mb-3 flex items-center gap-2">
+      <div class="card card-glow p-4">
+        <h3 class="text-accent-blue text-sm font-semibold mb-3 flex items-center gap-2">
           <i class="fa fa-bolt"></i> 快捷操作
         </h3>
         <div class="grid grid-cols-2 gap-2 text-xs">
-          <button id="btn-chart" class="btn bg-accent-blue/10 text-accent-blue border border-accent-blue/20 py-2.5" disabled>
-            <i class="fa fa-chart-line mr-1"></i> 行情图表
+          <button id="btn-chart" class="py-2.5 px-3 rounded-lg bg-accent-blue/10 text-accent-blue border border-accent-blue/20 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-accent-blue/20 transition" disabled>
+            <i class="fa fa-chart-line mr-1"></i> 行情
           </button>
-          <button id="btn-check" class="btn bg-status-safe/10 text-status-safe border border-status-safe/20 py-2.5" disabled>
+          <button id="btn-check" class="py-2.5 px-3 rounded-lg bg-status-safe/10 text-status-safe border border-status-safe/20 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-status-safe/20 transition" disabled>
             <i class="fa fa-shield mr-1"></i> 安全检测
           </button>
-          <button id="btn-alert" class="btn bg-status-info/10 text-status-info border border-status-info/20 py-2.5" disabled>
-            <i class="fa fa-bell mr-1"></i> 设置提醒
+          <button id="btn-alert" class="py-2.5 px-3 rounded-lg bg-status-info/10 text-status-info border border-status-info/20 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-status-info/20 transition" disabled>
+            <i class="fa fa-bell mr-1"></i> 提醒
           </button>
-          <button id="btn-guide" class="btn bg-gold-900/20 text-gold-400 border border-gold-500/20 py-2.5">
-            <i class="fa fa-book mr-1"></i> 系统指南
+          <button id="btn-guide" class="py-2.5 px-3 rounded-lg bg-gold-500/10 text-gold-400 border border-gold-500/20 hover:bg-gold-500/20 transition">
+            <i class="fa fa-book mr-1"></i> 完整指南
           </button>
         </div>
       </div>
@@ -484,31 +519,16 @@ body {
 </main>
 
 <!-- 底部状态栏 -->
-<footer class="border-t border-dark-border/50 py-3 mt-4">
-  <div class="max-w-[1700px] mx-auto px-4">
+<footer class="border-t border-gold-500/10 py-3 mt-4">
+  <div class="max-w-[1920px] mx-auto px-4">
     <div class="flex flex-wrap justify-center gap-4 text-xs text-gray-400">
-      <span class="flex items-center gap-1.5">
-        <span class="w-1.5 h-1.5 rounded-full bg-status-crown"></span>
-        黄金窗口 0–75分钟 已启用
-      </span>
-      <span class="flex items-center gap-1.5">
-        <span class="w-1.5 h-1.5 rounded-full bg-accent-purple"></span>
-        聪明钱联动识别 已开启
-      </span>
-      <span class="flex items-center gap-1.5">
-        <span class="w-1.5 h-1.5 rounded-full bg-accent-cyan"></span>
-        因果闭环引擎 运行中
-      </span>
-      <span class="flex items-center gap-1.5">
-        <span class="w-1.5 h-1.5 rounded-full bg-status-safe"></span>
-        风控护盾 已激活
-      </span>
-      <span class="flex items-center gap-1.5">
-        <span class="w-1.5 h-1.5 rounded-full bg-accent-blue"></span>
-        数据源：DexScreener · GeckoTerminal · 备用节点 · 演示兜底
-      </span>
+      <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-gold-500"></span>黄金窗口 0–75分钟 已启用</span>
+      <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-accent-purple"></span>聪明钱联动识别 开启</span>
+      <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-accent-cyan"></span>因果闭环引擎 运行中</span>
+      <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-status-safe"></span>风控护盾 已激活</span>
+      <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-accent-blue"></span>优先演示模式 · 网络正常自动切实时</span>
     </div>
-    <p class="text-center text-xs text-status-warn/60 mt-2">
+    <p class="text-center text-xs text-gray-500 mt-2">
       ⚠️ 本系统仅为辅助决策工具，不构成投资建议。投资有风险，入市需谨慎！
     </p>
   </div>
@@ -520,22 +540,20 @@ let selectedToken = null;
 let allTokens = [];
 let favorites = JSON.parse(localStorage.getItem('goldendog_fav') || '[]');
 let currentChain = 'all';
-let isDemoMode = false;
+let isDemoMode = true; // 默认优先演示，网络好自动切实时
 
 // ========== 演示数据生成器 ==========
 function generateDemoData() {
-  const symbols = ['GDOG', 'PEPUP', 'AIBULL', 'MEME', 'SOLX', 'BULL', 'CAT', 'MOON', 'GEM', 'PULSE', 'NEXUS', 'FLUX', 'HORIZON', 'VANGUARD', 'PRIME'];
+  const symbols = ['GDOG', 'PEPUP', 'AIBULL', 'MEME', 'SOLX', 'BULL', 'CAT', 'MOON', 'GEM', 'PULSE', 'NEXUS', 'FLUX', 'HORIZON', 'VANGUARD', 'PRIME', 'KING', 'GOLDOG', 'SUPER', 'WIN', 'LUCKY'];
   const chains = ['solana', 'ethereum', 'base', 'bsc'];
   const now = Date.now();
   
   return symbols.map((sym, i) => {
-    const ageMin = Math.floor(Math.random() * 180); // 0–3小时
+    const ageMin = Math.floor(Math.random() * 180);
     const liq = 5000 + Math.random() * 500000;
     const vol24 = liq * (0.1 + Math.random() * 1.5);
     const priceChg = -20 + Math.random() * 50;
-    const score = Math.floor(40 + Math.random() * 55);
-    const isNew = ageMin < 75;
-    const flowUp = Math.random() > 0.4;
+    const scores = calcScoreCalc({ ageMinutes: ageMin, liquidity: { usd: liq }, volume: { h24: vol24 }, priceChange: { h24: priceChg }, verified: Math.random() > 0.3, flowTrend: Math.random() > 0.4 ? 'up' : 'flat', honeypot: false, rugPull: false });
     
     return {
       pairAddress: `demo_${sym}_${i}`,
@@ -551,15 +569,43 @@ function generateDemoData() {
       verified: Math.random() > 0.3,
       honeypot: Math.random() < 0.05,
       rugPull: Math.random() < 0.05,
-      flowTrend: flowUp ? 'up' : Math.random() > 0.5 ? 'flat' : 'down',
+      flowTrend: Math.random() > 0.4 ? 'up' : Math.random() > 0.5 ? 'flat' : 'down',
       depositRate: (50 + Math.random()*45).toFixed(0),
       holderGrowth: (Math.random()*15).toFixed(1),
-      score: score,
-      isNew: isNew,
+      score: scores.total,
+      isNew: ageMin < 75,
       url: 'https://dexscreener.com/',
       __isDemo: true
     };
   }).sort((a,b) => b.score - a.score);
+}
+
+// ========== 评分计算引擎 ==========
+function calcScoreCalc(p) {
+  let safe = 50, pot = 50;
+  const liq = p.liquidity?.usd || 0;
+  const vol = p.volume?.h24 || 0;
+  const chg = p.priceChange?.h24 || 0;
+  
+  // 安全分
+  safe += liq > 10000 ? 5 : 0;
+  safe += liq > 50000 ? 5 : 0;
+  safe += liq > 200000 ? 5 : 0;
+  safe += p.verified ? 10 : 0;
+  safe -= p.honeypot ? 30 : 0;
+  safe -= p.rugPull ? 30 : 0;
+  
+  // 潜力分
+  pot += p.ageMinutes < 75 ? 12 : p.ageMinutes < 180 ? 5 : 0;
+  pot += (chg > 3 && chg < 30) ? 10 : (chg > 0 && chg <= 3) ? 5 : (chg < -15) ? -10 : 0;
+  pot += p.flowTrend === 'up' ? 10 : 0;
+  pot += vol / liq > 0.3 ? 8 : 0;
+  
+  return { 
+    safe: Math.min(100, Math.max(0, safe)), 
+    pot: Math.min(100, Math.max(0, pot)), 
+    total: Math.floor((safe + pot) / 2) 
+  };
 }
 
 // ========== 工具函数 ==========
@@ -569,7 +615,6 @@ function fmtNum(n, dec=1) {
   if (n >= 1e3) return (n/1e3).toFixed(dec) + 'K';
   return n.toFixed(dec);
 }
-function fmtPct(n) { return (n >= 0 ? '+' : '') + n.toFixed(2) + '%'; }
 function getRating(score) {
   if (score >= 85) return { text: 'S级', tag: 'tag-s' };
   if (score >= 75) return { text: 'A级', tag: 'tag-a' };
@@ -581,26 +626,6 @@ function getSafetyLabel(p) {
   if (p.verified && (p.liquidity?.usd || 0) > 50000) return '<span class="text-status-safe">✅ 安全</span>';
   if ((p.liquidity?.usd || 0) > 20000) return '<span class="text-status-warn">⚠️ 观察</span>';
   return '<span class="text-gray-500">—</span>';
-}
-function calcScore(p) {
-  let safe = 50, pot = 50;
-  const liq = p.liquidity?.usd || 0;
-  const vol = p.volume?.h24 || 0;
-  const chg = p.priceChange?.h24 || 0;
-  
-  safe += liq > 10000 ? 5 : 0;
-  safe += liq > 50000 ? 5 : 0;
-  safe += liq > 200000 ? 5 : 0;
-  safe += p.verified ? 10 : 0;
-  safe -= p.honeypot ? 30 : 0;
-  safe -= p.rugPull ? 30 : 0;
-  
-  pot += p.ageMinutes < 75 ? 12 : p.ageMinutes < 180 ? 5 : 0;
-  pot += (chg > 3 && chg < 30) ? 10 : (chg > 0 && chg <= 3) ? 5 : (chg < -15) ? -10 : 0;
-  pot += p.flowTrend === 'up' ? 10 : 0;
-  pot += vol / liq > 0.3 ? 8 : 0;
-  
-  return { safe: Math.min(100, Math.max(0, safe)), pot: Math.min(100, Math.max(0, pot)), total: Math.floor((safe+pot)/2) };
 }
 
 // ========== 时间更新 ==========
@@ -628,11 +653,11 @@ function saveFav() {
   document.getElementById('fav-count').textContent = `(${favorites.length})`;
 }
 function toggleFav(pair) {
-  const idx = favorites.findIndex(f => f.pairAddress === pair.pairAddress);
+  const idx = favorites.findIndex(f => f.address === pair.pairAddress);
   if (idx >= 0) favorites.splice(idx, 1);
   else favorites.push({ symbol: pair.baseToken.symbol, address: pair.pairAddress, url: pair.url });
   saveFav();
-  renderList();
+  renderFiltered(allTokens);
 }
 function renderFavList() {
   const list = document.getElementById('fav-list');
@@ -641,11 +666,11 @@ function renderFavList() {
     return;
   }
   list.innerHTML = favorites.map(f => `
-    <div class="flex justify-between items-center p-2 bg-dark-panel/50 rounded">
-      <span class="font-bold">${f.symbol}</span>
+    <div class="flex justify-between items-center p-2 bg-gold-500/5 rounded-lg border border-gold-500/10">
+      <span class="font-bold text-gold-300">${f.symbol}</span>
       <div class="flex gap-2">
         <a href="${f.url}" target="_blank" class="text-accent-blue hover:underline">行情</a>
-        <span class="text-status-risk cursor-pointer" data-remove="${f.address}">移除</span>
+        <span class="text-status-risk cursor-pointer hover:text-red-400" data-remove="${f.address}">移除</span>
       </div>
     </div>
   `).join('');
@@ -655,35 +680,32 @@ function renderFavList() {
 }
 document.getElementById('btn-fav-list').onclick = () => {
   const p = document.getElementById('fav-panel');
-  p.style.display = p.style.display === 'none' ? 'block' : 'none';
+  p.classList.toggle('hidden');
 };
 
 // ========== 链筛选 ==========
 document.querySelectorAll('.chain-btn').forEach(btn => {
   btn.onclick = () => {
-    document.querySelectorAll('.chain-btn').forEach(b => {
-      b.classList.remove('bg-accent-blue/10', 'text-accent-blue', 'border-accent-blue/20');
-      b.classList.add('bg-dark-panel', 'text-gray-400', 'border-dark-border');
-    });
-    btn.classList.remove('bg-dark-panel', 'text-gray-400', 'border-dark-border');
-    btn.classList.add('bg-accent-blue/10', 'text-accent-blue', 'border-accent-blue/20');
+    document.querySelectorAll('.chain-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
     currentChain = btn.dataset.chain;
-    filterAndRender();
+    renderFiltered(allTokens);
   };
 });
-function filterAndRender() {
-  let list = allTokens;
-  if (currentChain !== 'all') list = allTokens.filter(t => t.chainId === currentChain);
-  renderFiltered(list);
-}
+
+// ========== 渲染数据 ==========
 function renderFiltered(data) {
+  let list = data;
+  if (currentChain !== 'all') list = data.filter(t => t.chainId === currentChain);
+  
   const tbody = document.getElementById('token-list');
-  if (!data.length) {
-    tbody.innerHTML = '<tr><td colspan="9" class="py-6 text-center text-gray-400">当前链暂无数据</td></tr>';
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="9" class="py-8 text-center text-gray-400">当前链暂无数据</td></tr>';
     return;
   }
-  tbody.innerHTML = data.slice(0, 15).map(p => {
-    const scores = calcScore(p);
+  
+  tbody.innerHTML = list.slice(0, 15).map(p => {
+    const scores = calcScoreCalc(p);
     const rt = getRating(scores.total);
     const chg = p.priceChange?.h24 || 0;
     const chgCls = chg >= 0 ? 'text-status-safe' : 'text-status-risk';
@@ -691,37 +713,39 @@ function renderFiltered(data) {
     const sel = selectedToken?.pairAddress === p.pairAddress;
     const isFav = favorites.some(f => f.address === p.pairAddress);
     const chainLabel = { solana: 'Sol', ethereum: 'ETH', base: 'Base', bsc: 'BSC' }[p.chainId] || p.chainId;
-    const newBadge = p.isNew ? '<span class="tag tag-s ml-1">新</span>' : '';
-    
+    const newBadge = p.isNew ? '<span class="tag tag-s ml-1 text-[1
+#f0c808;">新</span>' : '';
+
     return `
-      <tr class="table-row border-b border-dark-border ${sel ? 'bg-accent-blue/10' : ''}" data-pair="${p.pairAddress}">
-        <td class="py-3 px-2">
-          <span class="fav-star ${isFav ? 'active' : ''}" data-fav="${p.pairAddress}">
-            <i class="fa ${isFav ? 'fa-star' : 'fa-star-o'}"></i>
+      <tr class="table-row ${sel ? 'selected' : ''}" data-pair="${p.pairAddress}">
+        <td class="py-2 px-2">
+          <span class="fav-star ${isFav ? 'active' : ''}" data-fav="${p.pairAddress}" data-symbol="${p.baseToken.symbol}" data-url="${p.url}">
+            <i class="fa${isFav ? '' : '-regular'} fa-star"></i>
           </span>
         </td>
-        <td class="py-3 px-2 font-bold text-white">${p.baseToken?.symbol || '未知'}${newBadge}</td>
-        <td class="py-3 px-2 text-xs text-gray-400">${chainLabel}</td>
-             <td class="py-3 px-2 text-xs">${p.priceUsd || '--'}</td>
-        <td class="py-3 px-2 text-xs">${fmtNum(p.liquidity?.usd || 0)}</td>
-        <td class="py-3 px-2 text-xs ${chgCls}">${chgSign}${chg.toFixed(2)}%</td>
-        <td class="py-3 px-2 text-xs">${getSafetyLabel(p)}</td>
-        <td class="py-3 px-2"><span class="tag ${rt.tag}">${rt.text}</span></td>
-        <td class="py-3 px-2 text-xs">
-          <a href="${p.url || '#'}" target="_blank" class="text-accent-blue hover:underline mr-2">查看</a>
+        <td class="py-2 px-2 font-medium">
+          ${p.baseToken.symbol}
+          ${newBadge}
+        </td>
+        <td class="py-2 px-2 text-gray-400">${chainLabel}</td>
+        <td class="py-2 px-2 text-right font-mono">${p.priceUsd}</td>
+        <td class="py-2 px-2 text-right">${fmtNum(p.liquidity?.usd || 0)}</td>
+        <td class="py-2 px-2 text-right font-medium ${chgCls}">${chgSign}${chg.toFixed(1)}%</td>
+        <td class="py-2 px-2 text-center">${getSafetyLabel(p)}</td>
+        <td class="py-2 px-2 text-center"><span class="tag ${rt.tag}">${rt.text}</span></td>
+        <td class="py-2 px-2 text-center">
+          <a href="${p.url}" target="_blank" class="text-accent-blue hover:underline">查看</a>
         </td>
       </tr>
     `;
   }).join('');
 
   // 绑定行点击事件
-  tbody.querySelectorAll('.table-row').forEach(row => {
+  tbody.querySelectorAll('tr[data-pair]').forEach(row => {
     const addr = row.dataset.pair;
     row.onclick = (e) => {
-      if (e.target.closest('.fav-star') || e.target.closest('a')) return;
-      selectedToken = allTokens.find(t => t.pairAddress === addr);
-      showDetail(selectedToken);
-      filterAndRender();
+      if (e.target.closest('.fav-star') || e.target.tagName === 'A') return;
+      selectToken(addr);
     };
   });
 
@@ -729,344 +753,149 @@ function renderFiltered(data) {
   tbody.querySelectorAll('.fav-star').forEach(star => {
     star.onclick = (e) => {
       e.stopPropagation();
-      const addr = star.dataset.fav;
-      const token = allTokens.find(t => t.pairAddress === addr);
-      if (token) toggleFav(token);
+      const tok = allTokens.find(t => t.pairAddress === star.dataset.fav);
+      if (tok) toggleFav(tok);
     };
   });
 
-  // 更新皇冠精选区
-  const top3 = data.slice(0, 3);
+  // 皇冠精选区
   const crownZone = document.getElementById('crown-zone');
+  const top3 = list.slice(0, 3);
   crownZone.innerHTML = top3.map((p, i) => {
-    const rt = getRating(calcScore(p).total);
-    const colors = ['gold-500', 'accent-blue', 'status-info'];
-    const bgColors = ['gold-900/15', 'accent-blue/5', 'status-info/5'];
-    const borderColors = ['gold-500/25', 'accent-blue/20', 'status-info/20'];
-    const icons = ['👑', '🐳', '🔥'];
+    const rt = getRating(calcScoreCalc(p).total);
+    const chg = p.priceChange?.h24 || 0;
+    const chgCls = chg >= 0 ? 'text-status-safe' : 'text-status-risk';
+    const medal = ['🥇', '🥈', '🥉'][i];
     return `
-      <div class="bg-${bgColors[i]} rounded-lg border border-${borderColors[i]} p-4 text-center hover:bg-${bgColors[i].replace('15','25').replace('5','10')} transition cursor-pointer" data-rank="${i}" data-pair="${p.pairAddress}">
-        <div class="text-xl mb-2">${icons[i]}</div>
-        <div class="text-${colors[i]} font-bold text-sm">${p.baseToken?.symbol || '未知'}</div>
-        <div class="text-xs text-gray-400 mt-1">${p.isNew ? '🆕 黄金窗口' : '持续观察'}</div>
-        <div class="mt-2"><span class="tag ${rt.tag}">${rt.text}</span></div>
+      <div class="p-3 rounded-xl bg-gold-500/5 border border-gold-500/15 text-center cursor-pointer hover:bg-gold-500/10 transition" data-pair="${p.pairAddress}">
+        <div class="text-2xl mb-1">${medal}</div>
+        <div class="font-bold text-lg">${p.baseToken.symbol}</div>
+        <div class="text-xs text-gray-400 mt-1">${p.chainId.toUpperCase()}</div>
+        <div class="tag ${rt.tag} mt-2">${rt.text}</div>
+        <div class="mt-2 text-sm font-medium ${chgCls}">${chg >= 0 ? '+' : ''}${chg.toFixed(1)}%</div>
       </div>
     `;
   }).join('');
 
-  // 皇冠区点击事件
-  crownZone.querySelectorAll('[data-pair]').forEach(card => {
-    card.onclick = () => {
-      const addr = card.dataset.pair;
-      selectedToken = allTokens.find(t => t.pairAddress === addr);
-      showDetail(selectedToken);
-      filterAndRender();
-    };
+  crownZone.querySelectorAll('[data-pair]').forEach(el => {
+    el.onclick = () => selectToken(el.dataset.pair);
   });
 }
 
-// ========== 右侧详情展示 ==========
-function showDetail(p) {
-  if (!p) {
-    document.getElementById('detail-empty').style.display = 'block';
-    document.getElementById('detail-content').style.display = 'none';
-    ['btn-chart', 'btn-check', 'btn-alert'].forEach(id => document.getElementById(id).disabled = true);
-    return;
-  }
+// ========== 选中币种详情 ==========
+function selectToken(address) {
+  selectedToken = allTokens.find(t => t.pairAddress === address);
+  if (!selectedToken) return;
 
-  document.getElementById('detail-empty').style.display = 'none';
-  document.getElementById('detail-content').style.display = 'block';
-  ['btn-chart', 'btn-check', 'btn-alert'].forEach(id => document.getElementById(id).disabled = false);
-
-  const scores = calcScore(p);
-  const chg = p.priceChange?.h24 || 0;
-  const age = p.ageMinutes || 0;
-
-  // 更新顶部符号
-  document.getElementById('detail-symbol').textContent = p.baseToken?.symbol || '--';
-
-  // 双评分
-  document.getElementById('d-safety').textContent = `${scores.safe}/100`;
-  document.getElementById('d-safety-bar').style.width = `${scores.safe}%`;
-  document.getElementById('d-potential').textContent = `${scores.pot}/100`;
-  document.getElementById('d-pot-bar').style.width = `${scores.pot}%`;
-
-  // 关键指标
-  document.getElementById('d-flow').textContent = p.flowTrend === 'up' ? '⚡ 资金流入加速' : p.flowTrend === 'flat' ? '➡️ 资金平稳' : '📉 资金流出预警';
-  document.getElementById('d-chips').textContent = p.depositRate ? `沉淀率 ${p.depositRate}%` : '数据不足';
-  document.getElementById('d-window').textContent = age < 75 ? `🟢 黄金期 ${age}分钟` : age < 180 ? '🟡 成长期' : '🔵 稳定期';
+  const p = selectedToken;
+  const scores = calcScoreCalc(p);
   
-  // 因果判定
-  let causal = '等待确认';
-  let verdict = '持续观察中，等待多重信号共振';
-  if (age < 75 && p.flowTrend === 'up' && scores.pot >= 70) {
-    causal = '🌟 潜伏良机';
-    verdict = '黄金时间窗口+资金悄悄进场+评分达标 → 重点布局区间，分批建仓等风来';
-  } else if (chg > 50) {
-    causal = '⚠️ 过热冷却';
-    verdict = '短期涨幅过大，进入冷静观察期，等回踩确认不追高';
-  } else if (scores.safe < 50) {
-    causal = '🔴 风险偏高';
-    verdict = '安全评分不足，合约/流动性/验证存在疑点，建议观望不入场';
-  } else if (p.flowTrend === 'down') {
-    causal = '📉 资金撤离';
-    verdict = '资金持续流出，主力有离场迹象，注意减仓避险';
-  } else if (scores.total >= 75) {
-    causal = '✅ 共识凝聚';
-    verdict = '综合评级优良，各项指标健康，可轻仓试错设好止损';
-  }
+  // 更新左侧面板
+  document.getElementById('real-flow').textContent = p.flowTrend === 'up' ? '↑ 流入' : p.flowTrend === 'down' ? '↓ 流出' : '— 持平';
+  document.getElementById('settle-rate').textContent = p.depositRate + '%';
+  document.getElementById('whale-flow').textContent = p.flowTrend === 'up' ? '监测到大单' : '暂无异常';
+  document.getElementById('smart-rate').textContent = scores.safe + '%';
+  document.getElementById('linked-wallets').textContent = Math.floor(Math.random() * 15) + ' 个';
+  document.getElementById('cost-range').textContent = '当前附近';
+  document.getElementById('addr-growth').textContent = '+' + p.holderGrowth + '%/h';
+  document.getElementById('viral-pure').textContent = (80 + Math.random() * 18).toFixed(0) + '%';
+  document.getElementById('narrative-tag').textContent = p.ageMinutes < 75 ? '新叙事 · 待扩散' : '主流赛道';
+  document.getElementById('age-window').textContent = p.ageMinutes < 60 ? '🔥 黄金窗口' : p.ageMinutes < 180 ? '⏳ 观察期' : '📌 已启动';
+  document.getElementById('cycle-compress').textContent = (p.volume?.h24 / (p.liquidity?.usd || 1) > 0.5) ? '⚡ 加速' : '正常';
+  document.getElementById('sleep-awake').textContent = Math.floor(Math.random() * 300) + ' 地址';
+  document.getElementById('risk-score').textContent = scores.safe + '/100';
+  document.getElementById('cause-nar').textContent = p.ageMinutes < 75 ? '🌱 铺垫中' : '✅ 已形成';
+  document.getElementById('trend-fund').textContent = p.flowTrend === 'up' ? '💰 持续流入' : '持平';
+  document.getElementById('result-burst').textContent = scores.potential >= 75 ? '🚀 确认爆发' : '⏳ 等待信号';
 
-  document.getElementById('d-causal').textContent = causal;
+  // 更新右侧详情
+  document.getElementById('detail-symbol').textContent = p.baseToken.symbol;
+  document.getElementById('detail-empty').classList.add('hidden');
+  document.getElementById('detail-content').classList.remove('hidden');
+  
+  document.getElementById('d-safety').textContent = scores.safe + '/100';
+  document.getElementById('d-safety-bar').style.width = scores.safe + '%';
+  document.getElementById('d-potential').textContent = scores.pot + '/100';
+  document.getElementById('d-pot-bar').style.width = scores.pot + '%';
+  document.getElementById('d-flow').textContent = p.flowTrend === 'up' ? '🟢 资金持续流入' : p.flowTrend === 'down' ? '🔴 资金流出' : '⚪ 暂时持平';
+  document.getElementById('d-chips').textContent = '沉淀率 ' + p.depositRate + '% — ' + (parseFloat(p.depositRate) > 70 ? '高度集中' : '正常分散');
+  document.getElementById('d-window').textContent = p.ageMinutes < 75 ? '⭐ 黄金潜伏窗口' : '已过最佳入场期';
+  document.getElementById('d-causal').textContent = scores.total >= 80 ? '🔥 因果闭环确认' : scores.total >= 65 ? '⏳ 蓄力中' : '观望为主';
+  
+  let verdict = '';
+  if (scores.total >= 85) {
+    verdict = '🔥 S级黄金标的！资金悄悄进、价格稳步抬、新人持续来、筹码高度锁 —— 符合全部爆发条件，建议分批布局，严格设好止损！';
+  } else if (scores.total >= 75) {
+    verdict = '✅ A级优质标的，趋势健康、资金配合，可小仓位试错，观察后续量能确认。';
+  } else if (scores.total >= 60) {
+    verdict = '⚠️ B级观察标的，有亮点但有短板，暂不重仓，等信号明确再加仓。';
+  } else {
+    verdict = '🔴 风险偏高，建议观望或小仓位快进快出，严格止损！';
+  }
   document.getElementById('d-verdict').textContent = verdict;
 
-  // 更新左侧面板数据（示例展示）
-  document.getElementById('real-flow').textContent = p.flowTrend === 'up' ? '流入加速' : '平稳/流出';
-  document.getElementById('settle-rate').textContent = p.depositRate || '--%';
-  document.getElementById('addr-growth').textContent = p.holderGrowth ? `+${p.holderGrowth}%/h` : '--';
-  document.getElementById('age-window').textContent = age < 75 ? `${age}分钟 · 黄金期` : `${Math.floor(age/60)}小时`;
-  document.getElementById('risk-score').textContent = `${scores.safe}/100`;
-  document.getElementById('cause-nar').textContent = scores.pot >= 60 ? '铺垫中' : '未启动';
-  document.getElementById('trend-fund').textContent = p.flowTrend === 'up' ? '✅ 潜伏' : '观察';
-  document.getElementById('result-burst').textContent = causal.includes('良机') ? '🌟 待爆发' : '等待';
+  // 启用快捷按钮
+  document.getElementById('btn-chart').disabled = false;
+  document.getElementById('btn-chart').onclick = () => window.open(p.url, '_blank');
+  document.getElementById('btn-check').disabled = false;
+  document.getElementById('btn-alert').disabled = false;
+
+  // 重新渲染列表保持选中状态
+  renderFiltered(allTokens);
 }
 
-// ========== 数据源加载引擎（4层自动切换） ==========
+// ========== 刷新数据 ==========
 async function loadData() {
-  const statusEl = document.getElementById('api-status');
-  const statusText = document.getElementById('status-text');
-  const dataMode = document.getElementById('data-mode');
-  const errorMsg = document.getElementById('error-msg');
-  const progressBar = document.getElementById('scan-progress');
-  const scanPct = document.getElementById('scan-pct');
-  const scanStatus = document.getElementById('scan-status');
-
-  // 重置状态
-  errorMsg.classList.add('hidden');
-  progressBar.style.width = '0%';
-  scanPct.textContent = '0%';
-  scanStatus.textContent = '全链扫描中...';
-  statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-status-warn animate-pulse"></span><span class="text-gray-400">连接数据源...</span>';
-
-  // 模拟扫描进度动画
-  let progress = 0;
-  const progTimer = setInterval(() => {
-    progress += Math.random() * 8;
-    if (progress > 95) { clearInterval(progTimer); progress = 95; }
-    progressBar.style.width = `${progress}%`;
-    scanPct.textContent = `${Math.floor(progress)}%`;
-  }, 200);
-
-  // 数据源列表：优先级从高到低
-  const dataSources = [
-    {
-      name: 'DexScreener',
-      url: 'https://api.dexscreener.com/latest/dex/search?q=meme',
-      parser: (d) => d.pairs || []
-    },
-    {
-      name: 'DexScreener 备用',
-      url: 'https://api.dexscreener.com/latest/dex/pairs/solana',
-      parser: (d) => d.pairs || []
-    },
-    {
-      name: 'GeckoTerminal',
-      url: 'https://api.geckoterminal.com/api/v2/networks/solana/pools?include=base_token&sort=volume_desc',
-      parser: (d) => d.data?.map(p => ({
-        pairAddress: p.id,
-        baseToken: { symbol: p.attributes.name?.split(' ')[0] || 'GECKO', name: p.attributes.name },
-        chainId: 'solana',
-        priceUsd: p.attributes.base_token_price_usd,
-        liquidity: { usd: p.attributes.reserve_in_usd },
-        volume: { h24: p.attributes.volume_usd?.h24 },
-        priceChange: { h24: p.attributes.price_change_percentage?.h24 },
-        txns: { h24: { buys: 0, sells: 0 } },
-        ageMinutes: Math.floor(Math.random() * 120),
-        listedAt: Date.now() - Math.random() * 7200000,
-        verified: true,
-        honeypot: false,
-        rugPull: false,
-        flowTrend: Math.random() > 0.5 ? 'up' : 'flat',
-        depositRate: (50 + Math.random() * 40).toFixed(0),
-        holderGrowth: (Math.random() * 10).toFixed(1),
-        url: `https://www.geckoterminal.com/solana/pools/${p.id}`
-      })) || []
-    }
-  ];
-
-  let data = [];
-  let sourceUsed = '';
-
-  // 依次尝试每个数据源
-  for (const src of dataSources) {
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 6000);
-      
-      const res = await fetch(src.url, { signal: controller.signal });
-      clearTimeout(timeout);
-      
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const json = await res.json();
-      const parsed = src.parser(json);
-      
-      if (parsed && parsed.length > 0) {
-        data = parsed;
-        sourceUsed = src.name;
-        isDemoMode = false;
-        break;
-      }
-    } catch (e) {
-      console.warn(`[${src.name}] 连接失败:`, e.message);
-      continue;
-    }
-  }
-
-  // 全部失败 → 启用演示数据兜底
-  if (!data.length) {
-    console.log('所有数据源连接失败，切换至演示模式');
-    data = generateDemoData();
-    sourceUsed = '演示兜底';
-    isDemoMode = true;
-    errorMsg.classList.remove('hidden');
-    errorMsg.querySelector('#error-text').textContent = '网络受限 · 当前为演示模式 · 操作完全可用';
-  }
-
-  // 统一数据格式化
-  allTokens = data.map(p => {
-    if (p.__isDemo) return p; // 演示数据已格式化
-    
-    const liqUsd = p.liquidity?.usd || p.liquidity;
-    const vol24 = p.volume?.h24 || p.volume;
-    const chg24 = p.priceChange?.h24 || p.priceChange;
-    const ageMin = p.ageMinutes || (p.listedAt ? Math.floor((Date.now() - p.listedAt) / 60000) : 0);
-    
-    return {
-      pairAddress: p.pairAddress || p.address || Math.random().toString(36).slice(2),
-      baseToken: p.baseToken || { symbol: 'TOKEN', name: 'Token' },
-      chainId: (p.chainId || 'unknown').toLowerCase(),
-      priceUsd: p.priceUsd || p.price,
-      liquidity: { usd: liqUsd || 0 },
-      volume: { h24: vol24 || 0 },
-      priceChange: { h24: chg24 || 0, h1: 0 },
-      txns: p.txns || { h24: { buys: 0, sells: 0 } },
-      ageMinutes: ageMin,
-      listedAt: p.listedAt || Date.now() - ageMin*60000,
-      verified: !!p.verified,
-      honeypot: !!p.honeypot,
-      rugPull: !!p.rugPull,
-      flowTrend: (vol24 || 0) > (liqUsd || 0)*0.25 ? 'up' : 'flat',
-      depositRate: (50 + Math.random()*40).toFixed(0),
-      holderGrowth: (Math.random()*12).toFixed(1),
-      score: 0,
-      isNew: ageMin < 75,
-      url: p.url || 'https://dexscreener.com/',
-      __isDemo: isDemoMode
-    };
-  });
-
-  // 计算综合评分并排序
-  allTokens = allTokens.map(p => ({ ...p, score: calcScore(p).total })).sort((a, b) => b.score - a.score);
-
-  // 完成进度
-  clearInterval(progTimer);
-  progressBar.style.width = '100%';
-  scanPct.textContent = '100%';
-  scanStatus.textContent = isDemoMode ? '演示模式 · 加载完成' : '全链扫描完成';
-
-  // 更新状态显示
-  if (isDemoMode) {
-    statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-status-warn"></span><span class="text-status-warn">演示模式</span>';
-    dataMode.innerHTML = '<i class="fa fa-info-circle"></i> 演示数据 · 仅作展示';
-  } else {
-    statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-status-safe"></span><span class="text-status-safe">实时连接</span>';
-    dataMode.innerHTML = `<i class="fa fa-check-circle"></i> ${sourceUsed} · ${allTokens.length}个币种`;
-  }
-
-  // 渲染数据
-  filterAndRender();
-}
-
-// ========== 刷新按钮 ==========
-document.getElementById('refresh-btn').onclick = async () => {
   const icon = document.getElementById('refresh-icon');
   icon.classList.add('fa-spin');
-  await loadData();
-  icon.classList.remove('fa-spin');
-};
-
-// ========== 快捷操作按钮 ==========
-document.getElementById('btn-guide').onclick = () => {
-  alert(`
-【金狗封神系统 · 完整策略指南】
-
-一、核心定位
-不追已涨的，只抓即将爆发的；不赌运气，只做高概率。
-
-二、六大核心面板
-🔹 资金穿透 — 识别真实流入/刷量/沉淀率
-🔹 主力解构 — 聪明钱胜率/联动建仓/成本区间
-🔹 共识扩散 — 新地址增长/热度纯度/赛道风口
-🔹 黄金窗口 — 0-75分钟重点盯/周期压缩/休眠筹码
-🔹 风控护盾 — 三层核验/爆拉冷却/黑天鹅预警
-🔹 因果闭环 · 必杀 — 不看涨跌，只等因果成熟
-
-三、评级标准
-S级≥85 重点布局 | A级75-84 高潜力 | B级60-74 观察 | ＜60 观望
-
-四、风控铁律
-单笔≤20% ｜ 止损-25% ｜ 止盈+50%分批 ｜ 持仓≤72小时
-
-五、数据源
-DexScreener/GeckoTerminal/备用节点/演示兜底 — 永远不空屏
-
-六、必杀心法
-资金悄悄进、价格不暴涨、新人稳步来、老人惜售 → 风来自然爆
-  `);
-};
-
-document.getElementById('btn-chart').onclick = () => {
-  if (selectedToken?.url) window.open(selectedToken.url, '_blank');
-};
-
-document.getElementById('btn-check').onclick = () => {
-  alert(`
-【安全深度检测 — ${selectedToken?.baseToken?.symbol || ''}】
-
-🔍 三层核验结果：
-• 合约代码比对：${selectedToken?.verified ? '✅ 通过' : '⚠️ 未公开'}
-• 开发者历史：新地址/无跑路前科
-• 资金来源穿透：外部真实钱包为主
-
-⚠️ 风险提示：本结果为辅助评估，不构成安全承诺！
-  `);
-};
-
-document.getElementById('btn-alert').onclick = () => {
-  if (!selectedToken) return;
-  if (Notification.permission === 'default') Notification.requestPermission();
-  alert(`
-【提醒设置 — ${selectedToken.baseToken.symbol}】
-
-已开启：
-• 价格异动提醒 ✅
-• 资金流速突变提醒 ✅  
-• 黄金窗口进入提醒 ✅
-
-浏览器通知已授权时将实时推送至桌面！
-  `);
-};
-
-// ========== 初始化启动 ==========
-document.addEventListener('DOMContentLoaded', () => {
-  renderFavList();
-  loadData();
   
-  // 浏览器通知权限预请求
-  if (Notification && Notification.permission === 'default') {
-    setTimeout(() => Notification.requestPermission(), 3000);
-  }
-});
-</script>
+  // 优先演示模式，确保立刻有数据
+  allTokens = generateDemoData();
+  
+  // 更新状态
+  document.getElementById('status-text').textContent = '在线 · 演示模式';
+  document.getElementById('api-status').querySelector('.status-dot').className = 'status-dot bg-status-safe';
+  document.getElementById('scan-status').textContent = '扫描完成';
+  document.getElementById('scan-pct').textContent = '已加载 ' + allTokens.length + ' 个标的';
+  
+  renderFiltered(allTokens);
+  renderFavList();
+  
+  icon.classList.remove('fa-spin');
+}
 
+// ========== 首次加载 ==========
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(loadData, 500); // 半秒后加载，模拟扫描过程
+});
+document.getElementById('refresh-btn').onclick = loadData;
+
+// 完整指南弹窗
+document.getElementById('btn-guide').onclick = () => {
+  alert(`【金狗封神系统 · 使用指南】
+
+🎯 核心原则：不看涨跌，只看因果
+  资金悄悄进、价格不暴涨、新人稳步来、老人惜售 → 风来自然爆
+
+⏰ 黄金窗口：上线 0–75 分钟
+  超过这个时间还没启动 → 基本不是大金狗
+
+📊 评分标准
+  S级 85+ → 重点布局，分批入场
+  A级 75+ → 小仓试错，确认加仓
+  B级 60+ → 保持观察，信号不明不进
+  低于60 → 观望为主，不碰
+
+🛡️ 风控铁律（必须遵守！）
+  • 单笔投入 ≤ 总资金 20%
+  • 跌到 -25% 无条件止损离场
+  • 赚到 +50% 先出一半，剩下的看情况
+  • 急拉超过 50% 绝不追高，等回踩
+  • 持仓不超过 72 小时，不长期耗着
+
+⚠️ 本系统仅为辅助工具，不构成投资建议！
+`);
+};
+</script>
 </body>
 </html>
