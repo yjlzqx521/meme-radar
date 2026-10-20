@@ -713,8 +713,7 @@ function renderFiltered(data) {
     const sel = selectedToken?.pairAddress === p.pairAddress;
     const isFav = favorites.some(f => f.address === p.pairAddress);
     const chainLabel = { solana: 'Sol', ethereum: 'ETH', base: 'Base', bsc: 'BSC' }[p.chainId] || p.chainId;
-    const newBadge = p.isNew ? '<span class="tag tag-s ml-1 text-[1
-#f0c808;">新</span>' : '';
+    const newBadge = p.isNew ? '<span class="tag tag-s ml-1 text-[1#f0c808;">新</span>' : '';
 
     return `
       <tr class="table-row ${sel ? 'selected' : ''}" data-pair="${p.pairAddress}">
